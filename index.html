@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tabela Verdade — Capacita Brasil</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:          #f0f0f5;
+  --surface:     #ffffff;
+  --border:      #d8d5e8;
+  --accent:      #8d62ff;
+  --accent2:     #00c896;
+  --text:        #1a1730;
+  --muted:       #7a748f;
+  --green:       #155e35;
+  --green-bg:    #d6f5e5;
+  --green-border:#6edaa8;
+  --red:         #7a1f1f;
+  --red-bg:      #fde8e8;
+  --red-border:  #f0a0a0;
+  --radius:      10px;
+  --glow:        0 0 18px rgba(141,98,255,0.15);
+  --grad:        linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
+  --surface2:    #f7f5ff;
+  --mint:        #00c896;
+  --danger:      #d63030;
+  --warn:        #d48a00;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  padding: 0 0 60px;
+  background-image:
+    radial-gradient(ellipse 70% 40% at 50% -10%, rgba(141,98,255,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 30% at 80% 110%, rgba(0,200,150,0.06) 0%, transparent 70%);
+}
+
+/* ── HEADER ── */
+header {
+  text-align: center;
+  padding: 36px 20px 28px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  background: var(--surface);
+  box-shadow: 0 2px 16px rgba(141,98,255,0.07);
+  margin-bottom: 0;
+}
+header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 2px;
+  background: linear-gradient(90deg, transparent, #8d62ff, transparent);
+}
+.header-logo {
+  height: 48px;
+  margin-bottom: 14px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.subtitle {
+  color: var(--muted);
+  font-size: .85rem;
+  margin-top: 6px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-family: 'Space Grotesk', sans-serif;
+}
+.header-badge {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 4px 16px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+  background: linear-gradient(270deg, rgba(141,98,255,.15), rgba(0,255,188,.1));
+  border: 1px solid rgba(141,98,255,.3);
+  color: var(--accent);
+  letter-spacing: .06em;
+}
+
+/* ── WRAP ── */
+.wrap {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+/* ── TABS ── */
+.tab-bar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 6px;
+  flex-wrap: wrap;
+  box-shadow: 0 2px 10px rgba(141,98,255,0.06);
+}
+.tab {
+  flex: 1;
+  min-width: 120px;
+  padding: 9px 16px;
+  border-radius: var(--radius);
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Space Grotesk', sans-serif;
+  transition: all .2s;
+}
+.tab:hover:not(.active) { background: rgba(141,98,255,.08); color: var(--text); }
+.tab.active {
+  background: var(--grad);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 2px 12px rgba(141,98,255,.3);
+}
+
+/* ── SECTIONS ── */
+.section { display: none; }
+.section.active { display: block; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(141,98,255,.35), transparent);
+}
+.card-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+}
+.card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+/* ── PILLS ── */
+.pill {
+  display: inline-block;
+  padding: 3px 11px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+}
+.pill-grad  { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.3); color: var(--accent); }
+.pill-green { background: rgba(0,200,150,.12);  border: 1px solid rgba(0,200,150,.3);  color: #0a7a5a; }
+.pill-red   { background: rgba(214,48,48,.1);   border: 1px solid rgba(214,48,48,.25); color: var(--danger); }
+.pill-amber { background: rgba(212,138,0,.1);   border: 1px solid rgba(212,138,0,.25); color: var(--warn); }
+.pill-blue  { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.25); color: #5a30cc; }
+
+/* ── OPERATORS GRID ── */
+.op-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 14px 0; }
+.op-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 10px;
+  text-align: center;
+  transition: border-color .2s, box-shadow .2s;
+}
+.op-card:hover { border-color: var(--accent); box-shadow: var(--glow); }
+.op-sym {
+  font-size: 20px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 4px;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.op-name { font-size: 12px; color: var(--muted); font-weight: 600; }
+.op-desc  { font-size: 11px; color: #a09ab5; margin-top: 5px; }
+
+/* ── TABLE ── */
+table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 12px 0; }
+th {
+  background: rgba(141,98,255,.1);
+  padding: 10px 14px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--accent);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: .05em;
+  border-bottom: 1px solid var(--border);
+}
+td { padding: 10px 14px; text-align: center; border-bottom: 1px solid rgba(141,98,255,.08); font-size: 13px; font-family: 'JetBrains Mono', monospace; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(141,98,255,.04); }
+.v { color: #0a7a5a; font-weight: 700; }
+.f { color: var(--danger); font-weight: 700; }
+
+/* ── SIMULATOR ── */
+.sim-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin: 14px 0;
+}
+.op-selector { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.op-btn {
+  padding: 7px 14px;
+  border-radius: 99px;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--muted);
+  transition: all .15s;
+}
+.op-btn:hover { border-color: var(--accent); color: var(--text); }
+.op-btn.active {
+  background: var(--grad);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 2px 10px rgba(141,98,255,.3);
+}
+
+.switch-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.sw-label { font-size: 14px; font-weight: 600; min-width: 80px; color: var(--text); font-family: 'JetBrains Mono', monospace; }
+.switch {
+  width: 48px; height: 26px;
+  background: var(--border);
+  border: 1.5px solid #c8c4e0;
+  border-radius: 13px;
+  position: relative;
+  cursor: pointer;
+  transition: all .25s;
+  outline: none;
+}
+.switch.on { background: var(--grad); border-color: transparent; box-shadow: 0 0 10px rgba(141,98,255,.25); }
+.switch span {
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 18px; height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform .25s;
+  pointer-events: none;
+  box-shadow: 0 1px 4px rgba(0,0,0,.2);
+}
+.switch.on span { transform: translateX(22px); }
+
+.val-label { font-size: 13px; font-weight: 600; font-family: 'JetBrains Mono', monospace; transition: color .2s; }
+
+.result-area {
+  border-top: 1px solid var(--border);
+  margin-top: 14px;
+  padding-top: 14px;
+}
+.expr-text { font-size: 12px; color: var(--muted); margin-bottom: 10px; font-family: 'JetBrains Mono', monospace; }
+.result-badge { display: flex; align-items: center; gap: 12px; }
+.res-circle {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--red-bg);
+  color: var(--danger);
+  border: 1.5px solid var(--red-border);
+  transition: all .25s;
+}
+.res-circle.on { background: var(--green-bg); color: #0a7a5a; border-color: var(--green-border); }
+.res-text { font-size: 15px; font-weight: 600; transition: color .25s; font-family: 'Space Grotesk', sans-serif; }
+
+/* ── SCORE BAR AREA (Exercícios) ── */
+.score-bar-area {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.score-val {
+  font-size: 28px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.score-label { font-size: 11px; color: var(--muted); font-family: 'Space Grotesk', sans-serif; }
+.score-track { flex: 1; background: #e5e2f0; border-radius: 99px; height: 8px; overflow: hidden; }
+.score-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: var(--grad);
+  width: 0%;
+  transition: width .4s cubic-bezier(.4,0,.2,1);
+}
+
+/* ── EXERCISE BLOCKS ── */
+.ex-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  border-left: 3px solid var(--accent);
+  transition: border-left-color .2s, box-shadow .2s;
+  box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.ex-block.done { border-left-color: var(--accent2); }
+.ex-q { font-size: 14px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+.ex-scenario { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+
+.choices { display: flex; gap: 8px; flex-wrap: wrap; }
+.choice {
+  padding: 9px 20px;
+  border-radius: 7px;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 13px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  transition: all .15s;
+}
+.choice:hover:not(:disabled) { background: rgba(141,98,255,.08); border-color: var(--accent); }
+.choice:disabled { cursor: default; }
+.choice.correct { background: var(--green-bg); color: #0a7a5a; border-color: var(--green-border); }
+.choice.wrong   { background: var(--red-bg);   color: var(--danger); border-color: var(--red-border); }
+
+.feedback {
+  font-size: 13px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  display: none;
+  line-height: 1.6;
+  font-family: 'Space Grotesk', sans-serif;
+}
+.feedback.show { display: block; }
+.feedback.ok { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.feedback.ko { background: var(--red-bg);   color: var(--red);   border: 1px solid var(--red-border); }
+
+/* ── CURIOSIDADES ── */
+.curi-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(141,98,255,.1);
+}
+.curi-item:last-of-type { border-bottom: none; }
+.curi-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  background: linear-gradient(270deg, rgba(141,98,255,.15), rgba(0,200,150,.1));
+  border: 1px solid rgba(141,98,255,.25);
+}
+.curi-title {
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+.curi-body { font-size: 13px; color: var(--muted); line-height: 1.65; }
+.curi-body code {
+  background: rgba(141,98,255,.12);
+  color: #5a30cc;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── FOOTER ── */
+footer {
+  text-align: center;
+  margin-top: 3rem;
+  font-size: 11px;
+  color: var(--muted);
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing: .04em;
+}
+footer span {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+}
+
+/* ── GRAD BUTTON ── */
+.grad-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  padding: 10px 22px;
+  border-radius: 8px;
+  background: var(--grad);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  transition: opacity .2s, transform .15s, box-shadow .2s;
+  box-shadow: 0 3px 14px rgba(141,98,255,.3);
+}
+.grad-btn:hover { opacity: .88; transform: translateY(-1px); box-shadow: 0 5px 20px rgba(141,98,255,.45); }
+
+@media (max-width: 540px) {
+  .op-row { grid-template-columns: 1fr 1fr; }
+  .tab { min-width: 80px; font-size: 12px; }
+}
+@media (max-width: 420px) {
+  .logo { font-size: 1.2rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <img class="header-logo" src="https://capacitabrasil.irede.org.br/assets/capacitaLogo-Ct3BEyem.png" alt="Capacita Brasil"/>
+  <div class="logo">∧ ∨ ¬ &nbsp;// Tabela Verdade</div>
+  <div class="subtitle">Lógica Booleana — Aula Interativa</div>
+  <div class="header-badge">Informática Básica</div>
+</header>
+
+<div class="wrap">
+
+  <!-- TABS -->
+  <div class="tab-bar">
+    <button class="tab active" onclick="showTab('resumo',this)">📘 Resumo</button>
+    <button class="tab" onclick="showTab('simulador',this)">⚡ Simulador</button>
+    <button class="tab" onclick="showTab('exercicios',this)">🎯 Exercícios</button>
+    <button class="tab" onclick="showTab('curiosidades',this)">🚀 Curiosidades</button>
+  </div>
+
+  <!-- ═══ RESUMO ═══ -->
+  <div id="resumo" class="section active">
+
+    <div class="card">
+      <div class="card-title">O que é tabela verdade? <span class="pill pill-grad">Fundamentos</span></div>
+      <p>A tabela verdade é uma ferramenta que mostra <strong style="color:var(--text)">todas as combinações possíveis</strong> entre valores lógicos e o resultado de uma operação. É como um "cardápio" de todas as situações que podem acontecer em um sistema lógico.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <span class="pill pill-green">V = Verdadeiro (1)</span>
+        <span class="pill pill-red">F = Falso (0)</span>
+        <span class="pill pill-blue">2ⁿ combinações para n variáveis</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Os 3 operadores principais</div>
+      <div class="op-row">
+        <div class="op-card">
+          <div class="op-sym">E (∧)</div>
+          <div class="op-name">Conjunção</div>
+          <div class="op-desc">Só é V se <em>ambos</em> forem V</div>
+        </div>
+        <div class="op-card">
+          <div class="op-sym">OU (∨)</div>
+          <div class="op-name">Disjunção</div>
+          <div class="op-desc">V se <em>pelo menos um</em> for V</div>
+        </div>
+        <div class="op-card">
+          <div class="op-sym">NÃO (¬)</div>
+          <div class="op-name">Negação</div>
+          <div class="op-desc">Inverte: V→F e F→V</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Tabela de referência completa</div>
+      <div style="overflow-x:auto">
+        <table>
+          <tr><th>A</th><th>B</th><th>A E B</th><th>A OU B</th><th>NÃO A</th><th>A XOU B</th></tr>
+          <tr><td class="v">V</td><td class="v">V</td><td class="v">V</td><td class="v">V</td><td class="f">F</td><td class="f">F</td></tr>
+          <tr><td class="v">V</td><td class="f">F</td><td class="f">F</td><td class="v">V</td><td class="f">F</td><td class="v">V</td></tr>
+          <tr><td class="f">F</td><td class="v">V</td><td class="f">F</td><td class="v">V</td><td class="v">V</td><td class="v">V</td></tr>
+          <tr><td class="f">F</td><td class="f">F</td><td class="f">F</td><td class="f">F</td><td class="v">V</td><td class="f">F</td></tr>
+        </table>
+      </div>
+      <p style="font-size:12px;margin-top:8px">Dica: com 2 variáveis → 4 linhas (2²). Com 3 variáveis → 8 linhas (2³). Com 10 variáveis → 1.024 linhas!</p>
+    </div>
+
+  </div>
+
+  <!-- ═══ SIMULADOR ═══ -->
+  <div id="simulador" class="section">
+    <div class="card">
+      <div class="card-title">Simulador interativo</div>
+      <p>Escolha o operador e ligue/desligue as variáveis para ver o resultado em tempo real. Experimente todas as combinações!</p>
+
+      <div class="sim-box" style="margin-top:16px">
+        <div class="op-selector">
+          <button class="op-btn active" onclick="setOp('e',this)">E (∧)</button>
+          <button class="op-btn" onclick="setOp('ou',this)">OU (∨)</button>
+          <button class="op-btn" onclick="setOp('nao',this)">NÃO A (¬)</button>
+          <button class="op-btn" onclick="setOp('xou',this)">XOU (⊕)</button>
+        </div>
+
+        <div class="switch-row">
+          <span class="sw-label">Variável A</span>
+          <button class="switch" id="swA" onclick="toggle('A')"><span></span></button>
+          <span class="val-label" id="lblA" style="color:var(--danger)">Falso</span>
+        </div>
+        <div class="switch-row" id="rowB">
+          <span class="sw-label">Variável B</span>
+          <button class="switch" id="swB" onclick="toggle('B')"><span></span></button>
+          <span class="val-label" id="lblB" style="color:var(--danger)">Falso</span>
+        </div>
+
+        <div class="result-area">
+          <div class="expr-text" id="expr-lbl">Expressão avaliada: <strong>A E B</strong></div>
+          <div class="result-badge">
+            <div class="res-circle" id="resCircle">F</div>
+            <span class="res-text" id="resText" style="color:var(--danger)">Resultado: Falso</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ EXERCÍCIOS ═══ -->
+  <div id="exercicios" class="section">
+
+    <div class="score-bar-area">
+      <div>
+        <div class="score-val" id="scoreVal">0/5</div>
+        <div class="score-label">acertos</div>
+      </div>
+      <div class="score-track">
+        <div class="score-fill" id="scoreBar"></div>
+      </div>
+    </div>
+
+    <div class="ex-block" id="ex0">
+      <div style="margin-bottom:8px"><span class="pill pill-blue">Exercício 1</span></div>
+      <div class="ex-q">Você pode ir à festa SE terminar a lição E SE seus pais deixarem.</div>
+      <div class="ex-scenario">Você terminou a lição ✓, mas seus pais não deixaram ✗. Você vai à festa?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer(0,this,false)">Sim (Verdadeiro)</button>
+        <button class="choice" onclick="answer(0,this,true)">Não (Falso)</button>
+      </div>
+      <div class="feedback" id="fb0"></div>
+    </div>
+
+    <div class="ex-block" id="ex1">
+      <div style="margin-bottom:8px"><span class="pill pill-blue">Exercício 2</span></div>
+      <div class="ex-q">O alarme dispara SE detectar movimento OU SE detectar som alto.</div>
+      <div class="ex-scenario">Não detectou movimento ✗, mas detectou som alto ✓. O alarme dispara?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer(1,this,true)">Sim (Verdadeiro)</button>
+        <button class="choice" onclick="answer(1,this,false)">Não (Falso)</button>
+      </div>
+      <div class="feedback" id="fb1"></div>
+    </div>
+
+    <div class="ex-block" id="ex2">
+      <div style="margin-bottom:8px"><span class="pill pill-blue">Exercício 3</span></div>
+      <div class="ex-q">A lâmpada fica acesa se NÃO apertar o botão de desligar.</div>
+      <div class="ex-scenario">Você apertou o botão de desligar ✓. A lâmpada fica acesa?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer(2,this,false)">Sim (Verdadeiro)</button>
+        <button class="choice" onclick="answer(2,this,true)">Não (Falso)</button>
+      </div>
+      <div class="feedback" id="fb2"></div>
+    </div>
+
+    <div class="ex-block" id="ex3">
+      <div style="margin-bottom:8px"><span class="pill pill-blue">Exercício 4</span></div>
+      <div class="ex-q">O Wi-Fi conecta SE a senha estiver certa E SE a rede estiver disponível.</div>
+      <div class="ex-scenario">A senha está certa ✓ e a rede está disponível ✓. O Wi-Fi conecta?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer(3,this,true)">Sim (Verdadeiro)</button>
+        <button class="choice" onclick="answer(3,this,false)">Não (Falso)</button>
+      </div>
+      <div class="feedback" id="fb3"></div>
+    </div>
+
+    <div class="ex-block" id="ex4">
+      <div style="margin-bottom:8px"><span class="pill pill-amber">Exercício 5 — Desafio</span></div>
+      <div class="ex-q">No jogo, você vence SE tiver vida OU escudo, E ainda NÃO tiver perdido o tempo.</div>
+      <div class="ex-scenario">Sem vida ✗, com escudo ✓, e o tempo ainda não acabou ✓. Você venceu?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer(4,this,true)">Sim (Verdadeiro)</button>
+        <button class="choice" onclick="answer(4,this,false)">Não (Falso)</button>
+      </div>
+      <div class="feedback" id="fb4"></div>
+    </div>
+
+  </div>
+
+  <!-- ═══ CURIOSIDADES ═══ -->
+  <div id="curiosidades" class="section">
+    <div class="card">
+      <div class="card-title">Tópicos que impressionam 🔥</div>
+
+      <div class="curi-item">
+        <div class="curi-icon">🧠</div>
+        <div>
+          <div class="curi-title">Inventada há quase 200 anos</div>
+          <div class="curi-body">George Boole criou a lógica booleana em 1854 — antes mesmo dos computadores existirem! Ele queria matematizar o raciocínio humano. Por isso o tipo <code>boolean</code> tem esse nome em toda linguagem de programação.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">💻</div>
+        <div>
+          <div class="curi-title">Está em todo processador</div>
+          <div class="curi-body">Um processador moderno tem bilhões de transistores que funcionam como chaves liga/desliga — exatamente como V e F. A tabela verdade é a base física de todo computador, smartphone e videogame que existe.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">🔐</div>
+        <div>
+          <div class="curi-title">Usada em senhas e segurança digital</div>
+          <div class="curi-body">Sistemas de autenticação como o login do Instagram usam operações lógicas para verificar condições: <code>usuário E senha corretos?</code> • <code>sessão válida OU token ativo?</code> • Tudo tabela verdade!</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">🤖</div>
+        <div>
+          <div class="curi-title">Inteligência Artificial também usa</div>
+          <div class="curi-body">Redes neurais artificiais são inspiradas em neurônios que "disparam" (V) ou "não disparam" (F). As decisões de uma IA são, no fundo, trilhões de operações lógicas encadeadas acontecendo em milissegundos.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">🔢</div>
+        <div>
+          <div class="curi-title">n variáveis = 2ⁿ linhas</div>
+          <div class="curi-body">Com 1 variável: 2 linhas. Com 2: 4. Com 3: 8. Com 10 variáveis já são 1.024 combinações! É por isso que linguagens de programação têm "curto-circuito" — para evitar calcular tudo desnecessariamente e ganhar performance.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">⚡</div>
+        <div>
+          <div class="curi-title">A porta NAND é "universal"</div>
+          <div class="curi-body">A operação NAND (NÃO-E) sozinha consegue simular qualquer outra operação lógica. Por isso é chamada de "porta universal" — computadores inteiros podem ser construídos usando apenas ela!</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    Material didático desenvolvido para <span>Capacita Brasil</span> — iRede &nbsp;·&nbsp; Lógica Booleana
+  </footer>
+
+</div><!-- /wrap -->
+
+<script>
+let scores = 0, answered = [false, false, false, false, false];
+let vals = {A: false, B: false}, curOp = 'e';
+const exprMap = {e:'A E B', ou:'A OU B', nao:'NÃO A', xou:'A XOU B (somente um V)'};
+
+function showTab(t, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(t).classList.add('active');
+  btn.classList.add('active');
+}
+
+function toggle(v) {
+  vals[v] = !vals[v];
+  const sw  = document.getElementById('sw'  + v);
+  const lbl = document.getElementById('lbl' + v);
+  sw.classList.toggle('on', vals[v]);
+  lbl.textContent  = vals[v] ? 'Verdadeiro' : 'Falso';
+  lbl.style.color  = vals[v] ? '#0a7a5a' : 'var(--danger)';
+  calc();
+}
+
+function setOp(op, btn) {
+  curOp = op;
+  document.querySelectorAll('.op-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const rowB = document.getElementById('rowB');
+  rowB.style.opacity       = op === 'nao' ? '0.35' : '1';
+  rowB.style.pointerEvents = op === 'nao' ? 'none'  : 'auto';
+  document.getElementById('expr-lbl').innerHTML =
+    'Expressão avaliada: <strong>' + exprMap[op] + '</strong>';
+  calc();
+}
+
+function calc() {
+  const a = vals.A, b = vals.B;
+  let r;
+  if      (curOp === 'e')   r = a && b;
+  else if (curOp === 'ou')  r = a || b;
+  else if (curOp === 'nao') r = !a;
+  else                      r = (a || b) && !(a && b);
+
+  const c = document.getElementById('resCircle');
+  const t = document.getElementById('resText');
+  c.textContent = r ? 'V' : 'F';
+  c.className   = 'res-circle' + (r ? ' on' : '');
+  t.textContent = 'Resultado: ' + (r ? 'Verdadeiro' : 'Falso');
+  t.style.color = r ? '#0a7a5a' : 'var(--danger)';
+}
+
+const feedbacksOk = [
+  'Correto! ✓ V E F = F. Para o operador E, os dois precisam ser verdadeiros para o resultado ser V.',
+  'Correto! ✓ F OU V = V. O operador OU é verdadeiro quando pelo menos um dos valores for V.',
+  'Correto! ✓ NÃO V = F. Como o botão foi pressionado (V), a negação inverte para F.',
+  'Correto! ✓ V E V = V. Ambas as condições são verdadeiras, então a conexão é estabelecida!',
+  'Correto! ✓ (F OU V) = V, e NÃO F = V. Logo: V E V = V. O escudo salvou a partida!'
+];
+const feedbacksErr = [
+  'Errado. ✗ V E F = F. O operador E exige que AMBOS sejam verdadeiros. Sem a autorização dos pais, não vai.',
+  'Errado. ✗ F OU V = V. O OU é verdadeiro com pelo menos um V. O som alto basta para o alarme disparar.',
+  'Errado. ✗ NÃO V = F. O botão foi apertado (V), então NÃO V resulta em F. A lâmpada apaga.',
+  'Errado. ✗ V E V = V. Ambas as condições foram satisfeitas. O Wi-Fi conecta normalmente!',
+  'Errado. ✗ Escudo ativo → (F OU V) = V. Tempo restante → NÃO F = V. Então V E V = V. Vitória!'
+];
+
+function answer(i, btn, isCorrect) {
+  if (answered[i]) return;
+  answered[i] = true;
+  const btns  = btn.closest('.ex-block').querySelectorAll('.choice');
+  btns.forEach(b => { b.disabled = true; });
+  const fb    = document.getElementById('fb'  + i);
+  const block = document.getElementById('ex'  + i);
+  fb.classList.add('show');
+  if (isCorrect) {
+    btn.classList.add('correct');
+    fb.className  = 'feedback show ok';
+    fb.textContent = feedbacksOk[i];
+    block.classList.add('done');
+    scores++;
+  } else {
+    btn.classList.add('wrong');
+    fb.className  = 'feedback show ko';
+    fb.textContent = feedbacksErr[i];
+    btns.forEach(b => { if (b !== btn) b.classList.add('correct'); });
+  }
+  document.getElementById('scoreVal').textContent = scores + '/5';
+  document.getElementById('scoreBar').style.width = (scores / 5 * 100) + '%';
+}
+</script>
+</body>
+</html>
