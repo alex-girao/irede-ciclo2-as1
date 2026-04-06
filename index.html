@@ -512,8 +512,8 @@ footer span {
 
   <!-- AULAS (abas externas) -->
   <div class="aula-bar">
-    <button class="aula-tab active" onclick="showAula('aula01',this)">📚 Aula 01</button>
-    <button class="aula-tab" onclick="showAula('aula02',this)">🆕 Aula 02</button>
+    <button class="aula-tab active" onclick="showAula('aula01',this)">📚 Aula 01 — Tabela Verdade</button>
+    <button class="aula-tab" onclick="showAula('aula02',this)">📖 Aula 02 — Conectivos Compostos</button>
   </div>
 
   <!-- ══════════ AULA 01 ══════════ -->
@@ -521,11 +521,11 @@ footer span {
 
   <!-- TABS -->
   <div class="tab-bar">
-    <button class="tab active" onclick="showTab('resumo',this)">📘 Resumo</button>
-    <button class="tab" onclick="showTab('simulador',this)">⚡ Simulador</button>
-    <button class="tab" onclick="showTab('exercicios',this)">🎯 Exercícios</button>
-    <button class="tab" onclick="showTab('questionarios',this)">📝 Questionários</button>
-    <button class="tab" onclick="showTab('curiosidades',this)">🚀 Curiosidades</button>
+    <button class="tab active" onclick="showTab('resumo',this,'aula01')">📘 Resumo</button>
+    <button class="tab" onclick="showTab('simulador',this,'aula01')">⚡ Simulador</button>
+    <button class="tab" onclick="showTab('exercicios',this,'aula01')">🎯 Exercícios</button>
+    <button class="tab" onclick="showTab('questionarios',this,'aula01')">📝 Questionários</button>
+    <button class="tab" onclick="showTab('curiosidades',this,'aula01')">🚀 Curiosidades</button>
   </div>
 
   <!-- ═══ RESUMO ═══ -->
@@ -585,7 +585,7 @@ footer span {
       <p>Escolha o operador e ligue/desligue as variáveis para ver o resultado em tempo real. Experimente todas as combinações!</p>
 
       <div class="sim-box" style="margin-top:16px">
-        <div class="op-selector">
+        <div class="op-selector" id="sim1-ops">
           <button class="op-btn active" onclick="setOp('e',this)">E (∧)</button>
           <button class="op-btn" onclick="setOp('ou',this)">OU (∨)</button>
           <button class="op-btn" onclick="setOp('nao',this)">NÃO A (¬)</button>
@@ -770,10 +770,297 @@ footer span {
 
   <!-- ══════════ AULA 02 ══════════ -->
   <div id="aula02" class="aula-section">
+
+  <!-- TABS -->
+  <div class="tab-bar">
+    <button class="tab active" onclick="showTab('a2-resumo',this,'aula02')">📘 Resumo</button>
+    <button class="tab" onclick="showTab('a2-simulador',this,'aula02')">⚡ Simulador</button>
+    <button class="tab" onclick="showTab('a2-exercicios',this,'aula02')">🎯 Exercícios</button>
+    <button class="tab" onclick="showTab('a2-questionarios',this,'aula02')">📝 Questionários</button>
+    <button class="tab" onclick="showTab('a2-curiosidades',this,'aula02')">🚀 Curiosidades</button>
+  </div>
+
+  <!-- ═══ RESUMO ═══ -->
+  <div id="a2-resumo" class="section active">
+
     <div class="card">
-      <div class="card-title">Aula 02 <span class="pill pill-grad">Em breve</span></div>
-      <p>O conteúdo desta aula será adicionado em breve. Fique ligado!</p>
+      <div class="card-title">Conectivos Compostos e Classificações <span class="pill pill-grad">Aula 02</span></div>
+      <p>Nesta aula vamos além dos três operadores básicos e exploramos como proposições se <strong style="color:var(--text)">relacionam entre si</strong> — a implicação, o bicondicional — e como classificar fórmulas quanto à sua validade lógica.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <span class="pill pill-green">P → Q (Implicação)</span>
+        <span class="pill pill-blue">P ↔ Q (Bicondicional)</span>
+        <span class="pill pill-amber">Tautologia · Contradição · Contingência</span>
+        <span class="pill pill-grad">Equivalência Lógica ≡</span>
+      </div>
     </div>
+
+    <div class="card">
+      <div class="card-title">Os conectivos desta aula</div>
+      <div class="op-row">
+        <div class="op-card">
+          <div class="op-sym">→</div>
+          <div class="op-name">Implicação</div>
+          <div class="op-desc">Falsa só quando P=V e Q=F</div>
+        </div>
+        <div class="op-card">
+          <div class="op-sym">↔</div>
+          <div class="op-name">Bicondicional</div>
+          <div class="op-desc">V quando P e Q têm mesmo valor</div>
+        </div>
+        <div class="op-card">
+          <div class="op-sym">≡</div>
+          <div class="op-name">Equivalência</div>
+          <div class="op-desc">Mesma tabela-verdade sempre</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Implicação — P → Q <span class="pill pill-green">Se P, então Q</span></div>
+      <p>A implicação representa uma condição: "Se P for verdadeiro, Q também deve ser." A única forma de <strong style="color:var(--text)">quebrar a promessa</strong> é P ser verdadeiro e Q ser falso.</p>
+      <div style="overflow-x:auto;margin-top:14px">
+        <table>
+          <tr><th>P</th><th>Q</th><th>P → Q</th><th>Interpretação</th></tr>
+          <tr><td class="v">V</td><td class="v">V</td><td class="v">V</td><td style="font-size:12px;color:var(--muted);font-family:'Space Grotesk'">Prometeu e cumpriu ✓</td></tr>
+          <tr><td class="v">V</td><td class="f">F</td><td class="f">F</td><td style="font-size:12px;color:var(--danger);font-family:'Space Grotesk'">Prometeu e violou ✗ — único caso falso</td></tr>
+          <tr><td class="f">F</td><td class="v">V</td><td class="v">V</td><td style="font-size:12px;color:var(--muted);font-family:'Space Grotesk'">Condição não se aplicou</td></tr>
+          <tr><td class="f">F</td><td class="f">F</td><td class="v">V</td><td style="font-size:12px;color:var(--muted);font-family:'Space Grotesk'">Condição não se aplicou</td></tr>
+        </table>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;margin-top:12px;font-size:13px;color:var(--muted)">
+        <strong style="color:var(--text)">Equivalência útil:</strong> P → Q ≡ ¬P ∨ Q &nbsp;&nbsp;·&nbsp;&nbsp; <strong style="color:var(--text)">Contrapositiva:</strong> P → Q ≡ ¬Q → ¬P
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Bicondicional — P ↔ Q <span class="pill pill-blue">P se e somente se Q</span></div>
+      <p>Verdadeiro quando P e Q têm <strong style="color:var(--text)">o mesmo valor lógico</strong> — ambos V ou ambos F. É como dizer "P e Q são a mesma coisa logicamente."</p>
+      <div style="overflow-x:auto;margin-top:14px">
+        <table>
+          <tr><th>P</th><th>Q</th><th>P ↔ Q</th><th>Interpretação</th></tr>
+          <tr><td class="v">V</td><td class="v">V</td><td class="v">V</td><td style="font-size:12px;color:var(--muted);font-family:'Space Grotesk'">Mesmos valores ✓</td></tr>
+          <tr><td class="v">V</td><td class="f">F</td><td class="f">F</td><td style="font-size:12px;color:var(--danger);font-family:'Space Grotesk'">Valores diferentes ✗</td></tr>
+          <tr><td class="f">F</td><td class="v">V</td><td class="f">F</td><td style="font-size:12px;color:var(--danger);font-family:'Space Grotesk'">Valores diferentes ✗</td></tr>
+          <tr><td class="f">F</td><td class="f">F</td><td class="v">V</td><td style="font-size:12px;color:var(--muted);font-family:'Space Grotesk'">Mesmos valores ✓</td></tr>
+        </table>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;margin-top:12px;font-size:13px;color:var(--muted)">
+        <strong style="color:var(--text)">Equivalência útil:</strong> P ↔ Q ≡ (P → Q) ∧ (Q → P)
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Classificações de Fórmulas</div>
+      <div class="op-row">
+        <div class="op-card" style="border-top:3px solid #0a7a5a">
+          <div class="op-sym" style="font-size:16px">Tautologia</div>
+          <div class="op-name">Sempre V</div>
+          <div class="op-desc">Exemplo: P ∨ ¬P — toda tabela retorna V</div>
+        </div>
+        <div class="op-card" style="border-top:3px solid var(--danger)">
+          <div class="op-sym" style="font-size:16px">Contradição</div>
+          <div class="op-name">Sempre F</div>
+          <div class="op-desc">Exemplo: P ∧ ¬P — toda tabela retorna F</div>
+        </div>
+        <div class="op-card" style="border-top:3px solid var(--warn)">
+          <div class="op-sym" style="font-size:16px">Contingência</div>
+          <div class="op-name">Às vezes V, às vezes F</div>
+          <div class="op-desc">Exemplo: P ∧ Q — depende dos valores</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Equivalência Lógica <span class="pill pill-grad">≡</span></div>
+      <p>Duas fórmulas são <strong style="color:var(--text)">logicamente equivalentes</strong> (A ≡ B) quando têm exatamente a mesma tabela-verdade. Podemos substituir uma pela outra sem alterar o sentido lógico.</p>
+      <div style="overflow-x:auto;margin-top:14px">
+        <table>
+          <tr><th>Nome</th><th>Equivalência</th></tr>
+          <tr><td style="text-align:left;font-family:'Space Grotesk'">Implicação</td><td>P → Q ≡ ¬P ∨ Q</td></tr>
+          <tr><td style="text-align:left;font-family:'Space Grotesk'">Contrapositiva</td><td>P → Q ≡ ¬Q → ¬P</td></tr>
+          <tr><td style="text-align:left;font-family:'Space Grotesk'">Bicondicional expandido</td><td>P ↔ Q ≡ (P → Q) ∧ (Q → P)</td></tr>
+          <tr><td style="text-align:left;font-family:'Space Grotesk'">De Morgan (∧)</td><td>¬(P ∧ Q) ≡ ¬P ∨ ¬Q</td></tr>
+          <tr><td style="text-align:left;font-family:'Space Grotesk'">De Morgan (∨)</td><td>¬(P ∨ Q) ≡ ¬P ∧ ¬Q</td></tr>
+        </table>
+      </div>
+      <p style="font-size:12px;margin-top:8px">Dica: para provar equivalência, monte as tabelas-verdade das duas fórmulas e compare coluna por coluna.</p>
+    </div>
+
+  </div>
+
+  <!-- ═══ SIMULADOR ═══ -->
+  <div id="a2-simulador" class="section">
+    <div class="card">
+      <div class="card-title">Simulador — Implicação e Bicondicional</div>
+      <p>Escolha o operador e ligue/desligue as variáveis para ver o resultado em tempo real. Compare P→Q com a Contrapositiva ¬Q→¬P e veja que são idênticos!</p>
+
+      <div class="sim-box" style="margin-top:16px">
+        <div class="op-selector" id="sim2-ops">
+          <button class="op-btn active" onclick="setOp2('impl',this)">P → Q (Implicação)</button>
+          <button class="op-btn" onclick="setOp2('bicond',this)">P ↔ Q (Bicondicional)</button>
+          <button class="op-btn" onclick="setOp2('contra',this)">¬Q → ¬P (Contrapositiva)</button>
+        </div>
+
+        <div class="switch-row">
+          <span class="sw-label">Variável P</span>
+          <button class="switch" id="sw2A" onclick="toggle2('A')"><span></span></button>
+          <span class="val-label" id="lbl2A" style="color:var(--danger)">Falso</span>
+        </div>
+        <div class="switch-row">
+          <span class="sw-label">Variável Q</span>
+          <button class="switch" id="sw2B" onclick="toggle2('B')"><span></span></button>
+          <span class="val-label" id="lbl2B" style="color:var(--danger)">Falso</span>
+        </div>
+
+        <div class="result-area">
+          <div class="expr-text" id="expr2-lbl">Expressão avaliada: <strong>P → Q (Implicação)</strong></div>
+          <div class="result-badge">
+            <div class="res-circle on" id="resCircle2">V</div>
+            <span class="res-text" id="resText2" style="color:#0a7a5a">Resultado: Verdadeiro</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ EXERCÍCIOS ═══ -->
+  <div id="a2-exercicios" class="section">
+
+    <div class="score-bar-area">
+      <div>
+        <div class="score-val" id="scoreVal2">0/5</div>
+        <div class="score-label">acertos</div>
+      </div>
+      <div class="score-track">
+        <div class="score-fill" id="scoreBar2"></div>
+      </div>
+    </div>
+
+    <div class="ex-block" id="a2-ex0">
+      <div style="margin-bottom:8px"><span class="pill pill-blue">Exercício 1</span></div>
+      <div class="ex-q">Regra do sistema: "Se o produto está vencido (P), então não pode ser vendido (Q)."</div>
+      <div class="ex-scenario">O produto está vencido ✓, mas foi vendido mesmo assim ✗. A implicação P→Q foi respeitada?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer2(0,this,false)">Sim (Verdadeiro)</button>
+        <button class="choice" onclick="answer2(0,this,true)">Não (Falso)</button>
+      </div>
+      <div class="feedback" id="a2-fb0"></div>
+    </div>
+
+    <div class="ex-block" id="a2-ex1">
+      <div style="margin-bottom:8px"><span class="pill pill-blue">Exercício 2</span></div>
+      <div class="ex-q">Regra: "Se há internet (P), o sistema sincroniza (Q)."</div>
+      <div class="ex-scenario">Não há internet ✗, mas o sistema sincronizou com dados em cache ✓. A implicação P→Q é verdadeira?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer2(1,this,true)">Sim (Verdadeiro)</button>
+        <button class="choice" onclick="answer2(1,this,false)">Não (Falso)</button>
+      </div>
+      <div class="feedback" id="a2-fb1"></div>
+    </div>
+
+    <div class="ex-block" id="a2-ex2">
+      <div style="margin-bottom:8px"><span class="pill pill-blue">Exercício 3</span></div>
+      <div class="ex-q">Sistema de acesso: "A catraca abre ↔ o cartão é válido."</div>
+      <div class="ex-scenario">O cartão NÃO é válido ✗ e a catraca NÃO abriu ✗. O bicondicional é satisfeito?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer2(2,this,true)">Sim (Verdadeiro)</button>
+        <button class="choice" onclick="answer2(2,this,false)">Não (Falso)</button>
+      </div>
+      <div class="feedback" id="a2-fb2"></div>
+    </div>
+
+    <div class="ex-block" id="a2-ex3">
+      <div style="margin-bottom:8px"><span class="pill pill-blue">Exercício 4</span></div>
+      <div class="ex-q">A fórmula P ∨ ¬P (P OU não-P) é verdadeira para qualquer valor de P?</div>
+      <div class="ex-scenario">Teste: P=V → V∨F = V. P=F → F∨V = V. O resultado muda dependendo de P?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer2(3,this,true)">Não muda — é Tautologia</button>
+        <button class="choice" onclick="answer2(3,this,false)">Muda — é Contingência</button>
+      </div>
+      <div class="feedback" id="a2-fb3"></div>
+    </div>
+
+    <div class="ex-block" id="a2-ex4">
+      <div style="margin-bottom:8px"><span class="pill pill-amber">Exercício 5 — Desafio</span></div>
+      <div class="ex-q">"Se chove (P), a rua fica molhada (Q)" e "Se a rua NÃO molhou (¬Q), então NÃO choveu (¬P)" são logicamente equivalentes?</div>
+      <div class="ex-scenario">Use a relação P→Q ≡ ¬Q→¬P (contrapositiva) para decidir.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer2(4,this,true)">Sim — são equivalentes</button>
+        <button class="choice" onclick="answer2(4,this,false)">Não — são diferentes</button>
+      </div>
+      <div class="feedback" id="a2-fb4"></div>
+    </div>
+
+  </div>
+
+  <!-- ═══ QUESTIONÁRIOS ═══ -->
+  <div id="a2-questionarios" class="section">
+    <div class="card">
+      <div class="card-title">Questionários <span class="pill pill-grad">Prática</span></div>
+      <p>Escolha um questionário para treinar implicação, bicondicional, tautologia e equivalência lógica com questões práticas e progressivas.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Questionários da Aula 02 <span class="pill pill-amber">Em breve</span></div>
+      <p>Os questionários específicos sobre <strong style="color:var(--text)">→</strong>, <strong style="color:var(--text)">↔</strong>, tautologia e equivalência lógica estão sendo preparados e estarão disponíveis em breve!</p>
+    </div>
+  </div>
+
+  <!-- ═══ CURIOSIDADES ═══ -->
+  <div id="a2-curiosidades" class="section">
+    <div class="card">
+      <div class="card-title">Fatos que impressionam 🔥</div>
+
+      <div class="curi-item">
+        <div class="curi-icon">⚖️</div>
+        <div>
+          <div class="curi-title">A implicação e os contratos</div>
+          <div class="curi-body">A implicação lógica P→Q é a base formal de qualquer contrato: "SE você pagar, ENTÃO entregarei o produto." A única violação é P=V e Q=F. Por isso, contratos jurídicos são estruturados como implicações materiais — o descumprimento é exatamente o caso V→F.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">🔄</div>
+        <div>
+          <div class="curi-title">Contrapositiva no código todo dia</div>
+          <div class="curi-body">Programadores usam a contrapositiva sem saber! Quando você escreve <code>if (!isValid) return error</code>, está aplicando ¬Q→¬P: "se NÃO é válido, então NÃO continua." É logicamente idêntico a "se continua, então é válido." Mesma lógica, forma diferente.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">🧩</div>
+        <div>
+          <div class="curi-title">Tautologia e provas matemáticas</div>
+          <div class="curi-body">Toda prova matemática válida produz uma tautologia: dado que as premissas são verdadeiras, a conclusão é sempre verdadeira. Quando matemáticos escrevem "Q.E.D." (quod erat demonstrandum), estão afirmando que chegaram a uma fórmula que é tautologia.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">🤯</div>
+        <div>
+          <div class="curi-title">A falácia do condicional inverso</div>
+          <div class="curi-body">Um erro clássico: confundir P→Q com Q→P. "Se é cachorro, é animal" não implica "Se é animal, é cachorro" — pode ser gato! Em código, isso gera bugs sutis quando se inverte condições sem cuidado. <code>if (isAdmin)</code> não é o mesmo que <code>if (!isAdmin)</code>.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">💡</div>
+        <div>
+          <div class="curi-title">Bicondicional e definições precisas</div>
+          <div class="curi-body">Toda definição matemática rigorosa usa o bicondicional: "n é par ↔ n mod 2 = 0". Isso significa que as duas direções valem simultaneamente. Funções como <code>isEven(n)</code> implementam esse bicondicional — a condição é exata, sem exceções.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">🔬</div>
+        <div>
+          <div class="curi-title">De Morgan e otimização de circuitos</div>
+          <div class="curi-body">Engenheiros usam as Leis de De Morgan para simplificar circuitos digitais. Substituir ¬(P∧Q) por ¬P∨¬Q pode reduzir o número de portas lógicas em um chip — economizando energia e área física em processadores modernos com bilhões de transistores.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   </div><!-- /aula02 -->
 
   <footer>
@@ -794,9 +1081,10 @@ function showAula(id, btn) {
   btn.classList.add('active');
 }
 
-function showTab(t, btn) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+function showTab(t, btn, scope) {
+  const container = scope ? document.getElementById(scope) : document;
+  container.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  container.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
   document.getElementById(t).classList.add('active');
   btn.classList.add('active');
 }
@@ -813,7 +1101,7 @@ function toggle(v) {
 
 function setOp(op, btn) {
   curOp = op;
-  document.querySelectorAll('.op-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#sim1-ops .op-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   const rowB = document.getElementById('rowB');
   rowB.style.opacity       = op === 'nao' ? '0.35' : '1';
@@ -876,6 +1164,87 @@ function answer(i, btn, isCorrect) {
   }
   document.getElementById('scoreVal').textContent = scores + '/5';
   document.getElementById('scoreBar').style.width = (scores / 5 * 100) + '%';
+}
+
+/* ── AULA 02 ── */
+let scores2 = 0, answered2 = [false, false, false, false, false];
+let vals2 = {A: false, B: false}, curOp2 = 'impl';
+const exprMap2 = {
+  impl:   'P → Q (Implicação)',
+  bicond: 'P ↔ Q (Bicondicional)',
+  contra: '¬Q → ¬P (Contrapositiva)'
+};
+
+function toggle2(v) {
+  vals2[v] = !vals2[v];
+  const sw  = document.getElementById('sw2'  + v);
+  const lbl = document.getElementById('lbl2' + v);
+  sw.classList.toggle('on', vals2[v]);
+  lbl.textContent = vals2[v] ? 'Verdadeiro' : 'Falso';
+  lbl.style.color = vals2[v] ? '#0a7a5a' : 'var(--danger)';
+  calc2();
+}
+
+function setOp2(op, btn) {
+  curOp2 = op;
+  document.querySelectorAll('#sim2-ops .op-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('expr2-lbl').innerHTML =
+    'Expressão avaliada: <strong>' + exprMap2[op] + '</strong>';
+  calc2();
+}
+
+function calc2() {
+  const a = vals2.A, b = vals2.B;
+  let r;
+  if      (curOp2 === 'impl')   r = !a || b;       // P → Q ≡ ¬P ∨ Q
+  else if (curOp2 === 'bicond') r = (a === b);      // P ↔ Q
+  else                          r = b || !a;        // ¬Q → ¬P ≡ Q ∨ ¬P (mesmo resultado que P→Q!)
+  const c = document.getElementById('resCircle2');
+  const t = document.getElementById('resText2');
+  c.textContent = r ? 'V' : 'F';
+  c.className   = 'res-circle' + (r ? ' on' : '');
+  t.textContent = 'Resultado: ' + (r ? 'Verdadeiro' : 'Falso');
+  t.style.color = r ? '#0a7a5a' : 'var(--danger)';
+}
+
+const feedbacksOk2 = [
+  'Correto! ✓ V→F = F. A implicação é a ÚNICA falsa quando o antecedente é V e o consequente é F. A regra foi violada!',
+  'Correto! ✓ F→V = V. Quando o antecedente (P) é Falso, a implicação é sempre Verdadeira — a condição não se aplicou.',
+  'Correto! ✓ F↔F = V. No bicondicional, tanto (V↔V) quanto (F↔F) resultam em Verdadeiro — o que importa é que ambos tenham o mesmo valor.',
+  'Correto! ✓ P∨¬P é uma Tautologia! Qualquer que seja o valor de P, sempre haverá um lado verdadeiro nessa disjunção.',
+  'Correto! ✓ P→Q ≡ ¬Q→¬P. A contrapositiva é sempre logicamente equivalente à implicação original — tabelas-verdade idênticas em todas as linhas!'
+];
+const feedbacksErr2 = [
+  'Errado. ✗ V→F = F. A implicação é violada exatamente quando prometemos (P=V) e não cumprimos (Q=F). A regra não foi respeitada.',
+  'Errado. ✗ F→V = V! Quando P é Falso, a implicação nunca é violada. A sincronização por cache ocorreu por outro caminho — a condição P→Q nem se aplicou.',
+  'Errado. ✗ F↔F = V! O bicondicional é verdadeiro quando ambos têm o mesmo valor. Dois Falsos são iguais entre si → resultado Verdadeiro.',
+  'Errado. ✗ P∨¬P é sempre V! P=V→V∨F=V; P=F→F∨V=V. Não depende de P nunca — isso é a definição de Tautologia.',
+  'Errado. ✗ P→Q ≡ ¬Q→¬P sempre! Compare as tabelas-verdade das duas: cada linha tem o mesmo resultado. É chamada de contrapositiva e é uma equivalência fundamental.'
+];
+
+function answer2(i, btn, isCorrect) {
+  if (answered2[i]) return;
+  answered2[i] = true;
+  const btns  = btn.closest('.ex-block').querySelectorAll('.choice');
+  btns.forEach(b => { b.disabled = true; });
+  const fb    = document.getElementById('a2-fb'  + i);
+  const block = document.getElementById('a2-ex'  + i);
+  fb.classList.add('show');
+  if (isCorrect) {
+    btn.classList.add('correct');
+    fb.className   = 'feedback show ok';
+    fb.textContent = feedbacksOk2[i];
+    block.classList.add('done');
+    scores2++;
+  } else {
+    btn.classList.add('wrong');
+    fb.className   = 'feedback show ko';
+    fb.textContent = feedbacksErr2[i];
+    btns.forEach(b => { if (b !== btn) b.classList.add('correct'); });
+  }
+  document.getElementById('scoreVal2').textContent = scores2 + '/5';
+  document.getElementById('scoreBar2').style.width = (scores2 / 5 * 100) + '%';
 }
 </script>
 </body>
