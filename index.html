@@ -463,6 +463,39 @@ footer span {
 @media (max-width: 420px) {
   .logo { font-size: 1.2rem; }
 }
+
+/* ── AULA TABS (externas) ── */
+.aula-bar {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 1.5rem;
+  background: var(--text);
+  border-radius: 14px;
+  padding: 6px;
+  box-shadow: 0 4px 20px rgba(26,23,48,0.18);
+}
+.aula-tab {
+  flex: 1;
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.45);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  transition: all .2s;
+  letter-spacing: .02em;
+}
+.aula-tab:hover:not(.active) { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.8); }
+.aula-tab.active {
+  background: var(--grad);
+  color: #fff;
+  box-shadow: 0 2px 14px rgba(141,98,255,.45);
+}
+.aula-section { display: none; }
+.aula-section.active { display: block; }
 </style>
 </head>
 <body>
@@ -476,6 +509,15 @@ footer span {
 </header>
 
 <div class="wrap">
+
+  <!-- AULAS (abas externas) -->
+  <div class="aula-bar">
+    <button class="aula-tab active" onclick="showAula('aula01',this)">📚 Aula 01</button>
+    <button class="aula-tab" onclick="showAula('aula02',this)">🆕 Aula 02</button>
+  </div>
+
+  <!-- ══════════ AULA 01 ══════════ -->
+  <div id="aula01" class="aula-section active">
 
   <!-- TABS -->
   <div class="tab-bar">
@@ -724,6 +766,16 @@ footer span {
     </div>
   </div>
 
+  </div><!-- /aula01 -->
+
+  <!-- ══════════ AULA 02 ══════════ -->
+  <div id="aula02" class="aula-section">
+    <div class="card">
+      <div class="card-title">Aula 02 <span class="pill pill-grad">Em breve</span></div>
+      <p>O conteúdo desta aula será adicionado em breve. Fique ligado!</p>
+    </div>
+  </div><!-- /aula02 -->
+
   <footer>
     Material didático desenvolvido para <span>Capacita Brasil</span> — iRede &nbsp;·&nbsp; Lógica Booleana
   </footer>
@@ -734,6 +786,13 @@ footer span {
 let scores = 0, answered = [false, false, false, false, false];
 let vals = {A: false, B: false}, curOp = 'e';
 const exprMap = {e:'A E B', ou:'A OU B', nao:'NÃO A', xou:'A XOU B (somente um V)'};
+
+function showAula(id, btn) {
+  document.querySelectorAll('.aula-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.aula-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
 
 function showTab(t, btn) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
