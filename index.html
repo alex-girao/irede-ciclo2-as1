@@ -514,6 +514,7 @@ footer span {
   <div class="aula-bar">
     <button class="aula-tab active" onclick="showAula('aula01',this)">📚 Aula 01 — Tabela Verdade</button>
     <button class="aula-tab" onclick="showAula('aula02',this)">📖 Aula 02 — Conectivos Compostos</button>
+    <button class="aula-tab" onclick="showAula('aula03',this)">📐 Aula 03 — Leis e Argumentos</button>
   </div>
 
   <!-- ══════════ AULA 01 ══════════ -->
@@ -1077,6 +1078,355 @@ footer span {
 
   </div><!-- /aula02 -->
 
+  <!-- ══════════ AULA 03 ══════════ -->
+  <div id="aula03" class="aula-section">
+
+  <!-- TABS -->
+  <div class="tab-bar">
+    <button class="tab active" onclick="showTab('a3-resumo',this,'aula03')">📘 Resumo</button>
+    <button class="tab" onclick="showTab('a3-simulador',this,'aula03')">⚡ Simulador</button>
+    <button class="tab" onclick="showTab('a3-exercicios',this,'aula03')">🎯 Exercícios</button>
+    <button class="tab" onclick="showTab('a3-questionarios',this,'aula03')">📝 Questionários</button>
+    <button class="tab" onclick="showTab('a3-curiosidades',this,'aula03')">🚀 Curiosidades</button>
+  </div>
+
+  <!-- ═══ RESUMO ═══ -->
+  <div id="a3-resumo" class="section active">
+
+    <div class="card">
+      <div class="card-title">Leis da Lógica e Argumentos <span class="pill pill-grad">Aula 03</span></div>
+      <p>Nesta aula estudamos as <strong style="color:var(--text)">três leis fundamentais da lógica</strong> que sustentam todo raciocínio válido, e aprendemos a analisar <strong style="color:var(--text)">argumentos</strong> — identificando se são válidos, sólidos ou se contêm falácias.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <span class="pill pill-green">Identidade · Não-Contradição · Terceiro Excluído</span>
+        <span class="pill pill-blue">Modus Ponens · Modus Tollens</span>
+        <span class="pill pill-amber">Validade · Solidez · Falácias</span>
+        <span class="pill pill-grad">Silogismo Hipotético · Disjuntivo</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">As 3 Leis Fundamentais da Lógica</div>
+      <div class="op-row">
+        <div class="op-card" style="border-top:3px solid var(--accent)">
+          <div class="op-sym" style="font-size:15px">P ≡ P</div>
+          <div class="op-name">Identidade</div>
+          <div class="op-desc">Todo enunciado é idêntico a si mesmo — V é V, F é F</div>
+        </div>
+        <div class="op-card" style="border-top:3px solid var(--danger)">
+          <div class="op-sym" style="font-size:13px">¬(P ∧ ¬P)</div>
+          <div class="op-name">Não-Contradição</div>
+          <div class="op-desc">Nada pode ser V e F ao mesmo tempo</div>
+        </div>
+        <div class="op-card" style="border-top:3px solid var(--mint)">
+          <div class="op-sym" style="font-size:15px">P ∨ ¬P</div>
+          <div class="op-name">Terceiro Excluído</div>
+          <div class="op-desc">Toda proposição é V ou F — não há meio-termo</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;margin-top:4px;font-size:13px;color:var(--muted)">
+        <strong style="color:var(--text)">Atenção:</strong> As leis da Não-Contradição e do Terceiro Excluído são, respectivamente, uma <span style="color:var(--danger);font-weight:700">Contradição</span> (¬(P∧¬P) é sempre F) e uma <span style="color:#0a7a5a;font-weight:700">Tautologia</span> (P∨¬P é sempre V) — conceitos vistos na Aula 02!
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">O que é um Argumento? <span class="pill pill-blue">Estrutura</span></div>
+      <p>Um <strong style="color:var(--text)">argumento</strong> é um conjunto de proposições em que algumas — chamadas de <strong style="color:var(--text)">premissas</strong> — servem de base para justificar outra, chamada de <strong style="color:var(--text)">conclusão</strong>.</p>
+      <div style="overflow-x:auto;margin-top:14px">
+        <table>
+          <tr><th>Elemento</th><th>Papel</th><th>Exemplo</th></tr>
+          <tr><td style="text-align:left;font-family:'Space Grotesk'">Premissa 1</td><td style="text-align:left;font-family:'Space Grotesk'">Afirmação assumida como V</td><td style="text-align:left;font-family:'Space Grotesk';font-size:12px">Se chove, a rua fica molhada. (P → Q)</td></tr>
+          <tr><td style="text-align:left;font-family:'Space Grotesk'">Premissa 2</td><td style="text-align:left;font-family:'Space Grotesk'">Afirmação assumida como V</td><td style="text-align:left;font-family:'Space Grotesk';font-size:12px">Está chovendo. (P)</td></tr>
+          <tr><td style="text-align:left;font-family:'Space Grotesk'">Conclusão</td><td style="text-align:left;font-family:'Space Grotesk'">Decorre logicamente das premissas</td><td style="text-align:left;font-family:'Space Grotesk';font-size:12px">∴ A rua está molhada. (Q)</td></tr>
+        </table>
+      </div>
+      <p style="font-size:12px;margin-top:8px">O símbolo <strong style="color:var(--text)">∴</strong> significa "portanto" e indica a conclusão do argumento.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Validade e Solidez <span class="pill pill-amber">Conceitos-chave</span></div>
+      <div class="op-row" style="grid-template-columns:1fr 1fr">
+        <div class="op-card" style="border-top:3px solid #0a7a5a">
+          <div class="op-sym" style="font-size:14px">Válido</div>
+          <div class="op-name">Estrutura correta</div>
+          <div class="op-desc">Se as premissas fossem V, a conclusão seria necessariamente V — mesmo que as premissas sejam falsas na realidade</div>
+        </div>
+        <div class="op-card" style="border-top:3px solid var(--accent)">
+          <div class="op-sym" style="font-size:14px">Sólido</div>
+          <div class="op-name">Válido + premissas V</div>
+          <div class="op-desc">Argumento válido cujas premissas são, de fato, verdadeiras na realidade</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;margin-top:4px;font-size:13px;color:var(--muted)">
+        <strong style="color:var(--text)">Regra de ouro:</strong> Um argumento pode ser <em>válido</em> mesmo com premissas falsas. Validade é sobre a <strong style="color:var(--text)">forma</strong>, não sobre o <strong style="color:var(--text)">conteúdo</strong>. Um argumento <em>sólido</em> exige as duas coisas: forma válida + premissas verdadeiras.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Formas Argumentativas Válidas <span class="pill pill-green">Use e confie</span></div>
+      <div style="overflow-x:auto">
+        <table>
+          <tr><th>Nome</th><th>Forma</th><th>Leitura</th></tr>
+          <tr>
+            <td style="text-align:left;font-family:'Space Grotesk';font-weight:700">Modus Ponens</td>
+            <td style="text-align:left">P → Q, &nbsp;P &nbsp;⊢ Q</td>
+            <td style="text-align:left;font-family:'Space Grotesk';font-size:12px;color:var(--muted)">Afirmo o antecedente → concluo o consequente</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-family:'Space Grotesk';font-weight:700">Modus Tollens</td>
+            <td style="text-align:left">P → Q, &nbsp;¬Q &nbsp;⊢ ¬P</td>
+            <td style="text-align:left;font-family:'Space Grotesk';font-size:12px;color:var(--muted)">Nego o consequente → concluo negação do antecedente</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-family:'Space Grotesk';font-weight:700">Sil. Hipotético</td>
+            <td style="text-align:left">P → Q, &nbsp;Q → R &nbsp;⊢ P → R</td>
+            <td style="text-align:left;font-family:'Space Grotesk';font-size:12px;color:var(--muted)">Encadeamento de implicações</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-family:'Space Grotesk';font-weight:700">Sil. Disjuntivo</td>
+            <td style="text-align:left">P ∨ Q, &nbsp;¬P &nbsp;⊢ Q</td>
+            <td style="text-align:left;font-family:'Space Grotesk';font-size:12px;color:var(--muted)">Elimino uma opção da disjunção</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Falácias Formais <span class="pill pill-red">Evite!</span></div>
+      <p>Falácias formais são argumentos com <strong style="color:var(--text)">estrutura inválida</strong> — parecem corretos, mas a conclusão não decorre logicamente das premissas.</p>
+      <div style="overflow-x:auto;margin-top:14px">
+        <table>
+          <tr><th>Falácia</th><th>Forma</th><th>Por que é inválida?</th></tr>
+          <tr>
+            <td style="text-align:left;font-family:'Space Grotesk';font-weight:700;color:var(--danger)">Afirmação do Consequente</td>
+            <td style="text-align:left">P → Q, &nbsp;Q &nbsp;⊢ P</td>
+            <td style="text-align:left;font-family:'Space Grotesk';font-size:12px;color:var(--muted)">Q pode ser V por outras causas além de P</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-family:'Space Grotesk';font-weight:700;color:var(--danger)">Negação do Antecedente</td>
+            <td style="text-align:left">P → Q, &nbsp;¬P &nbsp;⊢ ¬Q</td>
+            <td style="text-align:left;font-family:'Space Grotesk';font-size:12px;color:var(--muted)">Q pode continuar V mesmo sem P</td>
+          </tr>
+        </table>
+      </div>
+      <div style="background:var(--red-bg);border:1px solid var(--red-border);border-radius:8px;padding:12px;margin-top:12px;font-size:13px;color:var(--red)">
+        <strong>Exemplo de falácia:</strong> "Se é cachorro, é animal. Esse ser é animal. Logo, é cachorro." — A conclusão é inválida: pode ser um gato!
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ SIMULADOR ═══ -->
+  <div id="a3-simulador" class="section">
+    <div class="card">
+      <div class="card-title">Verificador de Argumentos</div>
+      <p>Selecione uma forma argumentativa e defina os valores das premissas. O simulador mostra se a conclusão é garantida logicamente — revelando argumentos válidos e falácias!</p>
+
+      <div class="sim-box" style="margin-top:16px">
+        <div class="op-selector" id="sim3-ops">
+          <button class="op-btn active" onclick="setOp3('mp',this)">Modus Ponens</button>
+          <button class="op-btn" onclick="setOp3('mt',this)">Modus Tollens</button>
+          <button class="op-btn" onclick="setOp3('sh',this)">Sil. Hipotético</button>
+          <button class="op-btn" onclick="setOp3('sd',this)">Sil. Disjuntivo</button>
+          <button class="op-btn" onclick="setOp3('ac',this)">⚠ Afirm. Consequente</button>
+          <button class="op-btn" onclick="setOp3('na',this)">⚠ Neg. Antecedente</button>
+        </div>
+
+        <div id="a3-arg-display" style="background:rgba(141,98,255,.06);border:1px solid rgba(141,98,255,.2);border-radius:10px;padding:14px;margin-bottom:14px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2">
+          <div id="a3-prem1" style="color:var(--muted)">Premissa 1: P → Q</div>
+          <div id="a3-prem2" style="color:var(--muted)">Premissa 2: P (verdadeiro)</div>
+          <div style="border-top:1px solid var(--border);margin:6px 0"></div>
+          <div id="a3-concl" style="color:var(--text);font-weight:700">∴ Conclusão: Q</div>
+        </div>
+
+        <div class="switch-row">
+          <span class="sw-label" id="lbl3A-title">Premissa P</span>
+          <button class="switch" id="sw3A" onclick="toggle3('A')"><span></span></button>
+          <span class="val-label" id="lbl3A" style="color:var(--danger)">Falso</span>
+        </div>
+        <div class="switch-row" id="a3-rowB">
+          <span class="sw-label" id="lbl3B-title">Premissa Q</span>
+          <button class="switch" id="sw3B" onclick="toggle3('B')"><span></span></button>
+          <span class="val-label" id="lbl3B" style="color:var(--danger)">Falso</span>
+        </div>
+        <div class="switch-row" id="a3-rowC" style="display:none">
+          <span class="sw-label" id="lbl3C-title">Premissa R</span>
+          <button class="switch" id="sw3C" onclick="toggle3('C')"><span></span></button>
+          <span class="val-label" id="lbl3C" style="color:var(--danger)">Falso</span>
+        </div>
+
+        <div class="result-area">
+          <div class="expr-text" id="expr3-lbl">Forma avaliada: <strong>Modus Ponens — P → Q, P ⊢ Q</strong></div>
+          <div class="result-badge">
+            <div class="res-circle" id="resCircle3">F</div>
+            <span class="res-text" id="resText3" style="color:var(--danger)">Conclusão: Falsa</span>
+          </div>
+          <div id="a3-validity-badge" style="margin-top:10px;font-size:12px;padding:6px 12px;border-radius:6px;display:inline-block;background:var(--green-bg);color:#0a7a5a;border:1px solid var(--green-border);font-family:'JetBrains Mono',monospace;font-weight:700">
+            ✓ Forma VÁLIDA
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ EXERCÍCIOS ═══ -->
+  <div id="a3-exercicios" class="section">
+
+    <div class="score-bar-area">
+      <div>
+        <div class="score-val" id="scoreVal3">0/5</div>
+        <div class="score-label">acertos</div>
+      </div>
+      <div class="score-track">
+        <div class="score-fill" id="scoreBar3"></div>
+      </div>
+    </div>
+
+    <div class="ex-block" id="a3-ex0">
+      <div style="margin-bottom:8px"><span class="pill pill-blue">Exercício 1</span></div>
+      <div class="ex-q">Analise o argumento: "Se o arquivo existe (P), então pode ser aberto (Q). O arquivo existe (P). Logo, o arquivo pode ser aberto."</div>
+      <div class="ex-scenario">Qual é a forma desse argumento e ele é válido?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer3(0,this,true)">Modus Ponens — Válido</button>
+        <button class="choice" onclick="answer3(0,this,false)">Afirmação do Consequente — Inválido</button>
+        <button class="choice" onclick="answer3(0,this,false)">Modus Tollens — Válido</button>
+      </div>
+      <div class="feedback" id="a3-fb0"></div>
+    </div>
+
+    <div class="ex-block" id="a3-ex1">
+      <div style="margin-bottom:8px"><span class="pill pill-blue">Exercício 2</span></div>
+      <div class="ex-q">"Se o sensor detecta fumaça (P), o alarme dispara (Q). O alarme NÃO disparou (¬Q). Logo, o sensor NÃO detectou fumaça (¬P)."</div>
+      <div class="ex-scenario">Esse argumento usa qual forma e é válido?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer3(1,this,false)">Negação do Antecedente — Inválido</button>
+        <button class="choice" onclick="answer3(1,this,true)">Modus Tollens — Válido</button>
+        <button class="choice" onclick="answer3(1,this,false)">Silogismo Disjuntivo — Válido</button>
+      </div>
+      <div class="feedback" id="a3-fb1"></div>
+    </div>
+
+    <div class="ex-block" id="a3-ex2">
+      <div style="margin-bottom:8px"><span class="pill pill-blue">Exercício 3</span></div>
+      <div class="ex-q">"Se há conexão (P), os dados sincronizam (Q). Não há conexão (¬P). Logo, os dados não sincronizam (¬Q)."</div>
+      <div class="ex-scenario">Esse argumento é válido ou é uma falácia?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer3(2,this,true)">Falácia — Negação do Antecedente</button>
+        <button class="choice" onclick="answer3(2,this,false)">Válido — Modus Tollens</button>
+        <button class="choice" onclick="answer3(2,this,false)">Válido — Modus Ponens</button>
+      </div>
+      <div class="feedback" id="a3-fb2"></div>
+    </div>
+
+    <div class="ex-block" id="a3-ex3">
+      <div style="margin-bottom:8px"><span class="pill pill-blue">Exercício 4</span></div>
+      <div class="ex-q">"O sistema usa Python (P) ou JavaScript (Q). O sistema não usa Python (¬P). Logo, o sistema usa JavaScript (Q)."</div>
+      <div class="ex-scenario">Qual forma argumentativa é essa e ela é válida?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer3(3,this,false)">Afirmação do Consequente — Inválido</button>
+        <button class="choice" onclick="answer3(3,this,false)">Silogismo Hipotético — Válido</button>
+        <button class="choice" onclick="answer3(3,this,true)">Silogismo Disjuntivo — Válido</button>
+      </div>
+      <div class="feedback" id="a3-fb3"></div>
+    </div>
+
+    <div class="ex-block" id="a3-ex4">
+      <div style="margin-bottom:8px"><span class="pill pill-amber">Exercício 5 — Desafio</span></div>
+      <div class="ex-q">"Se o código compila (P), os testes rodam (Q). Se os testes rodam (Q), o deploy é feito (R). Logo, se o código compila (P), o deploy é feito (R)."</div>
+      <div class="ex-scenario">Esse é um argumento válido? Se sim, qual é a forma?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer3(4,this,true)">Silogismo Hipotético — Válido</button>
+        <button class="choice" onclick="answer3(4,this,false)">Modus Ponens — Válido</button>
+        <button class="choice" onclick="answer3(4,this,false)">Falácia — Afirmação do Consequente</button>
+      </div>
+      <div class="feedback" id="a3-fb4"></div>
+    </div>
+
+  </div>
+
+  <!-- ═══ QUESTIONÁRIOS ═══ -->
+  <div id="a3-questionarios" class="section">
+    <div class="card">
+      <div class="card-title">Questionários <span class="pill pill-grad">Prática</span></div>
+      <p>Escolha um questionário para praticar as leis da lógica, identificação de formas argumentativas válidas, falácias formais e análise de validade com questões progressivas.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Quiz do Cotidiano <span class="pill pill-green">10 situações</span></div>
+      <p>Situações reais para identificar as <strong style="color:var(--text)">leis da lógica</strong>, reconhecer <strong style="color:var(--text)">Modus Ponens</strong> e <strong style="color:var(--text)">Modus Tollens</strong> no dia a dia, e detectar falácias comuns.</p>
+      <a class="grad-btn" href="questoes-03-01.html" style="text-decoration:none">Abrir questionário →</a>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Quiz Básico <span class="pill pill-blue">10 questões</span></div>
+      <p>Treino direto das <strong style="color:var(--text)">formas argumentativas</strong>: Modus Ponens, Modus Tollens, Silogismo Hipotético, Silogismo Disjuntivo e identificação de falácias formais.</p>
+      <a class="grad-btn" href="questoes-03-02.html" style="text-decoration:none">Abrir questionário →</a>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Quiz Avançado <span class="pill pill-amber">20 questões</span></div>
+      <p>Lista completa com <strong style="color:var(--text)">validade</strong>, <strong style="color:var(--text)">solidez</strong>, <strong style="color:var(--text)">falácias formais</strong>, <strong style="color:var(--text)">leis da lógica</strong> e argumentos encadeados com 3 ou mais proposições.</p>
+      <a class="grad-btn" href="questoes-03-03.html" style="text-decoration:none">Abrir questionário →</a>
+    </div>
+  </div>
+
+  <!-- ═══ CURIOSIDADES ═══ -->
+  <div id="a3-curiosidades" class="section">
+    <div class="card">
+      <div class="card-title">Fatos que impressionam 🔥</div>
+
+      <div class="curi-item">
+        <div class="curi-icon">🏛️</div>
+        <div>
+          <div class="curi-title">Aristóteles criou o Modus Ponens há 2.400 anos</div>
+          <div class="curi-body">Aristóteles formalizou o silogismo no século IV a.C. — e o Modus Ponens que usamos hoje segue exatamente a mesma estrutura. Todo programa de computador que executa um <code>if-else</code> está aplicando, sem saber, a lógica aristotélica.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">⚖️</div>
+        <div>
+          <div class="curi-title">Tribunais usam Modus Tollens</div>
+          <div class="curi-body">A lógica forense clássica é: "Se o réu estivesse no local (P), haveria evidências físicas (Q). Não há evidências físicas (¬Q). Logo, o réu não estava no local (¬P)." — Isso é Modus Tollens puro. Advogados de defesa constroem argumentos assim formalmente.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">🔗</div>
+        <div>
+          <div class="curi-title">Pipelines de CI/CD são Silogismos Hipotéticos</div>
+          <div class="curi-body">Um pipeline moderno é um Silogismo Hipotético em ação: "Se o código passa no lint (P→Q), se passa nos testes (Q→R), se a build funciona (R→S), então faz deploy (P→S)." Cada etapa encadeia a próxima — exatamente a forma P→Q, Q→R ⊢ P→R.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">🤔</div>
+        <div>
+          <div class="curi-title">Falácias causam bugs reais</div>
+          <div class="curi-body">A Afirmação do Consequente gera bugs clássicos: "Se o usuário é admin (P), pode deletar (Q). Esse usuário pode deletar (Q). Logo, é admin (P)." — Errado! Outro papel pode ter essa permissão. Confundir P→Q com Q→P é um erro de lógica que vira falha de segurança.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">🧠</div>
+        <div>
+          <div class="curi-title">O Princípio do Terceiro Excluído não vale em computação quântica</div>
+          <div class="curi-body">Na lógica clássica, P ∨ ¬P é sempre verdadeiro. Mas um qubit quântico pode estar em <em>superposição</em> — nem V nem F, mas ambos ao mesmo tempo. A lógica quântica abandona o Terceiro Excluído, o que torna computadores quânticos radicalmente diferentes dos clássicos.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">🔍</div>
+        <div>
+          <div class="curi-title">Validade ≠ Verdade: a distinção mais importante</div>
+          <div class="curi-body">"Todos os peixes voam (P→Q). Tubarões são peixes (P). Logo, tubarões voam (Q)." — Esse argumento é <strong>válido</strong> (a forma está correta), mas não é <strong>sólido</strong> (as premissas são falsas). Distinguir validade de verdade é a habilidade mais poderosa do pensamento crítico.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  </div><!-- /aula03 -->
+
   <footer>
     Material didático desenvolvido para <span>Capacita Brasil</span> — iRede &nbsp;·&nbsp; Lógica Booleana
   </footer>
@@ -1259,6 +1609,127 @@ function answer2(i, btn, isCorrect) {
   }
   document.getElementById('scoreVal2').textContent = scores2 + '/5';
   document.getElementById('scoreBar2').style.width = (scores2 / 5 * 100) + '%';
+}
+
+/* ── AULA 03 ── */
+let scores3 = 0, answered3 = [false, false, false, false, false];
+let vals3 = {A: false, B: false, C: false}, curOp3 = 'mp';
+
+const op3Config = {
+  mp:  { label: 'Modus Ponens — P → Q, P ⊢ Q',           valid: true,  threeVars: false,
+         prem1: 'Premissa 1: P → Q', prem2id: 'P (o antecedente)', conclusao: '∴ Conclusão: Q' },
+  mt:  { label: 'Modus Tollens — P → Q, ¬Q ⊢ ¬P',        valid: true,  threeVars: false,
+         prem1: 'Premissa 1: P → Q', prem2id: '¬Q (nega o consequente)', conclusao: '∴ Conclusão: ¬P' },
+  sh:  { label: 'Silogismo Hipotético — P→Q, Q→R ⊢ P→R', valid: true,  threeVars: true,
+         prem1: 'Premissa 1: P → Q', prem2id: 'Q → R', conclusao: '∴ Conclusão: P → R' },
+  sd:  { label: 'Silogismo Disjuntivo — P ∨ Q, ¬P ⊢ Q',  valid: true,  threeVars: false,
+         prem1: 'Premissa 1: P ∨ Q', prem2id: '¬P (nega a primeira opção)', conclusao: '∴ Conclusão: Q' },
+  ac:  { label: '⚠ Afirmação do Consequente — P→Q, Q ⊢ P', valid: false, threeVars: false,
+         prem1: 'Premissa 1: P → Q', prem2id: 'Q (o consequente)', conclusao: '∴ Conclusão: P  ← INVÁLIDA!' },
+  na:  { label: '⚠ Negação do Antecedente — P→Q, ¬P ⊢ ¬Q', valid: false, threeVars: false,
+         prem1: 'Premissa 1: P → Q', prem2id: '¬P (nega o antecedente)', conclusao: '∴ Conclusão: ¬Q  ← INVÁLIDA!' }
+};
+
+function setOp3(op, btn) {
+  curOp3 = op;
+  document.querySelectorAll('#sim3-ops .op-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const cfg = op3Config[op];
+  document.getElementById('expr3-lbl').innerHTML = 'Forma avaliada: <strong>' + cfg.label + '</strong>';
+  document.getElementById('a3-prem1').textContent = cfg.prem1;
+  document.getElementById('a3-concl').textContent = cfg.conclusao;
+  const badge = document.getElementById('a3-validity-badge');
+  if (cfg.valid) {
+    badge.style.background = 'var(--green-bg)'; badge.style.color = '#0a7a5a';
+    badge.style.borderColor = 'var(--green-border)'; badge.textContent = '✓ Forma VÁLIDA';
+  } else {
+    badge.style.background = 'var(--red-bg)'; badge.style.color = 'var(--danger)';
+    badge.style.borderColor = 'var(--red-border)'; badge.textContent = '✗ Forma INVÁLIDA — Falácia!';
+  }
+  const rowC = document.getElementById('a3-rowC');
+  rowC.style.display = cfg.threeVars ? 'flex' : 'none';
+  document.getElementById('lbl3B-title').textContent = 'Premissa: ' + cfg.prem2id;
+  calc3();
+}
+
+function toggle3(v) {
+  vals3[v] = !vals3[v];
+  const swId  = v === 'C' ? 'sw3C'  : 'sw3' + v;
+  const lblId = v === 'C' ? 'lbl3C' : 'lbl3' + v;
+  const sw  = document.getElementById(swId);
+  const lbl = document.getElementById(lblId);
+  sw.classList.toggle('on', vals3[v]);
+  lbl.textContent = vals3[v] ? 'Verdadeiro' : 'Falso';
+  lbl.style.color = vals3[v] ? '#0a7a5a' : 'var(--danger)';
+  calc3();
+}
+
+function calc3() {
+  const p = vals3.A, q = vals3.B, r = vals3.C;
+  let result;
+  switch (curOp3) {
+    case 'mp': result = (!p || q) && p ? q : null; break;           // premissas: P→Q e P; concl: Q
+    case 'mt': result = (!p || q) && !q ? !p : null; break;         // premissas: P→Q e ¬Q; concl: ¬P
+    case 'sh': result = (!p || q) && (!q || r) ? (!p || r) : null; break; // P→Q, Q→R; concl: P→R
+    case 'sd': result = (p || q) && !p ? q : null; break;           // P∨Q, ¬P; concl: Q
+    case 'ac': result = (!p || q) && q ? p : null; break;           // falácia: P→Q, Q; concl: P
+    case 'na': result = (!p || q) && !p ? !q : null; break;         // falácia: P→Q, ¬P; concl: ¬Q
+  }
+  // Para Silogismo Hipotético, result é a avaliação de P→R com os valores dados
+  if (curOp3 === 'sh') { result = !p || r; }
+  // Para os demais, calcular com base nos valores
+  if (curOp3 === 'mp') result = q;           // quando P é V e P→Q é V, Q deve ser V
+  if (curOp3 === 'mt') result = !p;          // quando ¬Q e P→Q, então ¬P
+  if (curOp3 === 'sd') result = q;           // quando P∨Q e ¬P, então Q
+  if (curOp3 === 'ac') result = p;           // falácia: afirmar P a partir de Q
+  if (curOp3 === 'na') result = !q;          // falácia: negar Q a partir de ¬P
+
+  const c = document.getElementById('resCircle3');
+  const t = document.getElementById('resText3');
+  const isV = !!result;
+  c.textContent = isV ? 'V' : 'F';
+  c.className   = 'res-circle' + (isV ? ' on' : '');
+  t.textContent = 'Conclusão: ' + (isV ? 'Verdadeira' : 'Falsa');
+  t.style.color = isV ? '#0a7a5a' : 'var(--danger)';
+}
+
+const feedbacksOk3 = [
+  'Correto! ✓ Modus Ponens: P→Q e P verdadeiros garantem Q. É a forma argumentativa mais básica e fundamental — base de toda dedução lógica.',
+  'Correto! ✓ Modus Tollens: P→Q e ¬Q garantem ¬P. É a contrapositiva aplicada como argumento — se a consequência não ocorreu, a condição também não ocorreu.',
+  'Correto! ✓ Negação do Antecedente é uma falácia! ¬P não implica ¬Q — pode haver outras causas para Q ser verdadeiro. Os dados podem sincronizar via cache local, por exemplo.',
+  'Correto! ✓ Silogismo Disjuntivo: P∨Q e ¬P garantem Q. Ao eliminar uma das opções da disjunção, a outra necessariamente se mantém — argumento clássico de eliminação.',
+  'Correto! ✓ Silogismo Hipotético: P→Q e Q→R garantem P→R. O encadeamento de implicações é válido — se compile→testes e testes→deploy, então compile→deploy!'
+];
+const feedbacksErr3 = [
+  'Errado. ✗ Não é Afirmação do Consequente — esse argumento afirma o antecedente (P), não o consequente (Q). A forma correta é Modus Ponens: P→Q e P ⊢ Q, que é válida!',
+  'Errado. ✗ Não é Negação do Antecedente. Aqui negamos o CONSEQUENTE (¬Q), não o antecedente. P→Q e ¬Q ⊢ ¬P é o Modus Tollens — forma válida! A negação do antecedente seria ter ¬P como premissa.',
+  'Errado. ✗ Esse argumento É uma falácia — Negação do Antecedente. P→Q e ¬P NÃO garantem ¬Q. Os dados podem sincronizar por cache mesmo sem conexão ativa.',
+  'Errado. ✗ Não é Silogismo Hipotético (que encadeia implicações). Aqui temos uma DISJUNÇÃO (∨) com uma negação — isso é Silogismo Disjuntivo: P∨Q e ¬P ⊢ Q. Totalmente válido!',
+  'Errado. ✗ Esse argumento é válido, mas não é Modus Ponens (que afirma o antecedente). A forma correta é Silogismo Hipotético: P→Q, Q→R ⊢ P→R — o encadeamento de implicações.'
+];
+
+function answer3(i, btn, isCorrect) {
+  if (answered3[i]) return;
+  answered3[i] = true;
+  const btns  = btn.closest('.ex-block').querySelectorAll('.choice');
+  btns.forEach(b => { b.disabled = true; });
+  const fb    = document.getElementById('a3-fb'  + i);
+  const block = document.getElementById('a3-ex'  + i);
+  fb.classList.add('show');
+  if (isCorrect) {
+    btn.classList.add('correct');
+    fb.className   = 'feedback show ok';
+    fb.textContent = feedbacksOk3[i];
+    block.classList.add('done');
+    scores3++;
+  } else {
+    btn.classList.add('wrong');
+    fb.className   = 'feedback show ko';
+    fb.textContent = feedbacksErr3[i];
+    btns.forEach(b => { if (b !== btn) b.classList.add('correct'); });
+  }
+  document.getElementById('scoreVal3').textContent = scores3 + '/5';
+  document.getElementById('scoreBar3').style.width = (scores3 / 5 * 100) + '%';
 }
 </script>
 </body>

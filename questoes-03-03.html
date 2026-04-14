@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Aula 03 — Quiz Avançado</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg:       #f0f0f5;
+    --surface:  #ffffff;
+    --border:   #d8d5e8;
+    --accent:   #8d62ff;
+    --accent2:  #00c896;
+    --text:     #1a1730;
+    --muted:    #7a748f;
+    --green:    #155e35;
+    --green-bg: #d6f5e5;
+    --green-border: #6edaa8;
+    --red:      #7a1f1f;
+    --red-bg:   #fde8e8;
+    --red-border:#f0a0a0;
+    --true-btn: #ede8ff;
+    --false-btn:#e0faf3;
+    --radius:   10px;
+    --glow:     0 0 18px rgba(141,98,255,0.15);
+    --grad:     linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    padding: 0 0 60px;
+    background-image:
+      radial-gradient(ellipse 70% 40% at 50% -10%, rgba(141,98,255,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 30% at 80% 110%, rgba(0,200,150,0.06) 0%, transparent 70%);
+  }
+
+  header {
+    text-align: center;
+    padding: 36px 20px 28px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    background: var(--surface);
+    box-shadow: 0 2px 16px rgba(141,98,255,0.07);
+  }
+  .header-logo {
+    height: 48px;
+    margin-bottom: 14px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 50%; transform: translateX(-50%);
+    width: 120px; height: 2px;
+    background: linear-gradient(90deg, transparent, #8d62ff, transparent);
+  }
+  .logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(1.6rem, 4vw, 2.6rem);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    background: linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .logo span { opacity: 0.6; }
+  .subtitle {
+    color: var(--muted);
+    font-size: .9rem;
+    margin-top: 6px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+    margin: 28px auto 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .8rem;
+    color: var(--muted);
+    flex-wrap: wrap;
+  }
+  .legend span { display: flex; align-items: center; gap: 6px; }
+  .legend i {
+    display: inline-block;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #8d62ff;
+  }
+  .legend i.v { background: #00a87a; }
+  .legend i.f { background: #d63030; }
+
+  .score-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    margin: 0 auto;
+    padding: 22px 20px 0;
+    max-width: 900px;
+  }
+  .score-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .82rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 6px 18px;
+    color: var(--muted);
+    box-shadow: 0 1px 6px rgba(141,98,255,0.08);
+  }
+  .score-pill strong { color: var(--text); }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 16px;
+    max-width: 900px;
+    margin: 24px auto 0;
+    padding: 0 20px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    transition: border-color .25s, box-shadow .25s, background .35s;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity .3s;
+    pointer-events: none;
+  }
+  .card.correct {
+    border-color: var(--green-border);
+    background: var(--green-bg);
+    box-shadow: 0 0 16px rgba(0,180,100,0.12);
+  }
+  .card.incorrect {
+    border-color: var(--red-border);
+    background: var(--red-bg);
+    box-shadow: 0 0 16px rgba(220,80,80,0.1);
+  }
+
+  .card-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .7rem;
+    color: var(--muted);
+    margin-bottom: 8px;
+    letter-spacing: .1em;
+  }
+
+  .expression {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(.9rem, 2vw, 1.05rem);
+    color: var(--text);
+    line-height: 1.7;
+    margin-bottom: 14px;
+    word-break: break-word;
+  }
+  .expression .val-true  { color: #0a8a5c; font-weight: 700; }
+  .expression .val-false { color: #d63030; font-weight: 700; }
+  .expression .op        { color: #8d62ff; }
+  .expression .question  { color: #00a87a; font-size: 1.15em; }
+  .expression .fallacy   { color: #d63030; font-size: .75em; font-weight: 700; }
+
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .vf-btn {
+    flex: 1;
+    padding: 10px 0;
+    border-radius: 7px;
+    border: 1.5px solid transparent;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: .95rem;
+    cursor: pointer;
+    transition: background .18s, border-color .18s, transform .1s, box-shadow .18s;
+    letter-spacing: .06em;
+  }
+  .vf-btn:active { transform: scale(0.96); }
+
+  .vf-btn.v-btn {
+    background: var(--true-btn);
+    border-color: #c4b4ff;
+    color: #5a30cc;
+  }
+  .vf-btn.v-btn:hover { background: #ddd5ff; border-color: #8d62ff; box-shadow: 0 0 10px rgba(141,98,255,.2); }
+  .vf-btn.v-btn.selected { background: #8d62ff; border-color: #7040ee; color: #fff; box-shadow: 0 0 16px rgba(141,98,255,.35); }
+
+  .vf-btn.f-btn {
+    background: var(--false-btn);
+    border-color: #80dfc0;
+    color: #0a7a5a;
+  }
+  .vf-btn.f-btn:hover { background: #c0f0e0; border-color: #00c896; box-shadow: 0 0 10px rgba(0,200,150,.2); }
+  .vf-btn.f-btn.selected { background: #00b888; border-color: #009970; color: #fff; box-shadow: 0 0 16px rgba(0,200,150,.35); }
+
+  .vf-btn:disabled { cursor: default; opacity: .8; }
+
+  .feedback-icon {
+    position: absolute;
+    top: 16px; right: 18px;
+    font-size: 1.3rem;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: opacity .3s, transform .3s;
+  }
+  .card.correct   .feedback-icon { color: #0a8a5c; opacity: 1; transform: scale(1); }
+  .card.incorrect .feedback-icon { color: #d63030; opacity: 1; transform: scale(1); }
+
+  .actions {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin: 36px auto 0;
+    padding: 0 20px;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    background: linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
+    color: #fff;
+    border: none;
+    border-radius: 9px;
+    padding: 14px 40px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: opacity .2s, transform .15s, box-shadow .2s;
+    letter-spacing: .04em;
+    box-shadow: 0 4px 22px rgba(141,98,255,0.35);
+  }
+  .btn-primary:hover { opacity: .88; transform: translateY(-1px); box-shadow: 0 6px 28px rgba(141,98,255,0.5); }
+  .btn-primary:active { transform: scale(.97); }
+  .btn-primary:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--muted);
+    border: 1.5px solid var(--border);
+    border-radius: 9px;
+    padding: 14px 32px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .92rem;
+    cursor: pointer;
+    transition: border-color .2s, color .2s;
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--text); }
+
+  .result-panel {
+    display: none;
+    text-align: center;
+    max-width: 480px;
+    margin: 32px auto 0;
+    padding: 30px 36px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    animation: fadeUp .4s ease;
+    box-shadow: 0 4px 24px rgba(141,98,255,0.1);
+  }
+  .result-panel.show { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .result-score {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 3rem;
+    font-weight: 700;
+    background: linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .result-msg { color: var(--muted); font-size: .95rem; margin-top: 6px; }
+  .result-bar { margin: 18px 0 8px; height: 8px; background: #e0ddf0; border-radius: 99px; overflow: hidden; }
+  .result-fill {
+    height: 100%; border-radius: 99px;
+    background: linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
+    transition: width .8s cubic-bezier(.4,0,.2,1); width: 0%;
+  }
+
+  .progress-info {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .78rem;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 14px;
+    padding: 0 20px;
+  }
+
+  @media (max-width: 480px) {
+    .grid { grid-template-columns: 1fr; }
+    .expression { font-size: .88rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <img class="header-logo" src="https://capacitabrasil.irede.org.br/assets/capacitaLogo-Ct3BEyem.png" alt="Capacita Brasil" />
+  <div class="logo">∴ ⊢ ¬ <span>//</span> Aula 03</div>
+  <div class="subtitle">Quiz Avançado — Formas, Leis e Equivalências — 20 questões</div>
+  <div class="legend">
+    <span><i class="v"></i> Válido / Verdadeiro</span>
+    <span><i class="f"></i> Inválido / Falso</span>
+    <span><i></i> ⊢ = Conclui &nbsp;·&nbsp; ≡ = Equivale &nbsp;·&nbsp; ¬ = NÃO</span>
+  </div>
+</header>
+
+<div class="score-bar">
+  <div class="score-pill">Respondidas: <strong id="count">0</strong> / 20</div>
+</div>
+
+<div class="grid" id="quiz"></div>
+
+<div class="progress-info" id="progressInfo">Responda todas as questões para verificar o resultado.</div>
+
+<div class="actions">
+  <button class="btn-primary" id="btnCheck" disabled onclick="checkAnswers()">Verificar Respostas</button>
+  <button class="btn-secondary" id="btnReset" onclick="resetQuiz()">Reiniciar</button>
+</div>
+
+<div class="result-panel" id="resultPanel">
+  <div class="result-score" id="resultScore">—</div>
+  <div class="result-msg" id="resultMsg"></div>
+  <div class="result-bar"><div class="result-fill" id="resultFill"></div></div>
+</div>
+
+<script>
+const questions = [
+  /* ── Formas Argumentativas Válidas ── */
+  {
+    label: 'Modus Ponens',
+    expr:  'P<op>→</op>Q,  P  <op>⊢</op>  Q  =  <q>?</q>',
+    answer: 'V',
+    hint:  'MP: afirmo o antecedente → conclusão garantida'
+  },
+  {
+    label: 'Modus Tollens',
+    expr:  'P<op>→</op>Q,  <op>¬</op>Q  <op>⊢</op>  <op>¬</op>P  =  <q>?</q>',
+    answer: 'V',
+    hint:  'MT: nego o consequente → nego o antecedente'
+  },
+  {
+    label: 'Silogismo Hipotético',
+    expr:  'P<op>→</op>Q,  Q<op>→</op>R  <op>⊢</op>  P<op>→</op>R  =  <q>?</q>',
+    answer: 'V',
+    hint:  'SH: encadeamento de implicações'
+  },
+  {
+    label: 'Silogismo Disjuntivo',
+    expr:  'P<op>∨</op>Q,  <op>¬</op>P  <op>⊢</op>  Q  =  <q>?</q>',
+    answer: 'V',
+    hint:  'SD: elimino uma opção da disjunção'
+  },
+  {
+    label: 'Simplificação',
+    expr:  'P<op>∧</op>Q  <op>⊢</op>  P  =  <q>?</q>',
+    answer: 'V',
+    hint:  'De uma conjunção, posso extrair qualquer conjunto'
+  },
+  {
+    label: 'Adição',
+    expr:  'P  <op>⊢</op>  P<op>∨</op>Q  =  <q>?</q>',
+    answer: 'V',
+    hint:  'Se P é verdadeiro, P∨Q é verdadeiro (Q pode ser qualquer coisa)'
+  },
+  /* ── Falácias Formais ── */
+  {
+    label: 'Afirmação do Consequente',
+    expr:  'P<op>→</op>Q,  Q  <op>⊢</op>  P  =  <q>?</q>  <fallacy>(falácia?)</fallacy>',
+    answer: 'F',
+    hint:  'Falácia: afirmar Q não garante P'
+  },
+  {
+    label: 'Negação do Antecedente',
+    expr:  'P<op>→</op>Q,  <op>¬</op>P  <op>⊢</op>  <op>¬</op>Q  =  <q>?</q>  <fallacy>(falácia?)</fallacy>',
+    answer: 'F',
+    hint:  'Falácia: negar P não garante ¬Q'
+  },
+  /* ── Leis da Lógica ── */
+  {
+    label: 'Não-Contradição',
+    expr:  'P <op>∧</op> <op>¬</op>P  =  <q>?</q>',
+    answer: 'F',
+    hint:  'Contradição — sempre Falso'
+  },
+  {
+    label: 'Terceiro Excluído',
+    expr:  'P <op>∨</op> <op>¬</op>P  =  <q>?</q>',
+    answer: 'V',
+    hint:  'Tautologia — sempre Verdadeiro'
+  },
+  {
+    label: 'Identidade',
+    expr:  'P <op>≡</op> P  =  <q>?</q>',
+    answer: 'V',
+    hint:  'Toda proposição é idêntica a si mesma'
+  },
+  {
+    label: 'Dupla Negação',
+    expr:  '<op>¬¬</op>P <op>≡</op> P  =  <q>?</q>',
+    answer: 'V',
+    hint:  'A dupla negação cancela: ¬¬P = P'
+  },
+  /* ── Equivalências Lógicas ── */
+  {
+    label: 'Contrapositiva',
+    expr:  'P<op>→</op>Q  <op>≡</op>  <op>¬</op>Q<op>→</op><op>¬</op>P  =  <q>?</q>',
+    answer: 'V',
+    hint:  'A contrapositiva é sempre equivalente à implicação original'
+  },
+  {
+    label: 'Conversa (não equivale)',
+    expr:  'P<op>→</op>Q  <op>≡</op>  Q<op>→</op>P  =  <q>?</q>',
+    answer: 'F',
+    hint:  'A conversa NÃO é equivalente à implicação original!'
+  },
+  {
+    label: 'De Morgan (∧)',
+    expr:  '<op>¬</op>(P<op>∧</op>Q)  <op>≡</op>  <op>¬</op>P<op>∨</op><op>¬</op>Q  =  <q>?</q>',
+    answer: 'V',
+    hint:  'Lei de De Morgan para conjunção'
+  },
+  {
+    label: 'Implicação como disjunção',
+    expr:  'P<op>→</op>Q  <op>≡</op>  <op>¬</op>P<op>∨</op>Q  =  <q>?</q>',
+    answer: 'V',
+    hint:  'Equivalência fundamental: P→Q pode ser reescrita como ¬P∨Q'
+  },
+  /* ── Casos Diretos ── */
+  {
+    label: 'Implicação (→)',
+    expr:  'V <op>→</op> F  =  <q>?</q>',
+    answer: 'F',
+    hint:  'V→F: o único caso em que a implicação é falsa'
+  },
+  {
+    label: 'Implicação (→)',
+    expr:  'F <op>→</op> F  =  <q>?</q>',
+    answer: 'V',
+    hint:  'F→F: antecedente falso → implicação sempre verdadeira'
+  },
+  {
+    label: 'Bicondicional (↔)',
+    expr:  'V <op>↔</op> F  =  <q>?</q>',
+    answer: 'F',
+    hint:  'V↔F: valores diferentes → bicondicional falso'
+  },
+  {
+    label: 'Bicondicional (↔)',
+    expr:  'F <op>↔</op> F  =  <q>?</q>',
+    answer: 'V',
+    hint:  'F↔F: mesmos valores → bicondicional verdadeiro'
+  },
+];
+
+const TOTAL = questions.length;
+const userAnswers = new Array(TOTAL).fill(null);
+
+function formatExpr(raw) {
+  return raw
+    .replace(/<op>(.*?)<\/op>/g,      '<span class="op">$1</span>')
+    .replace(/<q>(.*?)<\/q>/g,        '<span class="question">$1</span>')
+    .replace(/<fallacy>(.*?)<\/fallacy>/g, '<span class="fallacy">$1</span>')
+    .replace(/<V>(.*?)<\/V>/g,        '<span class="val-true">$1</span>')
+    .replace(/<F>(.*?)<\/F>/g,        '<span class="val-false">$1</span>');
+}
+
+function buildQuiz() {
+  const container = document.getElementById('quiz');
+  container.innerHTML = '';
+  questions.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.id = `card-${i}`;
+    card.innerHTML = `
+      <div class="card-num">QUESTÃO ${String(i + 1).padStart(2, '0')} &nbsp;·&nbsp; ${q.label}</div>
+      <div class="expression">${formatExpr(q.expr)}</div>
+      <div class="btn-row">
+        <button class="vf-btn v-btn" onclick="select(${i},'V')">V — Válido</button>
+        <button class="vf-btn f-btn" onclick="select(${i},'F')">F — Inválido</button>
+      </div>
+      <div class="feedback-icon" id="icon-${i}"></div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function select(idx, value) {
+  userAnswers[idx] = value;
+  const card = document.getElementById(`card-${idx}`);
+  card.querySelectorAll('.vf-btn').forEach(b => b.classList.remove('selected'));
+  card.querySelector(value === 'V' ? '.v-btn' : '.f-btn').classList.add('selected');
+  const answered = userAnswers.filter(a => a !== null).length;
+  document.getElementById('count').textContent = answered;
+  const btnCheck = document.getElementById('btnCheck');
+  const info = document.getElementById('progressInfo');
+  if (answered === TOTAL) {
+    btnCheck.disabled = false;
+    info.textContent = 'Todas as questões respondidas! Clique em "Verificar Respostas".';
+  } else {
+    info.textContent = `Responda todas as questões para verificar o resultado. (${TOTAL - answered} restantes)`;
+  }
+  card.classList.remove('correct', 'incorrect');
+  document.getElementById(`icon-${idx}`).style.opacity = '0';
+}
+
+function checkAnswers() {
+  let correct = 0;
+  questions.forEach((q, i) => {
+    const card = document.getElementById(`card-${i}`);
+    const icon = document.getElementById(`icon-${i}`);
+    const isCorrect = userAnswers[i] === q.answer;
+    card.classList.toggle('correct',   isCorrect);
+    card.classList.toggle('incorrect', !isCorrect);
+    icon.textContent = isCorrect ? '✓' : '✗';
+    icon.style.opacity = '1';
+    icon.style.transform = 'scale(1)';
+    card.querySelectorAll('.vf-btn').forEach(b => b.disabled = true);
+    if (isCorrect) correct++;
+  });
+  const panel = document.getElementById('resultPanel');
+  panel.classList.add('show');
+  document.getElementById('resultScore').textContent = `${correct} / ${TOTAL}`;
+  const pct = (correct / TOTAL) * 100;
+  setTimeout(() => { document.getElementById('resultFill').style.width = pct + '%'; }, 100);
+  let msg = '';
+  if (correct === TOTAL)    msg = '🎉 Perfeito! Você domina todas as formas, leis e equivalências lógicas!';
+  else if (correct >= 17)   msg = '🟢 Excelente! Apenas pequenos detalhes a revisar.';
+  else if (correct >= 14)   msg = '🟡 Muito bom! Revise as falácias e as equivalências avançadas.';
+  else if (correct >= 10)   msg = '🟠 Bom progresso! Reforce as formas argumentativas e as leis.';
+  else                      msg = '🔴 Revise o Resumo da Aula 03 e refaça o Quiz do Cotidiano antes de tentar novamente!';
+  document.getElementById('resultMsg').textContent = msg;
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  document.getElementById('btnCheck').disabled = true;
+}
+
+function resetQuiz() {
+  userAnswers.fill(null);
+  document.getElementById('count').textContent = '0';
+  document.getElementById('btnCheck').disabled = true;
+  document.getElementById('progressInfo').textContent = 'Responda todas as questões para verificar o resultado.';
+  document.getElementById('resultPanel').classList.remove('show');
+  document.getElementById('resultFill').style.width = '0%';
+  buildQuiz();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+buildQuiz();
+</script>
+</body>
+</html>

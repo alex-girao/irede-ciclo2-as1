@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Aula 03 — Quiz do Cotidiano</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg:       #f0f0f5;
+    --surface:  #ffffff;
+    --border:   #d8d5e8;
+    --accent:   #8d62ff;
+    --accent2:  #00c896;
+    --text:     #1a1730;
+    --muted:    #7a748f;
+    --green:    #155e35;
+    --green-bg: #d6f5e5;
+    --green-border: #6edaa8;
+    --red:      #7a1f1f;
+    --red-bg:   #fde8e8;
+    --red-border:#f0a0a0;
+    --true-btn: #ede8ff;
+    --false-btn:#e0faf3;
+    --radius:   10px;
+    --glow:     0 0 18px rgba(141,98,255,0.15);
+    --grad:     linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    padding: 0 0 60px;
+    background-image:
+      radial-gradient(ellipse 70% 40% at 50% -10%, rgba(141,98,255,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 30% at 80% 110%, rgba(0,200,150,0.06) 0%, transparent 70%);
+  }
+
+  /* ── HEADER ── */
+  header {
+    text-align: center;
+    padding: 36px 20px 28px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    background: var(--surface);
+    box-shadow: 0 2px 16px rgba(141,98,255,0.07);
+  }
+  .header-logo {
+    height: 48px;
+    margin-bottom: 14px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 50%; transform: translateX(-50%);
+    width: 120px; height: 2px;
+    background: linear-gradient(90deg, transparent, #8d62ff, transparent);
+  }
+  .logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(1.6rem, 4vw, 2.6rem);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    background: linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .logo span { opacity: 0.6; }
+  .subtitle {
+    color: var(--muted);
+    font-size: .9rem;
+    margin-top: 6px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+    margin: 28px auto 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .8rem;
+    color: var(--muted);
+    flex-wrap: wrap;
+  }
+  .legend span { display: flex; align-items: center; gap: 6px; }
+  .legend i {
+    display: inline-block;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #8d62ff;
+  }
+  .legend i.v { background: #00a87a; }
+  .legend i.f { background: #d63030; }
+
+  /* ── SCORE BAR ── */
+  .score-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    margin: 0 auto;
+    padding: 22px 20px 0;
+    max-width: 900px;
+  }
+  .score-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .82rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 6px 18px;
+    color: var(--muted);
+    box-shadow: 0 1px 6px rgba(141,98,255,0.08);
+  }
+  .score-pill strong { color: var(--text); }
+
+  /* ── GRID ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+    gap: 16px;
+    max-width: 1020px;
+    margin: 24px auto 0;
+    padding: 0 20px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    transition: border-color .25s, box-shadow .25s, background .35s;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity .3s;
+    pointer-events: none;
+  }
+  .card.correct {
+    border-color: var(--green-border);
+    background: var(--green-bg);
+    box-shadow: 0 0 16px rgba(0,180,100,0.12);
+  }
+  .card.incorrect {
+    border-color: var(--red-border);
+    background: var(--red-bg);
+    box-shadow: 0 0 16px rgba(220,80,80,0.1);
+  }
+
+  .card-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .7rem;
+    color: var(--muted);
+    margin-bottom: 8px;
+    letter-spacing: .1em;
+  }
+
+  .expression {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(.9rem, 2vw, 1.05rem);
+    color: var(--text);
+    line-height: 1.55;
+    margin-bottom: 14px;
+    word-break: break-word;
+  }
+  .expression .val-true  { color: #0a8a5c; font-weight: 700; }
+  .expression .val-false { color: #d63030; font-weight: 700; }
+  .expression .op        { color: #8d62ff; }
+  .expression .question  { color: #00a87a; font-size: 1.15em; }
+
+  /* ── BUTTONS ── */
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .vf-btn {
+    flex: 1;
+    padding: 10px 0;
+    border-radius: 7px;
+    border: 1.5px solid transparent;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: .95rem;
+    cursor: pointer;
+    transition: background .18s, border-color .18s, transform .1s, box-shadow .18s;
+    letter-spacing: .06em;
+  }
+  .vf-btn:active { transform: scale(0.96); }
+
+  .vf-btn.v-btn {
+    background: var(--true-btn);
+    border-color: #c4b4ff;
+    color: #5a30cc;
+  }
+  .vf-btn.v-btn:hover { background: #ddd5ff; border-color: #8d62ff; box-shadow: 0 0 10px rgba(141,98,255,.2); }
+  .vf-btn.v-btn.selected { background: #8d62ff; border-color: #7040ee; color: #fff; box-shadow: 0 0 16px rgba(141,98,255,.35); }
+
+  .vf-btn.f-btn {
+    background: var(--false-btn);
+    border-color: #80dfc0;
+    color: #0a7a5a;
+  }
+  .vf-btn.f-btn:hover { background: #c0f0e0; border-color: #00c896; box-shadow: 0 0 10px rgba(0,200,150,.2); }
+  .vf-btn.f-btn.selected { background: #00b888; border-color: #009970; color: #fff; box-shadow: 0 0 16px rgba(0,200,150,.35); }
+
+  .vf-btn:disabled { cursor: default; opacity: .8; }
+
+  /* feedback icon */
+  .feedback-icon {
+    position: absolute;
+    top: 16px; right: 18px;
+    font-size: 1.3rem;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: opacity .3s, transform .3s;
+  }
+  .card.correct   .feedback-icon { color: #0a8a5c; opacity: 1; transform: scale(1); }
+  .card.incorrect .feedback-icon { color: #d63030; opacity: 1; transform: scale(1); }
+
+  /* ── ACTIONS ── */
+  .actions {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin: 36px auto 0;
+    padding: 0 20px;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    background: linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
+    color: #fff;
+    border: none;
+    border-radius: 9px;
+    padding: 14px 40px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: opacity .2s, transform .15s, box-shadow .2s;
+    letter-spacing: .04em;
+    box-shadow: 0 4px 22px rgba(141,98,255,0.35);
+  }
+  .btn-primary:hover { opacity: .88; transform: translateY(-1px); box-shadow: 0 6px 28px rgba(141,98,255,0.5); }
+  .btn-primary:active { transform: scale(.97); }
+  .btn-primary:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--muted);
+    border: 1.5px solid var(--border);
+    border-radius: 9px;
+    padding: 14px 32px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .92rem;
+    cursor: pointer;
+    transition: border-color .2s, color .2s;
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--text); }
+
+  /* ── RESULT PANEL ── */
+  .result-panel {
+    display: none;
+    text-align: center;
+    max-width: 480px;
+    margin: 32px auto 0;
+    padding: 30px 36px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    animation: fadeUp .4s ease;
+    box-shadow: 0 4px 24px rgba(141,98,255,0.1);
+  }
+  .result-panel.show { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .result-score {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 3rem;
+    font-weight: 700;
+    background: linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .result-msg {
+    color: var(--muted);
+    font-size: .95rem;
+    margin-top: 6px;
+  }
+  .result-bar {
+    margin: 18px 0 8px;
+    height: 8px;
+    background: #e0ddf0;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .result-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
+    transition: width .8s cubic-bezier(.4,0,.2,1);
+    width: 0%;
+  }
+
+  .progress-info {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .78rem;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 14px;
+    padding: 0 20px;
+  }
+
+  @media (max-width: 480px) {
+    .grid { grid-template-columns: 1fr; }
+    .expression { font-size: .88rem; }
+  }
+
+  /* ── SITUATION CARD EXTRAS ── */
+  .situation-emoji {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    line-height: 1;
+  }
+  .situation-box {
+    font-size: .95rem;
+    color: var(--text);
+    line-height: 1.6;
+    margin-bottom: 10px;
+    padding: 10px 14px;
+    background: #f5f3ff;
+    border-left: 3px solid #8d62ff;
+    border-radius: 6px;
+  }
+  .context-box {
+    font-size: .88rem;
+    color: var(--muted);
+    line-height: 1.55;
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    background: #f8f8fa;
+    border-radius: 6px;
+    border: 1px dashed var(--border);
+  }
+  .question-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .88rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 12px;
+    padding-top: 2px;
+  }
+  .conj {
+    color: #8d62ff;
+    font-weight: 700;
+  }
+  .explanation {
+    display: none;
+    margin-top: 12px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: .82rem;
+    font-family: 'JetBrains Mono', monospace;
+    background: #fffbe6;
+    border: 1px solid #ffe58a;
+    color: #7a5c00;
+  }
+  .card.correct   .explanation { background: #f0fdf4; border-color: #86efac; color: #166534; }
+  .card.incorrect .explanation { background: #fff1f1; border-color: #fca5a5; color: #991b1b; }
+</style>
+</head>
+<body>
+
+<header>
+  <img class="header-logo" src="https://capacitabrasil.irede.org.br/assets/capacitaLogo-Ct3BEyem.png" alt="Capacita Brasil" />
+  <div class="logo">∴ ⊢ ≡ <span>//</span> Aula 03</div>
+  <div class="subtitle">Leis da Lógica e Argumentos no Dia a Dia — 10 situações</div>
+  <div class="legend">
+    <span><i class="v"></i> Verdadeiro (V)</span>
+    <span><i class="f"></i> Falso (F)</span>
+    <span><i></i> Analise cada argumento e decida se a conclusão é Verdadeira ou Falsa</span>
+  </div>
+</header>
+
+<div class="score-bar">
+  <div class="score-pill">Respondidas: <strong id="count">0</strong> / 10</div>
+</div>
+
+<div class="grid" id="quiz"></div>
+
+<div class="progress-info" id="progressInfo">Responda todas as questões para verificar o resultado.</div>
+
+<div class="actions">
+  <button class="btn-primary" id="btnCheck" disabled onclick="checkAnswers()">Verificar Respostas</button>
+  <button class="btn-secondary" id="btnReset" onclick="resetQuiz()">Reiniciar</button>
+</div>
+
+<div class="result-panel" id="resultPanel">
+  <div class="result-score" id="resultScore">—</div>
+  <div class="result-msg" id="resultMsg"></div>
+  <div class="result-bar"><div class="result-fill" id="resultFill"></div></div>
+</div>
+
+<script>
+const questions = [
+  {
+    label: 'Modus Ponens',
+    emoji: '🌧️',
+    situation: 'Regra do organizador: <conj>SE</conj> chover <op>(P)</op>, <conj>ENTÃO</conj> o jogo ao ar livre será cancelado <op>(Q)</op>.',
+    context:   'Hoje está <val-t>chovendo (P é verdadeiro)</val-t>. Conclusão inferida: <op>∴ Q — o jogo será cancelado.</op>',
+    question:  'A conclusão "o jogo será cancelado" decorre logicamente do argumento?',
+    answer: 'V',
+    explanation: 'Modus Ponens: P→Q e P ⊢ Q. Afirmamos o antecedente (P), portanto o consequente (Q) é garantido. Forma válida — a conclusão é necessária!'
+  },
+  {
+    label: 'Modus Tollens',
+    emoji: '🔋',
+    situation: 'Regra do fabricante: <conj>SE</conj> o celular está carregando <op>(P)</op>, <conj>ENTÃO</conj> a luz de carregamento acende <op>(Q)</op>.',
+    context:   'A luz de carregamento <val-f>não acendeu (¬Q é verdadeiro)</val-f>. Conclusão inferida: <op>∴ ¬P — o celular não está carregando.</op>',
+    question:  'A conclusão "o celular não está carregando" é logicamente correta?',
+    answer: 'V',
+    explanation: 'Modus Tollens: P→Q e ¬Q ⊢ ¬P. Negar o consequente garante negar o antecedente. Argumento válido — é a contrapositiva aplicada como inferência!'
+  },
+  {
+    label: 'Falácia — Afirmação do Consequente',
+    emoji: '🎉',
+    situation: 'Regra: <conj>SE</conj> o time ganhou o campeonato <op>(P)</op>, <conj>ENTÃO</conj> a torcida sairá às ruas para comemorar <op>(Q)</op>.',
+    context:   'A torcida <val-t>saiu às ruas para comemorar (Q é verdadeiro)</val-t>. Conclusão inferida: <op>∴ P — o time ganhou o campeonato.</op>',
+    question:  'A conclusão "o time ganhou o campeonato" é logicamente garantida?',
+    answer: 'F',
+    explanation: 'Falácia! Afirmação do Consequente: P→Q e Q NÃO garantem P. A torcida pode estar comemorando outro evento (aniversário do clube, título de outro time, etc.). Q verdadeiro não prova P.'
+  },
+  {
+    label: 'Terceiro Excluído (P ∨ ¬P)',
+    emoji: '🏥',
+    situation: '"Ou o paciente <op>tem febre (P)</op>, ou o paciente <conj>NÃO</conj> tem febre <op>(¬P)</op>." <op>(P ∨ ¬P)</op>',
+    context:   'Não importa qual o estado do paciente — um dos lados da disjunção é sempre verdadeiro pela estrutura lógica.',
+    question:  'Essa afirmação (P ∨ ¬P) é necessariamente verdadeira em qualquer situação?',
+    answer: 'V',
+    explanation: 'Princípio do Terceiro Excluído: P ∨ ¬P é sempre V (tautologia). Toda proposição é verdadeira ou falsa — sem meio-termo. O paciente ou tem febre, ou não tem. Impossível escapar disso!'
+  },
+  {
+    label: 'Falácia — Negação do Antecedente',
+    emoji: '🛍️',
+    situation: 'Política da loja: <conj>SE</conj> o produto está em promoção <op>(P)</op>, <conj>ENTÃO</conj> seu preço é mais barato que o normal <op>(Q)</op>.',
+    context:   'O produto <val-f>não está em promoção (¬P é verdadeiro)</val-f>. Conclusão inferida: <op>∴ ¬Q — o preço não é mais barato que o normal.</op>',
+    question:  'A conclusão "o preço não é mais barato" é logicamente garantida?',
+    answer: 'F',
+    explanation: 'Falácia! Negação do Antecedente: P→Q e ¬P NÃO garantem ¬Q. O produto pode ser barato por outras razões (preço de fábrica baixo, concorrência, etc.). ¬P não implica ¬Q.'
+  },
+  {
+    label: 'Silogismo Hipotético',
+    emoji: '📚',
+    situation: '<conj>SE</conj> você estudar todos os dias <op>(P)</op>, passará na prova final <op>(Q)</op>. <conj>SE</conj> passar na prova final <op>(Q)</op>, será aprovado no curso <op>(R)</op>.',
+    context:   'P→Q e Q→R estão estabelecidas. Conclusão inferida: <op>∴ P→R — se você estudar todos os dias, será aprovado no curso.</op>',
+    question:  'A conclusão "se estudar, será aprovado no curso" é logicamente válida?',
+    answer: 'V',
+    explanation: 'Silogismo Hipotético: P→Q e Q→R ⊢ P→R. O encadeamento de implicações é válido — a conclusão conecta diretamente o início ao fim da cadeia lógica!'
+  },
+  {
+    label: 'Silogismo Disjuntivo',
+    emoji: '💻',
+    situation: 'Diagnóstico técnico: o problema está na <op>conexão de rede (P)</op> ou no <op>servidor da empresa (Q)</op>. <op>(P ∨ Q)</op>',
+    context:   'Os testes confirmaram que o problema <val-f>não está na conexão de rede (¬P é verdadeiro)</val-f>. Conclusão: <op>∴ Q — está no servidor.</op>',
+    question:  'A conclusão "o problema está no servidor" é logicamente correta?',
+    answer: 'V',
+    explanation: 'Silogismo Disjuntivo: P∨Q e ¬P ⊢ Q. Eliminando uma opção da disjunção com certeza, a outra é necessariamente verdadeira. Argumento válido!'
+  },
+  {
+    label: 'Não-Contradição — ¬(P ∧ ¬P)',
+    emoji: '📁',
+    situation: '"O arquivo foi salvo com sucesso <op>(P)</op> <conj>E</conj>, ao mesmo tempo, o arquivo <conj>NÃO</conj> foi salvo com sucesso <op>(¬P)</op>." <op>(P ∧ ¬P)</op>',
+    context:   'Nenhum arquivo pode ser simultaneamente salvo e não salvo no mesmo instante e no mesmo sentido.',
+    question:  'Essa situação (P ∧ ¬P) pode ser verdadeira?',
+    answer: 'F',
+    explanation: 'Princípio da Não-Contradição: P ∧ ¬P é sempre FALSO (contradição). Nada pode ser verdadeiro e falso ao mesmo tempo e no mesmo sentido. É impossível logicamente!'
+  },
+  {
+    label: 'Validade sem Solidez',
+    emoji: '🐦',
+    situation: 'Argumento: <conj>SE</conj> todos os pássaros cantam <op>(P)</op>, <conj>ENTÃO</conj> o papagaio Rex canta <op>(Q)</op>. Todos os pássaros cantam <op>(P)</op>.',
+    context:   'Premissa 1 é <val-f>falsa na realidade</val-f> (nem todos cantam — pinguins, por exemplo). Mas assumindo P como verdadeira, a conclusão é inferida: <op>∴ Q — Rex canta.</op>',
+    question:  'O argumento é logicamente VÁLIDO (mesmo que as premissas sejam falsas na realidade)?',
+    answer: 'V',
+    explanation: 'Validade ≠ Solidez! Validade trata da FORMA: se as premissas fossem V, a conclusão seria necessariamente V. Aqui é Modus Ponens — forma válida. Mas não é SÓLIDO porque a premissa é falsa na realidade.'
+  },
+  {
+    label: 'Modus Tollens',
+    emoji: '📶',
+    situation: 'Comportamento do celular: <conj>SE</conj> há sinal de Wi-Fi disponível <op>(P)</op>, <conj>ENTÃO</conj> o ícone de Wi-Fi aparece na barra de status <op>(Q)</op>.',
+    context:   'O ícone de Wi-Fi <val-f>não aparece na barra de status (¬Q é verdadeiro)</val-f>. Conclusão inferida: <op>∴ ¬P — não há sinal de Wi-Fi disponível.</op>',
+    question:  'A conclusão "não há sinal de Wi-Fi" é logicamente correta?',
+    answer: 'V',
+    explanation: 'Modus Tollens: P→Q e ¬Q ⊢ ¬P. Negar o consequente (¬Q) garante negar o antecedente (¬P). Raciocínio válido — muito usado no diagnóstico de problemas tecnológicos!'
+  },
+];
+
+const userAnswers = new Array(questions.length).fill(null);
+
+function formatText(raw) {
+  return raw
+    .replace(/<op>(.*?)<\/op>/g,     '<span class="op">$1</span>')
+    .replace(/<conj>(.*?)<\/conj>/g, '<span class="conj">$1</span>')
+    .replace(/<val-t>(.*?)<\/val-t>/g,'<span style="color:#0a8a5c;font-weight:700">$1</span>')
+    .replace(/<val-f>(.*?)<\/val-f>/g,'<span style="color:#d63030;font-weight:700">$1</span>');
+}
+
+function buildQuiz() {
+  const container = document.getElementById('quiz');
+  container.innerHTML = '';
+  questions.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.id = `card-${i}`;
+    card.innerHTML = `
+      <div class="card-num">QUESTÃO ${String(i + 1).padStart(2, '0')} &nbsp;·&nbsp; ${q.label}</div>
+      <div class="situation-emoji">${q.emoji}</div>
+      <div class="situation-box">${formatText(q.situation)}</div>
+      <div class="context-box">${formatText(q.context)}</div>
+      <div class="question-text">${q.question}</div>
+      <div class="btn-row">
+        <button class="vf-btn v-btn" onclick="select(${i},'V')">V — Verdadeiro</button>
+        <button class="vf-btn f-btn" onclick="select(${i},'F')">F — Falso</button>
+      </div>
+      <div class="feedback-icon" id="icon-${i}"></div>
+      <div class="explanation" id="exp-${i}">${q.explanation}</div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function select(idx, value) {
+  userAnswers[idx] = value;
+  const card = document.getElementById(`card-${idx}`);
+  card.querySelectorAll('.vf-btn').forEach(b => b.classList.remove('selected'));
+  card.querySelector(value === 'V' ? '.v-btn' : '.f-btn').classList.add('selected');
+  const answered = userAnswers.filter(a => a !== null).length;
+  document.getElementById('count').textContent = answered;
+  const btnCheck = document.getElementById('btnCheck');
+  const info = document.getElementById('progressInfo');
+  if (answered === questions.length) {
+    btnCheck.disabled = false;
+    info.textContent = 'Todas as situações respondidas! Clique em "Verificar Respostas".';
+  } else {
+    info.textContent = `Responda todas as situações para verificar. (${questions.length - answered} restantes)`;
+  }
+  card.classList.remove('correct', 'incorrect');
+  document.getElementById(`icon-${idx}`).style.opacity = '0';
+  document.getElementById(`exp-${idx}`).style.display = 'none';
+}
+
+function checkAnswers() {
+  let correct = 0;
+  questions.forEach((q, i) => {
+    const card = document.getElementById(`card-${i}`);
+    const icon = document.getElementById(`icon-${i}`);
+    const exp  = document.getElementById(`exp-${i}`);
+    const isCorrect = userAnswers[i] === q.answer;
+    card.classList.toggle('correct',   isCorrect);
+    card.classList.toggle('incorrect', !isCorrect);
+    icon.textContent = isCorrect ? '✓' : '✗';
+    icon.style.opacity = '1';
+    icon.style.transform = 'scale(1)';
+    exp.style.display = 'block';
+    card.querySelectorAll('.vf-btn').forEach(b => b.disabled = true);
+    if (isCorrect) correct++;
+  });
+  const panel = document.getElementById('resultPanel');
+  panel.classList.add('show');
+  document.getElementById('resultScore').textContent = `${correct} / 10`;
+  const pct = (correct / 10) * 100;
+  setTimeout(() => { document.getElementById('resultFill').style.width = pct + '%'; }, 100);
+  let msg = '';
+  if (correct === 10)    msg = '🎉 Perfeito! Você domina as leis da lógica e as formas argumentativas!';
+  else if (correct >= 8) msg = '🟢 Ótimo! Apenas alguns detalhes a ajustar — revise as falácias.';
+  else if (correct >= 6) msg = '🟡 Bom! Atenção especial às falácias — Afirmação do Consequente e Negação do Antecedente.';
+  else if (correct >= 4) msg = '🟠 Continue praticando — releia o Resumo da Aula 03 e tente de novo!';
+  else                   msg = '🔴 Revise as formas argumentativas da Aula 03 antes de refazer o quiz!';
+  document.getElementById('resultMsg').textContent = msg;
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  document.getElementById('btnCheck').disabled = true;
+}
+
+function resetQuiz() {
+  userAnswers.fill(null);
+  document.getElementById('count').textContent = '0';
+  document.getElementById('btnCheck').disabled = true;
+  document.getElementById('progressInfo').textContent = 'Responda todas as questões para verificar o resultado.';
+  document.getElementById('resultPanel').classList.remove('show');
+  document.getElementById('resultFill').style.width = '0%';
+  buildQuiz();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+buildQuiz();
+</script>
+</body>
+</html>
