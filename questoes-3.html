@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Tabela Verdade — Quiz Lógico</title>
+<title>Quiz Tipos Primitivos — Java Aula 01</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
 <style>
   :root {
@@ -11,7 +11,6 @@
     --surface:  #ffffff;
     --border:   #d8d5e8;
     --accent:   #8d62ff;
-    --accent2:  #00c896;
     --text:     #1a1730;
     --muted:    #7a748f;
     --green:    #155e35;
@@ -23,12 +22,9 @@
     --true-btn: #ede8ff;
     --false-btn:#e0faf3;
     --radius:   10px;
-    --glow:     0 0 18px rgba(141,98,255,0.15);
     --grad:     linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
   }
-
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
     background: var(--bg);
     color: var(--text);
@@ -39,320 +35,160 @@
       radial-gradient(ellipse 70% 40% at 50% -10%, rgba(141,98,255,0.08) 0%, transparent 70%),
       radial-gradient(ellipse 50% 30% at 80% 110%, rgba(0,200,150,0.06) 0%, transparent 70%);
   }
-
-  /* ── HEADER ── */
   header {
-    text-align: center;
-    padding: 36px 20px 28px;
-    border-bottom: 1px solid var(--border);
-    position: relative;
-    background: var(--surface);
-    box-shadow: 0 2px 16px rgba(141,98,255,0.07);
+    text-align: center; padding: 36px 20px 28px; border-bottom: 1px solid var(--border);
+    position: relative; background: var(--surface); box-shadow: 0 2px 16px rgba(141,98,255,0.07);
   }
-  .header-logo {
-    height: 48px;
-    margin-bottom: 14px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-  }
+  .header-logo { height: 48px; margin-bottom: 14px; display: block; margin-left: auto; margin-right: auto; }
   header::after {
-    content: '';
-    position: absolute;
-    bottom: -1px; left: 50%; transform: translateX(-50%);
-    width: 120px; height: 2px;
-    background: linear-gradient(90deg, transparent, #8d62ff, transparent);
+    content: ''; position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%);
+    width: 120px; height: 2px; background: linear-gradient(90deg, transparent, #8d62ff, transparent);
   }
   .logo {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: clamp(1.6rem, 4vw, 2.6rem);
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    background: linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-family: 'JetBrains Mono', monospace; font-size: clamp(1.6rem, 4vw, 2.6rem);
+    font-weight: 700; letter-spacing: -0.5px;
+    background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   }
   .logo span { opacity: 0.6; }
-  .subtitle {
-    color: var(--muted);
-    font-size: .9rem;
-    margin-top: 6px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-
-  /* ── LEGEND ── */
+  .subtitle { color: var(--muted); font-size: .9rem; margin-top: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
   .legend {
-    display: flex;
-    justify-content: center;
-    gap: 28px;
-    margin: 28px auto 0;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: .8rem;
-    color: var(--muted);
-    flex-wrap: wrap;
+    display: flex; justify-content: center; gap: 28px; margin: 28px auto 0;
+    font-family: 'JetBrains Mono', monospace; font-size: .8rem; color: var(--muted); flex-wrap: wrap;
   }
   .legend span { display: flex; align-items: center; gap: 6px; }
-  .legend i {
-    display: inline-block;
-    width: 8px; height: 8px; border-radius: 50%;
-    background: #8d62ff;
-  }
+  .legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #8d62ff; }
   .legend i.v { background: #00a87a; }
   .legend i.f { background: #d63030; }
 
-  /* ── SCORE BAR ── */
-  .score-bar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 24px;
-    margin: 0 auto;
-    padding: 22px 20px 0;
-    max-width: 900px;
-  }
+  .score-bar { display: flex; justify-content: center; gap: 24px; margin: 0 auto; padding: 22px 20px 0; max-width: 900px; }
   .score-pill {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: .82rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 99px;
-    padding: 6px 18px;
-    color: var(--muted);
-    box-shadow: 0 1px 6px rgba(141,98,255,0.08);
+    font-family: 'JetBrains Mono', monospace; font-size: .82rem; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 99px; padding: 6px 18px;
+    color: var(--muted); box-shadow: 0 1px 6px rgba(141,98,255,0.08);
   }
   .score-pill strong { color: var(--text); }
 
-  /* ── GRID ── */
   .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-    gap: 16px;
-    max-width: 900px;
-    margin: 24px auto 0;
-    padding: 0 20px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+    gap: 16px; max-width: 1020px; margin: 24px auto 0; padding: 0 20px;
   }
-
-  /* ── CARD ── */
   .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px 22px;
-    transition: border-color .25s, box-shadow .25s, background .35s;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px 22px; transition: border-color .25s, box-shadow .25s, background .35s;
+    position: relative; overflow: hidden; box-shadow: 0 2px 8px rgba(141,98,255,0.06);
   }
-  .card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transition: opacity .3s;
-    pointer-events: none;
-  }
-  .card.correct {
-    border-color: var(--green-border);
-    background: var(--green-bg);
-    box-shadow: 0 0 16px rgba(0,180,100,0.12);
-  }
-  .card.incorrect {
-    border-color: var(--red-border);
-    background: var(--red-bg);
-    box-shadow: 0 0 16px rgba(220,80,80,0.1);
-  }
+  .card.correct  { border-color: var(--green-border); background: var(--green-bg); box-shadow: 0 0 16px rgba(0,180,100,0.12); }
+  .card.incorrect{ border-color: var(--red-border);   background: var(--red-bg);   box-shadow: 0 0 16px rgba(220,80,80,0.1); }
 
-  .card-num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: .7rem;
-    color: var(--muted);
-    margin-bottom: 8px;
-    letter-spacing: .1em;
+  .card-num { font-family: 'JetBrains Mono', monospace; font-size: .7rem; color: var(--muted); margin-bottom: 8px; letter-spacing: .1em; }
+  .situation-emoji { font-size: 2rem; margin-bottom: 10px; line-height: 1; }
+  .situation-box {
+    font-size: .95rem; color: var(--text); line-height: 1.6; margin-bottom: 10px;
+    padding: 10px 14px; background: #f5f3ff; border-left: 3px solid #8d62ff; border-radius: 6px;
   }
+  .context-box {
+    font-size: .88rem; color: var(--muted); line-height: 1.6; margin-bottom: 12px;
+    padding: 8px 12px; background: #f8f8fa; border-radius: 6px; border: 1px dashed var(--border);
+  }
+  .question-text {
+    font-family: 'JetBrains Mono', monospace; font-size: .88rem; font-weight: 600;
+    color: var(--text); margin-bottom: 12px; padding-top: 2px;
+  }
+  .kw        { color: #8d62ff; font-weight: 700; }
+  .val-true  { color: #0a8a5c; font-weight: 700; }
+  .val-false { color: #d63030; font-weight: 700; }
+  .ic { background: rgba(141,98,255,.13); color: #5a30cc; padding: 1px 7px; border-radius: 4px; font-size: .85em; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
 
-  .expression {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: clamp(.9rem, 2vw, 1.05rem);
-    color: var(--text);
-    line-height: 1.55;
-    margin-bottom: 14px;
-    word-break: break-word;
-  }
-  .expression .val-true  { color: #0a8a5c; font-weight: 700; }
-  .expression .val-false { color: #d63030; font-weight: 700; }
-  .expression .op        { color: #8d62ff; }
-  .expression .question  { color: #00a87a; font-size: 1.15em; }
-
-  /* ── BUTTONS ── */
-  .btn-row {
-    display: flex;
-    gap: 10px;
-    margin-top: 4px;
-  }
+  .btn-row { display: flex; gap: 10px; margin-top: 4px; }
   .vf-btn {
-    flex: 1;
-    padding: 10px 0;
-    border-radius: 7px;
-    border: 1.5px solid transparent;
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 700;
-    font-size: .95rem;
-    cursor: pointer;
-    transition: background .18s, border-color .18s, transform .1s, box-shadow .18s;
-    letter-spacing: .06em;
+    flex: 1; padding: 10px 0; border-radius: 7px; border: 1.5px solid transparent;
+    font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: .95rem;
+    cursor: pointer; transition: background .18s, border-color .18s, transform .1s, box-shadow .18s; letter-spacing: .06em;
   }
   .vf-btn:active { transform: scale(0.96); }
-
-  .vf-btn.v-btn {
-    background: var(--true-btn);
-    border-color: #c4b4ff;
-    color: #5a30cc;
-  }
-  .vf-btn.v-btn:hover { background: #ddd5ff; border-color: #8d62ff; box-shadow: 0 0 10px rgba(141,98,255,.2); }
+  .vf-btn.v-btn { background: var(--true-btn);  border-color: #c4b4ff; color: #5a30cc; }
+  .vf-btn.v-btn:hover    { background: #ddd5ff; border-color: #8d62ff; box-shadow: 0 0 10px rgba(141,98,255,.2); }
   .vf-btn.v-btn.selected { background: #8d62ff; border-color: #7040ee; color: #fff; box-shadow: 0 0 16px rgba(141,98,255,.35); }
-
-  .vf-btn.f-btn {
-    background: var(--false-btn);
-    border-color: #80dfc0;
-    color: #0a7a5a;
-  }
-  .vf-btn.f-btn:hover { background: #c0f0e0; border-color: #00c896; box-shadow: 0 0 10px rgba(0,200,150,.2); }
+  .vf-btn.f-btn { background: var(--false-btn); border-color: #80dfc0; color: #0a7a5a; }
+  .vf-btn.f-btn:hover    { background: #c0f0e0; border-color: #00c896; box-shadow: 0 0 10px rgba(0,200,150,.2); }
   .vf-btn.f-btn.selected { background: #00b888; border-color: #009970; color: #fff; box-shadow: 0 0 16px rgba(0,200,150,.35); }
-
   .vf-btn:disabled { cursor: default; opacity: .8; }
 
-  /* feedback icon */
   .feedback-icon {
-    position: absolute;
-    top: 16px; right: 18px;
-    font-size: 1.3rem;
-    opacity: 0;
-    transform: scale(0.5);
-    transition: opacity .3s, transform .3s;
+    position: absolute; top: 16px; right: 18px; font-size: 1.3rem;
+    opacity: 0; transform: scale(0.5); transition: opacity .3s, transform .3s;
   }
   .card.correct   .feedback-icon { color: #0a8a5c; opacity: 1; transform: scale(1); }
   .card.incorrect .feedback-icon { color: #d63030; opacity: 1; transform: scale(1); }
 
-  /* ── ACTIONS ── */
-  .actions {
-    display: flex;
-    justify-content: center;
-    gap: 14px;
-    margin: 36px auto 0;
-    padding: 0 20px;
-    flex-wrap: wrap;
-  }
+  .actions { display: flex; justify-content: center; gap: 14px; margin: 36px auto 0; padding: 0 20px; flex-wrap: wrap; }
   .btn-primary {
-    background: linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
-    color: #fff;
-    border: none;
-    border-radius: 9px;
-    padding: 14px 40px;
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 700;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: opacity .2s, transform .15s, box-shadow .2s;
-    letter-spacing: .04em;
+    background: var(--grad); color: #fff; border: none; border-radius: 9px;
+    padding: 14px 40px; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 1rem;
+    cursor: pointer; transition: opacity .2s, transform .15s, box-shadow .2s; letter-spacing: .04em;
     box-shadow: 0 4px 22px rgba(141,98,255,0.35);
   }
-  .btn-primary:hover { opacity: .88; transform: translateY(-1px); box-shadow: 0 6px 28px rgba(141,98,255,0.5); }
-  .btn-primary:active { transform: scale(.97); }
+  .btn-primary:hover    { opacity: .88; transform: translateY(-1px); box-shadow: 0 6px 28px rgba(141,98,255,0.5); }
   .btn-primary:disabled { opacity: .35; cursor: not-allowed; transform: none; }
-
   .btn-secondary {
-    background: transparent;
-    color: var(--muted);
-    border: 1.5px solid var(--border);
-    border-radius: 9px;
-    padding: 14px 32px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: .92rem;
-    cursor: pointer;
-    transition: border-color .2s, color .2s;
+    background: transparent; color: var(--muted); border: 1.5px solid var(--border); border-radius: 9px;
+    padding: 14px 32px; font-family: 'JetBrains Mono', monospace; font-size: .92rem;
+    cursor: pointer; transition: border-color .2s, color .2s;
   }
   .btn-secondary:hover { border-color: var(--accent); color: var(--text); }
 
-  /* ── RESULT PANEL ── */
   .result-panel {
-    display: none;
-    text-align: center;
-    max-width: 480px;
-    margin: 32px auto 0;
-    padding: 30px 36px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    animation: fadeUp .4s ease;
-    box-shadow: 0 4px 24px rgba(141,98,255,0.1);
+    display: none; text-align: center; max-width: 480px; margin: 32px auto 0;
+    padding: 30px 36px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; animation: fadeUp .4s ease; box-shadow: 0 4px 24px rgba(141,98,255,0.1);
   }
   .result-panel.show { display: block; }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+  @keyframes fadeUp { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: translateY(0); } }
   .result-score {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 3rem;
-    font-weight: 700;
-    background: linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-family: 'JetBrains Mono', monospace; font-size: 3rem; font-weight: 700;
+    background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   }
-  .result-msg {
-    color: var(--muted);
-    font-size: .95rem;
-    margin-top: 6px;
-  }
-  .result-bar {
-    margin: 18px 0 8px;
-    height: 8px;
-    background: #e0ddf0;
-    border-radius: 99px;
-    overflow: hidden;
-  }
-  .result-fill {
-    height: 100%;
-    border-radius: 99px;
-    background: linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
-    transition: width .8s cubic-bezier(.4,0,.2,1);
-    width: 0%;
-  }
+  .result-msg  { color: var(--muted); font-size: .95rem; margin-top: 6px; }
+  .result-bar  { margin: 18px 0 8px; height: 8px; background: #e0ddf0; border-radius: 99px; overflow: hidden; }
+  .result-fill { height: 100%; border-radius: 99px; background: var(--grad); transition: width .8s cubic-bezier(.4,0,.2,1); width: 0%; }
 
-  /* progress indicator */
-  .progress-info {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: .78rem;
-    color: var(--muted);
-    text-align: center;
-    margin-top: 14px;
-    padding: 0 20px;
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'JetBrains Mono', monospace; font-size: .82rem; color: var(--muted);
+    text-decoration: none; margin: 18px 0 0 20px; transition: color .2s;
   }
+  .back-link:hover { color: var(--accent); }
 
-  @media (max-width: 480px) {
-    .grid { grid-template-columns: 1fr; }
-    .expression { font-size: .88rem; }
+  .progress-info { font-family: 'JetBrains Mono', monospace; font-size: .78rem; color: var(--muted); text-align: center; margin-top: 14px; padding: 0 20px; }
+
+  .explanation {
+    display: none; margin-top: 12px; padding: 8px 12px; border-radius: 6px;
+    font-size: .82rem; font-family: 'JetBrains Mono', monospace; line-height: 1.55;
+    background: #fffbe6; border: 1px solid #ffe58a; color: #7a5c00;
   }
+  .card.correct   .explanation { background: #f0fdf4; border-color: #86efac; color: #166534; display: block; }
+  .card.incorrect .explanation { background: #fff1f1; border-color: #fca5a5; color: #991b1b; display: block; }
+
+  @media (max-width: 480px) { .grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 
 <header>
   <img class="header-logo" src="https://capacitabrasil.irede.org.br/assets/capacitaLogo-Ct3BEyem.png" alt="Capacita Brasil" />
-  <div class="logo">∧ ∨ ¬ <span>//</span> Tabela Verdade</div>
-  <div class="subtitle">Quiz de Lógica Proposicional — 20 questões</div>
+  <div class="logo">&#x2615; <span>//</span> Java</div>
+  <div class="subtitle">Aula 01 &mdash; Tipos Primitivos &nbsp;&middot;&nbsp; 10 questões</div>
   <div class="legend">
     <span><i class="v"></i> Verdadeiro (V)</span>
     <span><i class="f"></i> Falso (F)</span>
-    <span><i></i> ∧ = E &nbsp; ∨ = OU &nbsp; ¬ = NÃO &nbsp; → = Implica &nbsp; ↔ = Bicondicional &nbsp; ⊕ = XOR</span>
+    <span><i></i> Analise cada afirmação e decida se é Verdadeira ou Falsa</span>
   </div>
 </header>
 
+<a class="back-link" href="index.html">&larr; Voltar para a aula</a>
+
 <div class="score-bar">
-  <div class="score-pill">Respondidas: <strong id="count">0</strong> / 20</div>
+  <div class="score-pill">Respondidas: <strong id="count">0</strong> / 10</div>
 </div>
 
 <div class="grid" id="quiz"></div>
@@ -361,163 +197,181 @@
 
 <div class="actions">
   <button class="btn-primary" id="btnCheck" disabled onclick="checkAnswers()">Verificar Respostas</button>
-  <button class="btn-secondary" id="btnReset" onclick="resetQuiz()">Reiniciar</button>
+  <button class="btn-secondary" onclick="resetQuiz()">Reiniciar</button>
 </div>
 
 <div class="result-panel" id="resultPanel">
   <div class="result-score" id="resultScore">—</div>
-  <div class="result-msg" id="resultMsg"></div>
+  <div class="result-msg"   id="resultMsg"></div>
   <div class="result-bar"><div class="result-fill" id="resultFill"></div></div>
 </div>
 
 <script>
-// ── QUESTÕES ────────────────────────────────────────────────────────────────
 const questions = [
-  // 1-4 — AND / OR básico
-  { expr: 'P=<V>V</V>, Q=<V>V</V> | P <op>∧</op> Q = <q>?</q>', answer: 'V',
-    hint: 'V ∧ V' },
-  { expr: 'P=<V>V</V>, Q=<F>F</F> | P <op>∧</op> Q = <q>?</q>', answer: 'F',
-    hint: 'V ∧ F' },
-  { expr: 'P=<F>F</F>, Q=<F>F</F> | P <op>∨</op> Q = <q>?</q>', answer: 'F',
-    hint: 'F ∨ F' },
-  { expr: 'P=<V>V</V>, Q=<F>F</F> | P <op>∨</op> Q = <q>?</q>', answer: 'V',
-    hint: 'V ∨ F' },
-
-  // 5-6 — NÃO
-  { expr: 'P=<V>V</V> | <op>¬</op>P = <q>?</q>', answer: 'F',
-    hint: '¬V' },
-  { expr: 'P=<F>F</F> | <op>¬</op>P = <q>?</q>', answer: 'V',
-    hint: '¬F' },
-
-  // 7-9 — Implicação
-  { expr: 'P=<V>V</V>, Q=<F>F</F> | P <op>→</op> Q = <q>?</q>', answer: 'F',
-    hint: 'V → F' },
-  { expr: 'P=<F>F</F>, Q=<F>F</F> | P <op>→</op> Q = <q>?</q>', answer: 'V',
-    hint: 'F → F' },
-  { expr: 'P=<F>F</F>, Q=<V>V</V> | P <op>→</op> Q = <q>?</q>', answer: 'V',
-    hint: 'F → V' },
-
-  // 10-12 — Bicondicional
-  { expr: 'P=<V>V</V>, Q=<V>V</V> | P <op>↔</op> Q = <q>?</q>', answer: 'V',
-    hint: 'V ↔ V' },
-  { expr: 'P=<V>V</V>, Q=<F>F</F> | P <op>↔</op> Q = <q>?</q>', answer: 'F',
-    hint: 'V ↔ F' },
-  { expr: 'P=<F>F</F>, Q=<F>F</F> | P <op>↔</op> Q = <q>?</q>', answer: 'V',
-    hint: 'F ↔ F' },
-
-  // 13-14 — XOR
-  { expr: 'P=<V>V</V>, Q=<V>V</V> | P <op>⊕</op> Q = <q>?</q>', answer: 'F',
-    hint: 'V ⊕ V' },
-  { expr: 'P=<V>V</V>, Q=<F>F</F> | P <op>⊕</op> Q = <q>?</q>', answer: 'V',
-    hint: 'V ⊕ F' },
-
-  // 15-16 — Negação de compostas
-  { expr: 'P=<V>V</V>, Q=<V>V</V> | <op>¬</op>(P <op>∧</op> Q) = <q>?</q>', answer: 'F',
-    hint: '¬(V ∧ V)' },
-  { expr: 'P=<F>F</F>, Q=<F>F</F> | <op>¬</op>(P <op>∨</op> Q) = <q>?</q>', answer: 'V',
-    hint: '¬(F ∨ F)' },
-
-  // 17-18 — Expressões com 3 variáveis
-  { expr: 'P=<V>V</V>, Q=<V>V</V>, R=<F>F</F> | (P <op>∧</op> Q) <op>∨</op> R = <q>?</q>', answer: 'V',
-    hint: '(V ∧ V) ∨ F' },
-  { expr: 'P=<V>V</V>, Q=<F>F</F>, R=<V>V</V> | P <op>∧</op> (Q <op>∨</op> R) = <q>?</q>', answer: 'V',
-    hint: 'V ∧ (F ∨ V)' },
-
-  // 19-20 — Compostas
-  { expr: 'P=<F>F</F>, Q=<V>V</V> | <op>¬</op>P <op>∧</op> Q = <q>?</q>', answer: 'V',
-    hint: '¬F ∧ V' },
-  { expr: 'P=<V>V</V>, Q=<V>V</V> | <op>¬</op>(P <op>↔</op> Q) = <q>?</q>', answer: 'F',
-    hint: '¬(V ↔ V)' },
+  {
+    label: 'Faixa do tipo byte',
+    emoji: '&#x1F4BE;',
+    situation: 'O tipo <span class="kw">byte</span> usa 8 bits e suporta valores entre <span class="kw">-128</span> e <span class="kw">127</span>.',
+    context: 'Um programador declara: <span class="ic">byte b = 200;</span><br>O valor 200 está dentro da faixa permitida?',
+    question: 'A declaração byte b = 200 é válida em Java?',
+    answer: 'F',
+    explanation: 'F — byte vai de -128 a 127. O valor 200 ultrapassa o máximo (127) e causaria erro de compilação. Para guardar 200, use short ou int.'
+  },
+  {
+    label: 'int — tipo inteiro padrão',
+    emoji: '&#x1F522;',
+    situation: 'O tipo <span class="kw">int</span> é o tipo inteiro padrão do Java, ocupando <span class="kw">32 bits</span> de memória.',
+    context: 'Faixa: <span class="val-true">-2.147.483.648</span> a <span class="val-true">2.147.483.647</span><br>É o tipo recomendado para a maioria dos números inteiros.',
+    question: 'int é o tipo inteiro padrão do Java e usa 32 bits?',
+    answer: 'V',
+    explanation: 'V — int (32 bits) é o tipo inteiro padrão. Use-o na maioria dos casos. Para valores além de ~2 bilhões, use long; para economizar memória em grandes arrays, byte ou short.'
+  },
+  {
+    label: 'Sufixo L do tipo long',
+    emoji: '&#x1F4CF;',
+    situation: 'Para declarar um literal do tipo <span class="kw">long</span>, é necessário adicionar o sufixo <span class="kw">L</span> ao final do número.',
+    context: '<span class="val-true">long pop = 8_000_000_000L;</span> → correto<br><span class="val-false">long pop = 8_000_000_000;</span> → erro! (excede o int)',
+    question: 'O sufixo L é necessário em literais long que excedem o int?',
+    answer: 'V',
+    explanation: 'V — Literais numéricos são tratados como int por padrão. Se o valor exceder o limite do int, o sufixo L é obrigatório para indicar ao compilador que é long.'
+  },
+  {
+    label: 'float vs double — precisão',
+    emoji: '&#x1F4CA;',
+    situation: 'O tipo <span class="kw">float</span> possui maior precisão decimal do que o tipo <span class="kw">double</span>.',
+    context: '<span class="val-false">float</span>: 32 bits &nbsp;·&nbsp; ~6–7 dígitos decimais<br><span class="val-true">double</span>: 64 bits &nbsp;·&nbsp; ~15 dígitos decimais',
+    question: 'float tem maior precisão que double?',
+    answer: 'F',
+    explanation: 'F — double (64 bits, ~15 dígitos) tem precisão muito maior que float (32 bits, ~6-7 dígitos). Por isso double é o tipo decimal padrão do Java.'
+  },
+  {
+    label: 'char — aspas simples',
+    emoji: '&#x1F524;',
+    situation: 'O tipo <span class="kw">char</span> utiliza <span class="kw">aspas simples</span> para definir seu valor literal.',
+    context: '<span class="val-true">char c = \'A\';</span> → correto<br><span class="val-false">char c = "A";</span> → erro (isso é String, não char)',
+    question: 'char usa aspas simples para seu valor literal?',
+    answer: 'V',
+    explanation: 'V — char usa aspas simples: char c = \'A\'. Aspas duplas ("A") criam uma String. São tipos diferentes e não podem ser atribuídos diretamente um ao outro.'
+  },
+  {
+    label: 'boolean — valores aceitos',
+    emoji: '&#x2705;',
+    situation: 'Em Java, o tipo <span class="kw">boolean</span> aceita <span class="kw">0</span> e <span class="kw">1</span> como alternativas a <span class="kw">false</span> e <span class="kw">true</span>.',
+    context: 'Em C/C++, inteiros valem como booleanos (0 = false, 1 = true).<br>Em Java: <span class="ic">boolean ok = 1;</span> — isso funciona?',
+    question: 'boolean ok = 1 é uma declaração válida em Java?',
+    answer: 'F',
+    explanation: 'F — Em Java, boolean SOMENTE aceita true ou false. Ao contrário de C/C++, inteiros não podem representar booleanos. boolean ok = 1; causa erro de compilação.'
+  },
+  {
+    label: 'double — literal padrão',
+    emoji: '&#x1F9EE;',
+    situation: 'Literais decimais escritos sem sufixo são tratados como <span class="kw">double</span> pelo compilador Java.',
+    context: '<span class="val-true">double d = 3.14;</span> → válido (3.14 já é double)<br><span class="val-false">float f = 3.14;</span> → erro! Precisa de <span class="val-true">3.14f</span>',
+    question: 'O literal 3.14 (sem sufixo) é double por padrão em Java?',
+    answer: 'V',
+    explanation: 'V — Literais decimais sem sufixo são double por padrão. Para float, use o sufixo f: 3.14f. Sem ele, o compilador rejeita a atribuição (risco de perda de precisão).'
+  },
+  {
+    label: 'Faixa do tipo short',
+    emoji: '&#x1F4D0;',
+    situation: 'O tipo <span class="kw">short</span> usa 16 bits e pode armazenar o valor <span class="kw">40.000</span>.',
+    context: 'Faixa do short: de <span class="val-false">-32.768</span> a <span class="val-false">32.767</span><br>O valor 40.000 está dentro dessa faixa?',
+    question: 'short s = 40_000 é uma declaração válida?',
+    answer: 'F',
+    explanation: 'F — short suporta até 32.767. O valor 40.000 excede o limite e causaria erro de compilação. Para valores acima de 32.767, use int (32 bits).'
+  },
+  {
+    label: 'char — capacidade de armazenamento',
+    emoji: '&#x1F521;',
+    situation: 'O tipo <span class="kw">char</span> pode armazenar mais de um caractere, como uma sigla ou abreviação curta.',
+    context: 'Um programador tenta: <span class="ic">char sigla = \'BR\';</span><br>Seria possível guardar dois caracteres em um único char?',
+    question: 'char pode armazenar mais de um caractere?',
+    answer: 'F',
+    explanation: 'F — char armazena EXATAMENTE um único caractere Unicode (16 bits). char sigla = \'BR\'; causaria erro. Para múltiplos caracteres, use String: String sigla = "BR";'
+  },
+  {
+    label: 'long vs int — tamanho em bits',
+    emoji: '&#x1F4BB;',
+    situation: 'O tipo <span class="kw">long</span> usa exatamente o <span class="kw">dobro de bits</span> em relação ao tipo <span class="kw">int</span>.',
+    context: '<span class="val-true">int</span>: 32 bits &nbsp;&nbsp;·&nbsp;&nbsp; <span class="val-true">long</span>: 64 bits<br>64 = 32 × 2',
+    question: 'long usa o dobro de bits em relação ao int?',
+    answer: 'V',
+    explanation: 'V — int = 32 bits, long = 64 bits. O dobro de bits permite armazenar valores muito maiores: int chega a ~2,1 × 10⁹, enquanto long alcança ~9,2 × 10¹⁸.'
+  }
 ];
 
-// ── RENDER ───────────────────────────────────────────────────────────────────
 const userAnswers = new Array(questions.length).fill(null);
-
-function formatExpr(raw) {
-  return raw
-    .replace(/<V>(.*?)<\/V>/g, '<span class="val-true">$1</span>')
-    .replace(/<F>(.*?)<\/F>/g, '<span class="val-false">$1</span>')
-    .replace(/<op>(.*?)<\/op>/g, '<span class="op">$1</span>')
-    .replace(/<q>(.*?)<\/q>/g, '<span class="question">$1</span>');
-}
 
 function buildQuiz() {
   const container = document.getElementById('quiz');
   container.innerHTML = '';
-
   questions.forEach((q, i) => {
     const card = document.createElement('div');
     card.className = 'card';
-    card.id = `card-${i}`;
-    card.innerHTML = `
-      <div class="card-num">QUESTÃO ${String(i + 1).padStart(2, '0')} &nbsp;·&nbsp; ${q.hint}</div>
-      <div class="expression">${formatExpr(q.expr)}</div>
-      <div class="btn-row">
-        <button class="vf-btn v-btn" onclick="select(${i},'V')">V — Verdadeiro</button>
-        <button class="vf-btn f-btn" onclick="select(${i},'F')">F — Falso</button>
-      </div>
-      <div class="feedback-icon" id="icon-${i}"></div>
-    `;
+    card.id = 'card-' + i;
+    card.innerHTML =
+      '<div class="card-num">QUESTÃO ' + String(i + 1).padStart(2, '0') + ' &nbsp;·&nbsp; ' + q.label + '</div>' +
+      '<div class="situation-emoji">' + q.emoji + '</div>' +
+      '<div class="situation-box">' + q.situation + '</div>' +
+      '<div class="context-box">' + q.context + '</div>' +
+      '<div class="question-text">' + q.question + '</div>' +
+      '<div class="btn-row">' +
+        '<button class="vf-btn v-btn" onclick="pick(' + i + ',\'V\')">V &mdash; Verdadeiro</button>' +
+        '<button class="vf-btn f-btn" onclick="pick(' + i + ',\'F\')">F &mdash; Falso</button>' +
+      '</div>' +
+      '<div class="feedback-icon" id="icon-' + i + '"></div>' +
+      '<div class="explanation" id="exp-' + i + '">' + q.explanation + '</div>';
     container.appendChild(card);
   });
 }
 
-function select(idx, value) {
-  const prev = userAnswers[idx];
+function pick(idx, value) {
   userAnswers[idx] = value;
-
-  const card = document.getElementById(`card-${idx}`);
+  const card = document.getElementById('card-' + idx);
   card.querySelectorAll('.vf-btn').forEach(b => b.classList.remove('selected'));
   card.querySelector(value === 'V' ? '.v-btn' : '.f-btn').classList.add('selected');
 
-  // update counter
   const answered = userAnswers.filter(a => a !== null).length;
   document.getElementById('count').textContent = answered;
 
-  const btnCheck = document.getElementById('btnCheck');
   const info = document.getElementById('progressInfo');
   if (answered === questions.length) {
-    btnCheck.disabled = false;
+    document.getElementById('btnCheck').disabled = false;
     info.textContent = 'Todas as questões respondidas! Clique em "Verificar Respostas".';
   } else {
-    info.textContent = `Responda todas as questões para verificar o resultado. (${questions.length - answered} restantes)`;
+    info.textContent = 'Responda todas as questões para verificar. (' + (questions.length - answered) + ' restantes)';
   }
 
-  // remove result highlight if user changes answer after check
   card.classList.remove('correct', 'incorrect');
-  document.getElementById(`icon-${idx}`).style.opacity = '0';
+  document.getElementById('icon-' + idx).style.opacity = '0';
 }
 
 function checkAnswers() {
   let correct = 0;
   questions.forEach((q, i) => {
-    const card = document.getElementById(`card-${i}`);
-    const icon = document.getElementById(`icon-${i}`);
-    const isCorrect = userAnswers[i] === q.answer;
-    card.classList.toggle('correct',   isCorrect);
-    card.classList.toggle('incorrect', !isCorrect);
-    icon.textContent = isCorrect ? '✓' : '✗';
-    icon.style.opacity = '1';
+    const card = document.getElementById('card-' + i);
+    const icon = document.getElementById('icon-' + i);
+    const ok   = userAnswers[i] === q.answer;
+    card.classList.toggle('correct',   ok);
+    card.classList.toggle('incorrect', !ok);
+    icon.textContent     = ok ? '✓' : '✗';
+    icon.style.opacity   = '1';
     icon.style.transform = 'scale(1)';
     card.querySelectorAll('.vf-btn').forEach(b => b.disabled = true);
-    if (isCorrect) correct++;
+    if (ok) correct++;
   });
 
   const panel = document.getElementById('resultPanel');
   panel.classList.add('show');
-  document.getElementById('resultScore').textContent = `${correct} / 20`;
-
-  const pct = (correct / 20) * 100;
-  setTimeout(() => {
-    document.getElementById('resultFill').style.width = pct + '%';
-  }, 100);
+  document.getElementById('resultScore').textContent = correct + ' / 10';
+  setTimeout(() => { document.getElementById('resultFill').style.width = (correct * 10) + '%'; }, 100);
 
   let msg = '';
-  if (correct === 20)      msg = '🎉 Perfeito! Domínio total da lógica proposicional!';
-  else if (correct >= 16)  msg = '🟢 Excelente! Você tem ótima base em lógica.';
-  else if (correct >= 12)  msg = '🟡 Bom resultado! Revise implicação e bicondicional.';
-  else if (correct >= 8)   msg = '🟠 Continue estudando — você está no caminho certo.';
-  else                     msg = '🔴 Revise os conceitos e tente novamente!';
+  if (correct === 10)    msg = '🎉 Perfeito! Você domina os tipos primitivos do Java!';
+  else if (correct >= 8) msg = '🟢 Ótimo! Só pequenos detalhes a revisar.';
+  else if (correct >= 6) msg = '🟡 Bom! Revise faixas de valores e sufixos dos tipos.';
+  else if (correct >= 4) msg = '🟠 Continue praticando — você está evoluindo!';
+  else                   msg = '🔴 Revise os tipos primitivos da Aula 01 e tente novamente!';
   document.getElementById('resultMsg').textContent = msg;
 
   panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -526,16 +380,15 @@ function checkAnswers() {
 
 function resetQuiz() {
   userAnswers.fill(null);
-  document.getElementById('count').textContent = '0';
-  document.getElementById('btnCheck').disabled = true;
+  document.getElementById('count').textContent        = '0';
+  document.getElementById('btnCheck').disabled        = true;
   document.getElementById('progressInfo').textContent = 'Responda todas as questões para verificar o resultado.';
   document.getElementById('resultPanel').classList.remove('show');
-  document.getElementById('resultFill').style.width = '0%';
+  document.getElementById('resultFill').style.width   = '0%';
   buildQuiz();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ── INIT
 buildQuiz();
 </script>
 </body>

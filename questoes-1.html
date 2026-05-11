@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Tabela Verdade — Quiz do Cotidiano</title>
+<title>Quiz Java — Aula 01</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
 <style>
   :root {
@@ -23,7 +23,6 @@
     --true-btn: #ede8ff;
     --false-btn:#e0faf3;
     --radius:   10px;
-    --glow:     0 0 18px rgba(141,98,255,0.15);
     --grad:     linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
   }
 
@@ -40,7 +39,6 @@
       radial-gradient(ellipse 50% 30% at 80% 110%, rgba(0,200,150,0.06) 0%, transparent 70%);
   }
 
-  /* ── HEADER ── */
   header {
     text-align: center;
     padding: 36px 20px 28px;
@@ -49,359 +47,170 @@
     background: var(--surface);
     box-shadow: 0 2px 16px rgba(141,98,255,0.07);
   }
-  .header-logo {
-    height: 48px;
-    margin-bottom: 14px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-  }
+  .header-logo { height: 48px; margin-bottom: 14px; display: block; margin-left: auto; margin-right: auto; }
   header::after {
-    content: '';
-    position: absolute;
-    bottom: -1px; left: 50%; transform: translateX(-50%);
-    width: 120px; height: 2px;
-    background: linear-gradient(90deg, transparent, #8d62ff, transparent);
+    content: ''; position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%);
+    width: 120px; height: 2px; background: linear-gradient(90deg, transparent, #8d62ff, transparent);
   }
   .logo {
     font-family: 'JetBrains Mono', monospace;
     font-size: clamp(1.6rem, 4vw, 2.6rem);
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    background: linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-weight: 700; letter-spacing: -0.5px;
+    background: var(--grad); -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; background-clip: text;
   }
   .logo span { opacity: 0.6; }
-  .subtitle {
-    color: var(--muted);
-    font-size: .9rem;
-    margin-top: 6px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
+  .subtitle { color: var(--muted); font-size: .9rem; margin-top: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
 
-  /* ── LEGEND ── */
   .legend {
-    display: flex;
-    justify-content: center;
-    gap: 28px;
-    margin: 28px auto 0;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: .8rem;
-    color: var(--muted);
-    flex-wrap: wrap;
+    display: flex; justify-content: center; gap: 28px; margin: 28px auto 0;
+    font-family: 'JetBrains Mono', monospace; font-size: .8rem; color: var(--muted); flex-wrap: wrap;
   }
   .legend span { display: flex; align-items: center; gap: 6px; }
-  .legend i {
-    display: inline-block;
-    width: 8px; height: 8px; border-radius: 50%;
-    background: #8d62ff;
-  }
+  .legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #8d62ff; }
   .legend i.v { background: #00a87a; }
   .legend i.f { background: #d63030; }
 
-  /* ── SCORE BAR ── */
   .score-bar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 24px;
-    margin: 0 auto;
-    padding: 22px 20px 0;
-    max-width: 900px;
+    display: flex; justify-content: center; align-items: center; gap: 24px;
+    margin: 0 auto; padding: 22px 20px 0; max-width: 900px;
   }
   .score-pill {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: .82rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 99px;
-    padding: 6px 18px;
-    color: var(--muted);
-    box-shadow: 0 1px 6px rgba(141,98,255,0.08);
+    font-family: 'JetBrains Mono', monospace; font-size: .82rem; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 99px; padding: 6px 18px;
+    color: var(--muted); box-shadow: 0 1px 6px rgba(141,98,255,0.08);
   }
   .score-pill strong { color: var(--text); }
 
-  /* ── GRID ── */
   .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
-    gap: 16px;
-    max-width: 1020px;
-    margin: 24px auto 0;
-    padding: 0 20px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+    gap: 16px; max-width: 1020px; margin: 24px auto 0; padding: 0 20px;
   }
 
-  /* ── CARD ── */
   .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px 22px;
-    transition: border-color .25s, box-shadow .25s, background .35s;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px 22px; transition: border-color .25s, box-shadow .25s, background .35s;
+    position: relative; overflow: hidden; box-shadow: 0 2px 8px rgba(141,98,255,0.06);
   }
-  .card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transition: opacity .3s;
-    pointer-events: none;
-  }
-  .card.correct {
-    border-color: var(--green-border);
-    background: var(--green-bg);
-    box-shadow: 0 0 16px rgba(0,180,100,0.12);
-  }
-  .card.incorrect {
-    border-color: var(--red-border);
-    background: var(--red-bg);
-    box-shadow: 0 0 16px rgba(220,80,80,0.1);
-  }
+  .card.correct { border-color: var(--green-border); background: var(--green-bg); box-shadow: 0 0 16px rgba(0,180,100,0.12); }
+  .card.incorrect { border-color: var(--red-border); background: var(--red-bg); box-shadow: 0 0 16px rgba(220,80,80,0.1); }
 
-  .card-num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: .7rem;
-    color: var(--muted);
-    margin-bottom: 8px;
-    letter-spacing: .1em;
-  }
+  .card-num { font-family: 'JetBrains Mono', monospace; font-size: .7rem; color: var(--muted); margin-bottom: 8px; letter-spacing: .1em; }
 
-  .expression {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: clamp(.9rem, 2vw, 1.05rem);
-    color: var(--text);
-    line-height: 1.55;
-    margin-bottom: 14px;
-    word-break: break-word;
+  .situation-emoji { font-size: 2rem; margin-bottom: 10px; line-height: 1; }
+  .situation-box {
+    font-size: .95rem; color: var(--text); line-height: 1.6; margin-bottom: 10px;
+    padding: 10px 14px; background: #f5f3ff; border-left: 3px solid #8d62ff; border-radius: 6px;
   }
-  .expression .val-true  { color: #0a8a5c; font-weight: 700; }
-  .expression .val-false { color: #d63030; font-weight: 700; }
-  .expression .op        { color: #8d62ff; }
-  .expression .question  { color: #00a87a; font-size: 1.15em; }
+  .context-box {
+    font-size: .88rem; color: var(--muted); line-height: 1.55; margin-bottom: 12px;
+    padding: 8px 12px; background: #f8f8fa; border-radius: 6px; border: 1px dashed var(--border);
+  }
+  .question-text {
+    font-family: 'JetBrains Mono', monospace; font-size: .88rem; font-weight: 600;
+    color: var(--text); margin-bottom: 12px; padding-top: 2px;
+  }
+  .kw  { color: #8d62ff; font-weight: 700; }
+  .val-true  { color: #0a8a5c; font-weight: 700; }
+  .val-false { color: #d63030; font-weight: 700; }
 
-  /* ── BUTTONS ── */
-  .btn-row {
-    display: flex;
-    gap: 10px;
-    margin-top: 4px;
-  }
+  .btn-row { display: flex; gap: 10px; margin-top: 4px; }
   .vf-btn {
-    flex: 1;
-    padding: 10px 0;
-    border-radius: 7px;
-    border: 1.5px solid transparent;
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 700;
-    font-size: .95rem;
-    cursor: pointer;
-    transition: background .18s, border-color .18s, transform .1s, box-shadow .18s;
+    flex: 1; padding: 10px 0; border-radius: 7px; border: 1.5px solid transparent;
+    font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: .95rem;
+    cursor: pointer; transition: background .18s, border-color .18s, transform .1s, box-shadow .18s;
     letter-spacing: .06em;
   }
   .vf-btn:active { transform: scale(0.96); }
 
-  .vf-btn.v-btn {
-    background: var(--true-btn);
-    border-color: #c4b4ff;
-    color: #5a30cc;
-  }
+  .vf-btn.v-btn { background: var(--true-btn); border-color: #c4b4ff; color: #5a30cc; }
   .vf-btn.v-btn:hover { background: #ddd5ff; border-color: #8d62ff; box-shadow: 0 0 10px rgba(141,98,255,.2); }
   .vf-btn.v-btn.selected { background: #8d62ff; border-color: #7040ee; color: #fff; box-shadow: 0 0 16px rgba(141,98,255,.35); }
 
-  .vf-btn.f-btn {
-    background: var(--false-btn);
-    border-color: #80dfc0;
-    color: #0a7a5a;
-  }
+  .vf-btn.f-btn { background: var(--false-btn); border-color: #80dfc0; color: #0a7a5a; }
   .vf-btn.f-btn:hover { background: #c0f0e0; border-color: #00c896; box-shadow: 0 0 10px rgba(0,200,150,.2); }
   .vf-btn.f-btn.selected { background: #00b888; border-color: #009970; color: #fff; box-shadow: 0 0 16px rgba(0,200,150,.35); }
 
   .vf-btn:disabled { cursor: default; opacity: .8; }
 
-  /* feedback icon */
   .feedback-icon {
-    position: absolute;
-    top: 16px; right: 18px;
-    font-size: 1.3rem;
-    opacity: 0;
-    transform: scale(0.5);
-    transition: opacity .3s, transform .3s;
+    position: absolute; top: 16px; right: 18px; font-size: 1.3rem;
+    opacity: 0; transform: scale(0.5); transition: opacity .3s, transform .3s;
   }
   .card.correct   .feedback-icon { color: #0a8a5c; opacity: 1; transform: scale(1); }
   .card.incorrect .feedback-icon { color: #d63030; opacity: 1; transform: scale(1); }
 
-  /* ── ACTIONS ── */
   .actions {
-    display: flex;
-    justify-content: center;
-    gap: 14px;
-    margin: 36px auto 0;
-    padding: 0 20px;
-    flex-wrap: wrap;
+    display: flex; justify-content: center; gap: 14px; margin: 36px auto 0;
+    padding: 0 20px; flex-wrap: wrap;
   }
   .btn-primary {
-    background: linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
-    color: #fff;
-    border: none;
-    border-radius: 9px;
-    padding: 14px 40px;
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 700;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: opacity .2s, transform .15s, box-shadow .2s;
-    letter-spacing: .04em;
-    box-shadow: 0 4px 22px rgba(141,98,255,0.35);
+    background: var(--grad); color: #fff; border: none; border-radius: 9px;
+    padding: 14px 40px; font-family: 'JetBrains Mono', monospace; font-weight: 700;
+    font-size: 1rem; cursor: pointer; transition: opacity .2s, transform .15s, box-shadow .2s;
+    letter-spacing: .04em; box-shadow: 0 4px 22px rgba(141,98,255,0.35);
   }
   .btn-primary:hover { opacity: .88; transform: translateY(-1px); box-shadow: 0 6px 28px rgba(141,98,255,0.5); }
-  .btn-primary:active { transform: scale(.97); }
   .btn-primary:disabled { opacity: .35; cursor: not-allowed; transform: none; }
 
   .btn-secondary {
-    background: transparent;
-    color: var(--muted);
-    border: 1.5px solid var(--border);
-    border-radius: 9px;
-    padding: 14px 32px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: .92rem;
-    cursor: pointer;
-    transition: border-color .2s, color .2s;
+    background: transparent; color: var(--muted); border: 1.5px solid var(--border);
+    border-radius: 9px; padding: 14px 32px; font-family: 'JetBrains Mono', monospace;
+    font-size: .92rem; cursor: pointer; transition: border-color .2s, color .2s;
   }
   .btn-secondary:hover { border-color: var(--accent); color: var(--text); }
 
-  /* ── RESULT PANEL ── */
   .result-panel {
-    display: none;
-    text-align: center;
-    max-width: 480px;
-    margin: 32px auto 0;
-    padding: 30px 36px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    animation: fadeUp .4s ease;
-    box-shadow: 0 4px 24px rgba(141,98,255,0.1);
+    display: none; text-align: center; max-width: 480px; margin: 32px auto 0;
+    padding: 30px 36px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; animation: fadeUp .4s ease; box-shadow: 0 4px 24px rgba(141,98,255,0.1);
   }
   .result-panel.show { display: block; }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+  @keyframes fadeUp { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: translateY(0); } }
   .result-score {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 3rem;
-    font-weight: 700;
-    background: linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-family: 'JetBrains Mono', monospace; font-size: 3rem; font-weight: 700;
+    background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   }
-  .result-msg {
-    color: var(--muted);
-    font-size: .95rem;
-    margin-top: 6px;
-  }
-  .result-bar {
-    margin: 18px 0 8px;
-    height: 8px;
-    background: #e0ddf0;
-    border-radius: 99px;
-    overflow: hidden;
-  }
-  .result-fill {
-    height: 100%;
-    border-radius: 99px;
-    background: linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
-    transition: width .8s cubic-bezier(.4,0,.2,1);
-    width: 0%;
-  }
+  .result-msg { color: var(--muted); font-size: .95rem; margin-top: 6px; }
+  .result-bar { margin: 18px 0 8px; height: 8px; background: #e0ddf0; border-radius: 99px; overflow: hidden; }
+  .result-fill { height: 100%; border-radius: 99px; background: var(--grad); transition: width .8s cubic-bezier(.4,0,.2,1); width: 0%; }
 
-  /* progress indicator */
-  .progress-info {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: .78rem;
-    color: var(--muted);
-    text-align: center;
-    margin-top: 14px;
-    padding: 0 20px;
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'JetBrains Mono', monospace; font-size: .82rem; color: var(--muted);
+    text-decoration: none; margin: 18px 0 0 20px; transition: color .2s;
   }
+  .back-link:hover { color: var(--accent); }
+
+  .progress-info { font-family: 'JetBrains Mono', monospace; font-size: .78rem; color: var(--muted); text-align: center; margin-top: 14px; padding: 0 20px; }
+
+  .explanation {
+    display: none; margin-top: 12px; padding: 8px 12px; border-radius: 6px;
+    font-size: .82rem; font-family: 'JetBrains Mono', monospace;
+    background: #fffbe6; border: 1px solid #ffe58a; color: #7a5c00;
+  }
+  .card.correct   .explanation { background: #f0fdf4; border-color: #86efac; color: #166534; display: block; }
+  .card.incorrect .explanation { background: #fff1f1; border-color: #fca5a5; color: #991b1b; display: block; }
 
   @media (max-width: 480px) {
     .grid { grid-template-columns: 1fr; }
-    .expression { font-size: .88rem; }
   }
-
-  /* ── SITUATION CARD EXTRAS ── */
-  .situation-emoji {
-    font-size: 2rem;
-    margin-bottom: 10px;
-    line-height: 1;
-  }
-  .situation-box {
-    font-size: .95rem;
-    color: var(--text);
-    line-height: 1.6;
-    margin-bottom: 10px;
-    padding: 10px 14px;
-    background: #f5f3ff;
-    border-left: 3px solid #8d62ff;
-    border-radius: 6px;
-  }
-  .context-box {
-    font-size: .88rem;
-    color: var(--muted);
-    line-height: 1.55;
-    margin-bottom: 12px;
-    padding: 8px 12px;
-    background: #f8f8fa;
-    border-radius: 6px;
-    border: 1px dashed var(--border);
-  }
-  .question-text {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: .88rem;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 12px;
-    padding-top: 2px;
-  }
-  .conj {
-    color: #8d62ff;
-    font-weight: 700;
-  }
-  .explanation {
-    display: none;
-    margin-top: 12px;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: .82rem;
-    font-family: 'JetBrains Mono', monospace;
-    background: #fffbe6;
-    border: 1px solid #ffe58a;
-    color: #7a5c00;
-  }
-  .card.correct   .explanation { background: #f0fdf4; border-color: #86efac; color: #166534; }
-  .card.incorrect .explanation { background: #fff1f1; border-color: #fca5a5; color: #991b1b; }
 </style>
 </head>
 <body>
 
 <header>
   <img class="header-logo" src="https://capacitabrasil.irede.org.br/assets/capacitaLogo-Ct3BEyem.png" alt="Capacita Brasil" />
-  <div class="logo">∧ ∨ ¬ <span>//</span> Tabela Verdade</div>
-  <div class="subtitle">Lógica Proposicional no Dia a Dia — 10 situações</div>
+  <div class="logo">&#x2615; <span>//</span> Java</div>
+  <div class="subtitle">Aula 01 — Introdução ao Java &nbsp;·&nbsp; 10 questões</div>
   <div class="legend">
     <span><i class="v"></i> Verdadeiro (V)</span>
     <span><i class="f"></i> Falso (F)</span>
-    <span><i></i> Analise cada situação e decida se o resultado é Verdadeiro ou Falso</span>
+    <span><i></i> Analise cada afirmação e decida se é Verdadeira ou Falsa</span>
   </div>
 </header>
+
+<a class="back-link" href="index.html">&larr; Voltar para a aula</a>
 
 <div class="score-bar">
   <div class="score-pill">Respondidas: <strong id="count">0</strong> / 10</div>
@@ -423,140 +232,127 @@
 </div>
 
 <script>
-// ── QUESTÕES ────────────────────────────────────────────────────────────────
 const questions = [
   {
-    label: 'Operador E (∧)',
-    emoji: '☕',
-    situation: 'Para tomar café da manhã, João precisa <op>ter pão</op> <conj>E</conj> <op>ter manteiga</op>.',
-    context:   'João <val-t>tem pão</val-t>, mas <val-f>não tem manteiga</val-f>.',
-    question:  'João consegue tomar o café da manhã completo?',
-    answer: 'F',
-    explanation: 'V E F = F — as duas condições precisam ser verdadeiras.'
-  },
-  {
-    label: 'Operador E (∧)',
-    emoji: '🎬',
-    situation: 'Para entrar no cinema, é preciso <op>ter ingresso</op> <conj>E</conj> <op>ser maior de 14 anos</op>.',
-    context:   'Maria <val-t>tem ingresso</val-t> e <val-t>tem 16 anos</val-t>.',
-    question:  'Maria consegue entrar no cinema?',
+    label: 'História do Java',
+    emoji: '&#x2615;',
+    situation: 'Java foi criada por <span class="kw">James Gosling</span> e sua equipe na empresa <span class="kw">Sun Microsystems</span>.',
+    context: 'O lançamento oficial ocorreu em <span class="val-true">1995</span>.',
+    question: 'A afirmação sobre a criação do Java está correta?',
     answer: 'V',
-    explanation: 'V E V = V — ambas as condições são satisfeitas.'
+    explanation: 'Correto. Java foi criada por James Gosling na Sun Microsystems e lançada em 1995.'
   },
   {
-    label: 'Operador OU (∨)',
-    emoji: '🚌',
-    situation: 'Para ir ao trabalho, Pedro pode <op>pegar o ônibus</op> <conj>OU</conj> <op>chamar um táxi</op>.',
-    context:   '<val-f>Não há ônibus</val-f> disponível, mas Pedro <val-t>conseguiu um táxi</val-t>.',
-    question:  'Pedro consegue ir ao trabalho?',
-    answer: 'V',
-    explanation: 'F OU V = V — basta uma das opções ser verdadeira.'
-  },
-  {
-    label: 'Operador OU (∨)',
-    emoji: '💳',
-    situation: 'O restaurante aceita pagamento <op>com cartão</op> <conj>OU</conj> <op>em dinheiro</op>.',
-    context:   'Ana <val-f>não tem cartão</val-f> e <val-f>não tem dinheiro</val-f>.',
-    question:  'Ana consegue pagar a conta?',
+    label: 'JVM e Portabilidade',
+    emoji: '&#x1F30D;',
+    situation: 'O código Java <span class="kw">não precisa</span> de nenhuma camada intermediária — ele é executado diretamente pelo sistema operacional.',
+    context: 'Afinal, o compilador gera um arquivo <span class="val-false">.exe</span> específico para cada SO.',
+    question: 'Essa afirmação sobre a execução do Java está correta?',
     answer: 'F',
-    explanation: 'F OU F = F — nenhuma das opções está disponível.'
+    explanation: 'NÃO V = F. O Java usa a JVM (Java Virtual Machine), que executa o bytecode (.class). É por isso que Java é portável — a JVM traduz para cada SO.'
   },
   {
-    label: 'Operador NÃO (¬)',
-    emoji: '🌧️',
-    situation: 'Carlos vai ao parque se <conj>NÃO</conj> <op>estiver chovendo</op>.',
-    context:   'Hoje <val-t>está chovendo</val-t>.',
-    question:  'Carlos vai ao parque?',
-    answer: 'F',
-    explanation: 'NÃO V = F — como está chovendo, a condição para ir é falsa.'
-  },
-  {
-    label: 'Operador NÃO (¬)',
-    emoji: '📵',
-    situation: 'A reunião começa se o chefe <conj>NÃO</conj> <op>estiver atrasado</op>.',
-    context:   'O chefe <val-f>não está atrasado</val-f>.',
-    question:  'A reunião começa?',
+    label: 'Tipos Primitivos — int',
+    emoji: '&#x1F522;',
+    situation: 'O tipo primitivo <span class="kw">int</span> em Java usa <span class="kw">32 bits</span> e pode armazenar valores de aproximadamente -2 bilhões a +2 bilhões.',
+    context: 'Exatamente: de <span class="val-true">-2.147.483.648</span> a <span class="val-true">2.147.483.647</span>.',
+    question: 'A descrição do tipo int está correta?',
     answer: 'V',
-    explanation: 'NÃO F = V — como ele não está atrasado, a reunião começa.'
+    explanation: 'Verdadeiro. int tem 32 bits (2³² = ~4 bilhões de valores, divididos entre positivos e negativos).'
   },
   {
-    label: 'Combinada: E + NÃO',
-    emoji: '🏋️',
-    situation: 'Laura vai à academia se <conj>NÃO</conj> <op>estiver cansada</op> <conj>E</conj> <op>a academia estiver aberta</op>.',
-    context:   'Laura <val-f>está cansada</val-f>, mas a academia <val-t>está aberta</val-t>.',
-    question:  'Laura vai à academia?',
+    label: 'Tipos Primitivos — double',
+    emoji: '&#x1F4CA;',
+    situation: 'O tipo <span class="kw">double</span> em Java é utilizado para armazenar <span class="kw">números inteiros</span> de grande magnitude.',
+    context: 'Por isso se usa <span class="val-false">double x = 1000000;</span> no lugar de long.',
+    question: 'Essa afirmação sobre o tipo double está correta?',
     answer: 'F',
-    explanation: 'NÃO V E V = F E V = F — o cansaço impede mesmo com a academia aberta.'
+    explanation: 'NÃO V = F. double armazena números decimais de ponto flutuante (ex: 3.14). Para inteiros grandes, use long.'
   },
   {
-    label: 'Implicação (→)',
-    emoji: '🎓',
-    situation: '<conj>SE</conj> o aluno <op>estudar</op>, <conj>ENTÃO</conj> ele <op>será aprovado</op>.',
-    context:   'O aluno <val-f>não estudou</val-f>.',
-    question:  'A afirmação "SE estudar ENTÃO será aprovado" continua válida?',
-    answer: 'V',
-    explanation: 'F → ? = V — quando a premissa é falsa, a implicação é sempre verdadeira.'
-  },
-  {
-    label: 'Implicação (→)',
-    emoji: '🌂',
-    situation: '<conj>SE</conj> <op>chover</op>, <conj>ENTÃO</conj> <op>levo guarda-chuva</op>.',
-    context:   '<val-t>Choveu</val-t>, mas a pessoa <val-f>não levou guarda-chuva</val-f>.',
-    question:  'A regra foi cumprida?',
+    label: 'Operador Módulo %',
+    emoji: '&#x2797;',
+    situation: 'O operador <span class="kw">%</span> em Java realiza a <span class="kw">divisão</span> entre dois números e retorna o quociente.',
+    context: 'Por exemplo: <span class="val-false">10 % 3 = 3</span> (o resultado da divisão).',
+    question: 'Essa descrição do operador % está correta?',
     answer: 'F',
-    explanation: 'V → F = F — choveu (V) mas não levou guarda-chuva (F), regra violada.'
+    explanation: 'NÃO V = F. O % é o módulo — retorna o RESTO da divisão inteira. 10 % 3 = 1 (10 ÷ 3 = 3, resto 1).'
   },
   {
-    label: 'Bicondicional (↔)',
-    emoji: '🔑',
-    situation: 'A porta abre <conj>SE E SOMENTE SE</conj> a <op>senha estiver correta</op>.',
-    context:   'A senha digitada <val-f>está errada</val-f> e a porta <val-f>não abriu</val-f>.',
-    question:  'O sistema funcionou corretamente?',
+    label: 'Operador Lógico &&',
+    emoji: '&#x1F9E0;',
+    situation: 'Em Java, o operador <span class="kw">&amp;&amp;</span> representa o operador lógico <span class="kw">E (AND)</span>.',
+    context: 'Ele retorna <span class="val-true">true</span> somente quando <span class="val-true">ambas</span> as expressões são verdadeiras.',
+    question: 'Essa afirmação sobre o operador && está correta?',
     answer: 'V',
-    explanation: 'F ↔ F = V — senha errada e porta fechada: os dois lados são falsos, bicondicional verdadeiro.'
+    explanation: 'Verdadeiro. && é o AND lógico. true && true = true. Qualquer outro caso (com false) resulta em false.'
   },
+  {
+    label: 'System.out.println()',
+    emoji: '&#x1F5A5;',
+    situation: 'O método <span class="kw">System.out.println()</span> imprime um texto na tela e <span class="kw">automaticamente pula uma linha</span> ao final.',
+    context: '<span class="val-true">println</span> = print + line (nova linha).',
+    question: 'Essa afirmação sobre println() está correta?',
+    answer: 'V',
+    explanation: 'Verdadeiro. println = print + line. Imprime e quebra a linha. System.out.print() imprime sem quebrar.'
+  },
+  {
+    label: 'Tipo char — Aspas',
+    emoji: '&#x1F524;',
+    situation: 'Em Java, o tipo <span class="kw">char</span> usa <span class="kw">aspas duplas</span> para definir seu valor.',
+    context: 'Exemplo: <span class="val-false">char c = "A";</span>',
+    question: 'Essa afirmação sobre a sintaxe do char está correta?',
+    answer: 'F',
+    explanation: 'NÃO V = F. char usa ASPAS SIMPLES: char c = \'A\'. Aspas duplas são para String: String s = "Olá".'
+  },
+  {
+    label: 'JVM e Portabilidade',
+    emoji: '&#x2699;',
+    situation: 'A <span class="kw">JVM (Java Virtual Machine)</span> é o componente que permite ao Java executar o mesmo código em diferentes sistemas operacionais.',
+    context: 'Windows, Linux e macOS possuem suas próprias JVMs, mas todas executam o mesmo <span class="val-true">bytecode</span>.',
+    question: 'Essa afirmação sobre a JVM está correta?',
+    answer: 'V',
+    explanation: 'Verdadeiro. A JVM traduz o bytecode Java para instruções nativas de cada SO. Esse é o princípio WORA (Write Once, Run Anywhere).'
+  },
+  {
+    label: 'Sufixo do tipo long',
+    emoji: '&#x1F4DD;',
+    situation: 'Para declarar um literal do tipo <span class="kw">long</span> em Java, o número deve terminar com a letra <span class="kw">F</span>.',
+    context: 'Exemplo: <span class="val-false">long x = 9_000_000_000F;</span>',
+    question: 'Essa afirmação sobre o sufixo do tipo long está correta?',
+    answer: 'F',
+    explanation: 'NÃO V = F. long usa o sufixo L: long x = 9_000_000_000L. O sufixo F é para float: float f = 3.14f.'
+  }
 ];
 
-// ── RENDER ───────────────────────────────────────────────────────────────────
 const userAnswers = new Array(questions.length).fill(null);
-
-function formatText(raw) {
-  return raw
-    .replace(/<op>(.*?)<\/op>/g,     '<span class="op">$1</span>')
-    .replace(/<conj>(.*?)<\/conj>/g, '<span class="conj">$1</span>')
-    .replace(/<val-t>(.*?)<\/val-t>/g,'<span class="val-true">$1</span>')
-    .replace(/<val-f>(.*?)<\/val-f>/g,'<span class="val-false">$1</span>');
-}
 
 function buildQuiz() {
   const container = document.getElementById('quiz');
   container.innerHTML = '';
-
   questions.forEach((q, i) => {
     const card = document.createElement('div');
     card.className = 'card';
-    card.id = `card-${i}`;
-    card.innerHTML = `
-      <div class="card-num">QUESTÃO ${String(i + 1).padStart(2, '0')} &nbsp;·&nbsp; ${q.label}</div>
-      <div class="situation-emoji">${q.emoji}</div>
-      <div class="situation-box">${formatText(q.situation)}</div>
-      <div class="context-box">${formatText(q.context)}</div>
-      <div class="question-text">${q.question}</div>
-      <div class="btn-row">
-        <button class="vf-btn v-btn" onclick="select(${i},'V')">V — Verdadeiro</button>
-        <button class="vf-btn f-btn" onclick="select(${i},'F')">F — Falso</button>
-      </div>
-      <div class="feedback-icon" id="icon-${i}"></div>
-      <div class="explanation" id="exp-${i}">${q.explanation}</div>
-    `;
+    card.id = 'card-' + i;
+    card.innerHTML =
+      '<div class="card-num">QUESTÃO ' + String(i + 1).padStart(2, '0') + ' &nbsp;·&nbsp; ' + q.label + '</div>' +
+      '<div class="situation-emoji">' + q.emoji + '</div>' +
+      '<div class="situation-box">' + q.situation + '</div>' +
+      '<div class="context-box">' + q.context + '</div>' +
+      '<div class="question-text">' + q.question + '</div>' +
+      '<div class="btn-row">' +
+        '<button class="vf-btn v-btn" onclick="select(' + i + ',\'V\')">V &mdash; Verdadeiro</button>' +
+        '<button class="vf-btn f-btn" onclick="select(' + i + ',\'F\')">F &mdash; Falso</button>' +
+      '</div>' +
+      '<div class="feedback-icon" id="icon-' + i + '"></div>' +
+      '<div class="explanation" id="exp-' + i + '">' + q.explanation + '</div>';
     container.appendChild(card);
   });
 }
 
 function select(idx, value) {
   userAnswers[idx] = value;
-
-  const card = document.getElementById(`card-${idx}`);
+  const card = document.getElementById('card-' + idx);
   card.querySelectorAll('.vf-btn').forEach(b => b.classList.remove('selected'));
   card.querySelector(value === 'V' ? '.v-btn' : '.f-btn').classList.add('selected');
 
@@ -567,48 +363,43 @@ function select(idx, value) {
   const info = document.getElementById('progressInfo');
   if (answered === questions.length) {
     btnCheck.disabled = false;
-    info.textContent = 'Todas as situações respondidas! Clique em "Verificar Respostas".';
+    info.textContent = 'Todas as questões respondidas! Clique em "Verificar Respostas".';
   } else {
-    info.textContent = `Responda todas as situações para verificar. (${questions.length - answered} restantes)`;
+    info.textContent = 'Responda todas as questões para verificar. (' + (questions.length - answered) + ' restantes)';
   }
 
   card.classList.remove('correct', 'incorrect');
-  document.getElementById(`icon-${idx}`).style.opacity = '0';
-  document.getElementById(`exp-${idx}`).style.display = 'none';
+  document.getElementById('icon-' + idx).style.opacity = '0';
 }
 
 function checkAnswers() {
   let correct = 0;
   questions.forEach((q, i) => {
-    const card = document.getElementById(`card-${i}`);
-    const icon = document.getElementById(`icon-${i}`);
-    const exp  = document.getElementById(`exp-${i}`);
+    const card = document.getElementById('card-' + i);
+    const icon = document.getElementById('icon-' + i);
     const isCorrect = userAnswers[i] === q.answer;
     card.classList.toggle('correct',   isCorrect);
     card.classList.toggle('incorrect', !isCorrect);
     icon.textContent = isCorrect ? '✓' : '✗';
     icon.style.opacity = '1';
     icon.style.transform = 'scale(1)';
-    exp.style.display = 'block';
     card.querySelectorAll('.vf-btn').forEach(b => b.disabled = true);
     if (isCorrect) correct++;
   });
 
   const panel = document.getElementById('resultPanel');
   panel.classList.add('show');
-  document.getElementById('resultScore').textContent = `${correct} / 10`;
+  document.getElementById('resultScore').textContent = correct + ' / 10';
 
   const pct = (correct / 10) * 100;
-  setTimeout(() => {
-    document.getElementById('resultFill').style.width = pct + '%';
-  }, 100);
+  setTimeout(() => { document.getElementById('resultFill').style.width = pct + '%'; }, 100);
 
   let msg = '';
-  if (correct === 10)     msg = '🎉 Perfeito! Você aplica lógica no dia a dia como um mestre!';
-  else if (correct >= 8)  msg = '🟢 Ótimo raciocínio! Só detalhes a ajustar.';
-  else if (correct >= 6)  msg = '🟡 Bom! Atenção à implicação e ao bicondicional.';
-  else if (correct >= 4)  msg = '🟠 Continue praticando — você está evoluindo!';
-  else                    msg = '🔴 Revise os conectivos lógicos e tente de novo!';
+  if (correct === 10)    msg = '🎉 Perfeito! Você domina os fundamentos do Java!';
+  else if (correct >= 8) msg = '🟢 Ótimo! Só pequenos detalhes a revisar.';
+  else if (correct >= 6) msg = '🟡 Bom! Revise tipos primitivos e a JVM.';
+  else if (correct >= 4) msg = '🟠 Continue praticando — você está evoluindo!';
+  else                   msg = '🔴 Revise os conceitos da Aula 01 e tente novamente!';
   document.getElementById('resultMsg').textContent = msg;
 
   panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -619,14 +410,13 @@ function resetQuiz() {
   userAnswers.fill(null);
   document.getElementById('count').textContent = '0';
   document.getElementById('btnCheck').disabled = true;
-  document.getElementById('progressInfo').textContent = 'Responda todas as situações para verificar o resultado.';
+  document.getElementById('progressInfo').textContent = 'Responda todas as questões para verificar o resultado.';
   document.getElementById('resultPanel').classList.remove('show');
   document.getElementById('resultFill').style.width = '0%';
   buildQuiz();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ── INIT
 buildQuiz();
 </script>
 </body>
