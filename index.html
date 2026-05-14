@@ -289,6 +289,14 @@ tr:hover td { background: rgba(141,98,255,.04); }
 .curi-body { font-size: 13px; color: var(--muted); line-height: 1.65; }
 .curi-body code { background: rgba(141,98,255,.12); color: #5a30cc; padding: 1px 6px; border-radius: 4px; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
 
+/* ── LINKS ── */
+.link-item {
+  color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  text-decoration: none; word-break: break-all;
+  transition: color .15s;
+}
+.link-item:hover { color: var(--mint); text-decoration: underline; }
+
 /* ── GRAD BTN ── */
 .grad-btn {
   display: inline-flex; align-items: center; gap: 6px; margin-top: 14px;
@@ -336,6 +344,7 @@ footer span { background: var(--grad); -webkit-background-clip: text; -webkit-te
     <button class="tab"         onclick="showTab('exercicios',this,'aula01')">&#x1F3AF; Exercícios</button>
     <button class="tab"         onclick="showTab('questionarios',this,'aula01')">&#x1F4DD; Questionários</button>
     <button class="tab"         onclick="showTab('curiosidades',this,'aula01')">&#x1F680; Curiosidades</button>
+    <button class="tab"         onclick="showTab('links',this,'aula01')">&#x1F517; Links</button>
   </div>
 
   <!-- ═══ RESUMO ═══ -->
@@ -687,6 +696,48 @@ System.out.<span class="mtd">println</span>(<span class="str">"Idade: "</span> +
 
     </div>
   </div><!-- /curiosidades -->
+
+  <!-- ═══ LINKS ═══ -->
+  <div id="links" class="section">
+    <div class="card">
+      <div class="card-title">&#x23EA; Módulo Anterior</div>
+      <table>
+        <tr><th>Nome</th><th>Link</th></tr>
+        <tr>
+          <td class="left">Lógica</td>
+          <td class="left"><a href="https://alex-girao.github.io/irede-ciclo2-as1/logica/index.html" target="_blank" class="link-item">file:///C:/Users/alex-/Developer/irede/irede-ciclo2-as1/logica/index.html</a></td>
+        </tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">&#x1F4E6; Instaladores</div>
+      <table>
+        <tr><th>Nome</th><th>Link</th></tr>
+        <tr>
+          <td class="left">Java</td>
+          <td class="left"><a href="https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html" target="_blank" class="link-item">https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html</a></td>
+        </tr>
+        <tr>
+          <td class="left">Netbeans</td>
+          <td class="left"><a href="https://netbeans.apache.org/front/main/download/nb29/" target="_blank" class="link-item">https://netbeans.apache.org/front/main/download/nb29/</a></td>
+        </tr>
+        <tr>
+          <td class="left">Git</td>
+          <td class="left"><a href="https://git-scm.com/install/windows" target="_blank" class="link-item">https://git-scm.com/install/windows</a></td>
+        </tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">&#x1F310; Sites</div>
+      <table>
+        <tr><th>Nome</th><th>Link</th></tr>
+        <tr>
+          <td class="left">GitHub</td>
+          <td class="left"><a href="https://github.com/" target="_blank" class="link-item">https://github.com/</a></td>
+        </tr>
+      </table>
+    </div>
+  </div><!-- /links -->
 
   </div><!-- /aula01 -->
 
