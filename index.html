@@ -333,6 +333,7 @@ footer span { background: var(--grad); -webkit-background-clip: text; -webkit-te
 
   <div class="aula-bar">
     <button class="aula-tab active" onclick="showAula('aula01',this)">&#x1F4DA; Aula 01 &mdash; Introdução</button>
+    <button class="aula-tab" onclick="showAula('aula02',this)">&#x1F9E0; Aula 02 &mdash; Decisão</button>
   </div>
 
   <!-- ═══════════════ AULA 01 ═══════════════ -->
@@ -341,6 +342,7 @@ footer span { background: var(--grad); -webkit-background-clip: text; -webkit-te
   <div class="tab-bar">
     <button class="tab active"  onclick="showTab('resumo',this,'aula01')">&#x1F4D8; Resumo</button>
     <button class="tab"         onclick="showTab('simulador',this,'aula01')">&#x26A1; Simulador</button>
+    <button class="tab"         onclick="showTab('entrada-dados',this,'aula01')">&#x2328; Entrada de Dados</button>
     <button class="tab"         onclick="showTab('exercicios',this,'aula01')">&#x1F3AF; Exercícios</button>
     <button class="tab"         onclick="showTab('questionarios',this,'aula01')">&#x1F4DD; Questionários</button>
     <button class="tab"         onclick="showTab('curiosidades',this,'aula01')">&#x1F680; Curiosidades</button>
@@ -542,6 +544,182 @@ System.out.<span class="mtd">println</span>(<span class="str">"Idade: "</span> +
 
   </div><!-- /simulador -->
 
+  <!-- ═══ ENTRADA DE DADOS ═══ -->
+  <div id="entrada-dados" class="section">
+
+    <div class="card">
+      <div class="card-title">java.util.Scanner <span class="pill pill-java">Entrada de Dados</span></div>
+      <p>O <strong style="color:var(--text)">Scanner</strong> é uma classe da biblioteca padrão do Java usada para <strong style="color:var(--text)">ler dados digitados pelo usuário no console</strong>. Para utilizá-la, dois passos são obrigatórios: importar a classe no topo do arquivo e instanciar um objeto Scanner apontando para <span class="ic">System.in</span> (a entrada padrão do teclado).</p>
+      <div class="code-block" style="margin-top:14px"><span class="kw">import</span> java.util.<span class="cls">Scanner</span>;  <span class="cmt">// ① importar antes da declaração da classe</span>
+
+<span class="kw">public class</span> <span class="cls">MinhaClasse</span> {
+  <span class="kw">public static void</span> <span class="mtd">main</span>(<span class="typ">String</span>[] args) {
+
+    <span class="cls">Scanner</span> scanner = <span class="kw">new</span> <span class="cls">Scanner</span>(System.in);  <span class="cmt">// ② criar o Scanner</span>
+
+    <span class="cmt">// ... ler dados aqui ...</span>
+
+    scanner.<span class="mtd">close</span>();  <span class="cmt">// ③ fechar ao terminar (boa prática)</span>
+  }
+}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Métodos por Tipo de Dado <span class="pill pill-blue">Referência rápida</span></div>
+      <p>Cada tipo primitivo possui um método específico no Scanner. O <span class="ic">char</span> é o único que não tem método direto — usamos uma combinação de dois métodos.</p>
+      <div style="overflow-x:auto;margin-top:14px">
+        <table>
+          <tr><th>Tipo Java</th><th>Método Scanner</th><th>Exemplo de entrada</th><th style="text-align:left">Observação</th></tr>
+          <tr><td style="color:var(--accent);font-weight:700">String</td><td><span class="ic">nextLine()</span></td><td>João da Silva</td><td class="left">Lê a linha inteira, incluindo espaços</td></tr>
+          <tr><td style="color:var(--accent);font-weight:700">int</td><td><span class="ic">nextInt()</span></td><td>42</td><td class="left">Lê um número inteiro de 32 bits</td></tr>
+          <tr><td style="color:var(--accent);font-weight:700">double</td><td><span class="ic">nextDouble()</span></td><td>1.75</td><td class="left">Decimal de alta precisão</td></tr>
+          <tr><td style="color:var(--accent);font-weight:700">long</td><td><span class="ic">nextLong()</span></td><td>9000000000</td><td class="left">Para inteiros muito grandes</td></tr>
+          <tr><td style="color:var(--accent);font-weight:700">float</td><td><span class="ic">nextFloat()</span></td><td>3.14</td><td class="left">Decimal de precisão simples</td></tr>
+          <tr><td style="color:var(--accent);font-weight:700">boolean</td><td><span class="ic">nextBoolean()</span></td><td>true / false</td><td class="left">Apenas as palavras "true" ou "false"</td></tr>
+          <tr><td style="color:var(--accent);font-weight:700">char</td><td><span class="ic">next().charAt(0)</span></td><td>M</td><td class="left">Lê uma palavra e extrai o 1º caractere</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="ic">String</span> — <span class="ic">nextLine()</span> <span class="pill pill-grad">Texto</span></div>
+      <p>Usa <span class="ic">nextLine()</span> para ler a linha inteira digitada pelo usuário, incluindo espaços. Ideal para nomes, frases e endereços.</p>
+      <div class="code-block" style="margin-top:12px">System.out.<span class="mtd">println</span>(<span class="str">"Digite seu nome completo: "</span>);
+<span class="typ">String</span> nome = scanner.<span class="mtd">nextLine</span>();
+
+System.out.<span class="mtd">println</span>(<span class="str">"Olá, "</span> + nome + <span class="str">"!"</span>);</div>
+      <div style="margin-top:8px;background:#12121e;border:1px solid #2a2a40;border-radius:8px;padding:12px 16px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.9">
+        <span style="color:#6c7086">// Terminal</span><br>
+        <span style="color:#89b4fa">Digite seu nome completo: </span><span style="color:#f5c2e7">João da Silva</span><br>
+        <span style="color:#a6e3a1">Olá, João da Silva!</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="ic">int</span> — <span class="ic">nextInt()</span> <span class="pill pill-blue">Inteiro</span></div>
+      <p>Usa <span class="ic">nextInt()</span> para ler um número inteiro. Se o usuário digitar um valor decimal ou texto, o programa lançará uma exceção em tempo de execução.</p>
+      <div class="code-block" style="margin-top:12px">System.out.<span class="mtd">println</span>(<span class="str">"Digite sua idade: "</span>);
+<span class="kw">int</span> idade = scanner.<span class="mtd">nextInt</span>();
+
+System.out.<span class="mtd">println</span>(<span class="str">"Você tem "</span> + idade + <span class="str">" anos."</span>);</div>
+      <div style="margin-top:8px;background:#12121e;border:1px solid #2a2a40;border-radius:8px;padding:12px 16px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.9">
+        <span style="color:#6c7086">// Terminal</span><br>
+        <span style="color:#89b4fa">Digite sua idade: </span><span style="color:#f5c2e7">22</span><br>
+        <span style="color:#a6e3a1">Você tem 22 anos.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="ic">double</span> — <span class="ic">nextDouble()</span> <span class="pill pill-green">Decimal</span></div>
+      <p>Usa <span class="ic">nextDouble()</span> para ler um número decimal. O separador decimal aceito varia conforme o idioma configurado no sistema operacional (vírgula no BR, ponto no EN).</p>
+      <div class="code-block" style="margin-top:12px">System.out.<span class="mtd">println</span>(<span class="str">"Digite sua altura em metros (ex: 1.75): "</span>);
+<span class="kw">double</span> altura = scanner.<span class="mtd">nextDouble</span>();
+
+System.out.<span class="mtd">println</span>(<span class="str">"Sua altura é: "</span> + altura + <span class="str">" m"</span>);</div>
+      <div style="margin-top:8px;background:#12121e;border:1px solid #2a2a40;border-radius:8px;padding:12px 16px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.9">
+        <span style="color:#6c7086">// Terminal</span><br>
+        <span style="color:#89b4fa">Digite sua altura em metros (ex: 1.75): </span><span style="color:#f5c2e7">1.68</span><br>
+        <span style="color:#a6e3a1">Sua altura é: 1.68 m</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="ic">long</span> — <span class="ic">nextLong()</span> <span class="pill pill-amber">Inteiro Grande</span></div>
+      <p>Usa <span class="ic">nextLong()</span> para ler números inteiros que ultrapassam a capacidade do <span class="ic">int</span> (acima de ~2,1 bilhões). Útil para CPF, timestamps e grandes contagens.</p>
+      <div class="code-block" style="margin-top:12px">System.out.<span class="mtd">println</span>(<span class="str">"Digite o CPF (somente números): "</span>);
+<span class="kw">long</span> cpf = scanner.<span class="mtd">nextLong</span>();
+
+System.out.<span class="mtd">println</span>(<span class="str">"CPF informado: "</span> + cpf);</div>
+      <div style="margin-top:8px;background:#12121e;border:1px solid #2a2a40;border-radius:8px;padding:12px 16px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.9">
+        <span style="color:#6c7086">// Terminal</span><br>
+        <span style="color:#89b4fa">Digite o CPF (somente números): </span><span style="color:#f5c2e7">12345678901</span><br>
+        <span style="color:#a6e3a1">CPF informado: 12345678901</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="ic">boolean</span> — <span class="ic">nextBoolean()</span> <span class="pill pill-red">Lógico</span></div>
+      <p>Usa <span class="ic">nextBoolean()</span> para ler um valor lógico. O usuário deve digitar exatamente <span class="ic">true</span> ou <span class="ic">false</span> — qualquer outro valor causa exceção. A leitura é <em>case-insensitive</em> (<span class="ic">TRUE</span> também é aceito).</p>
+      <div class="code-block" style="margin-top:12px">System.out.<span class="mtd">println</span>(<span class="str">"Você é estudante? (true/false): "</span>);
+<span class="kw">boolean</span> ehEstudante = scanner.<span class="mtd">nextBoolean</span>();
+
+System.out.<span class="mtd">println</span>(<span class="str">"Estudante: "</span> + ehEstudante);</div>
+      <div style="margin-top:8px;background:#12121e;border:1px solid #2a2a40;border-radius:8px;padding:12px 16px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.9">
+        <span style="color:#6c7086">// Terminal</span><br>
+        <span style="color:#89b4fa">Você é estudante? (true/false): </span><span style="color:#f5c2e7">true</span><br>
+        <span style="color:#a6e3a1">Estudante: true</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="ic">char</span> — <span class="ic">next().charAt(0)</span> <span class="pill pill-grad">Caractere</span></div>
+      <p>O Scanner não possui um método direto para <span class="ic">char</span>. A solução é encadear dois métodos: <span class="ic">next()</span> lê a próxima palavra digitada e <span class="ic">charAt(0)</span> extrai seu primeiro caractere.</p>
+      <div class="code-block" style="margin-top:12px">System.out.<span class="mtd">println</span>(<span class="str">"Digite a inicial do seu nome: "</span>);
+<span class="kw">char</span> inicial = scanner.<span class="mtd">next</span>().<span class="mtd">charAt</span>(<span class="num">0</span>);
+
+System.out.<span class="mtd">println</span>(<span class="str">"Inicial: "</span> + inicial);</div>
+      <div style="margin-top:8px;background:#12121e;border:1px solid #2a2a40;border-radius:8px;padding:12px 16px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.9">
+        <span style="color:#6c7086">// Terminal</span><br>
+        <span style="color:#89b4fa">Digite a inicial do seu nome: </span><span style="color:#f5c2e7">M</span><br>
+        <span style="color:#a6e3a1">Inicial: M</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Programa Completo — Cadastro de Usuário <span class="pill pill-green">Exemplo integrado</span></div>
+      <p>Programa que combina a leitura de diferentes tipos de dados com Scanner e exibe um resumo ao final. Observe o <span class="ic">import</span>, a instância do Scanner e o <span class="ic">close()</span> ao término.</p>
+      <div class="code-block" style="margin-top:14px"><span class="kw">import</span> java.util.<span class="cls">Scanner</span>;
+
+<span class="kw">public class</span> <span class="cls">CadastroUsuario</span> {
+
+  <span class="kw">public static void</span> <span class="mtd">main</span>(<span class="typ">String</span>[] args) {
+    <span class="cls">Scanner</span> scanner = <span class="kw">new</span> <span class="cls">Scanner</span>(System.in);
+
+    System.out.<span class="mtd">println</span>(<span class="str">"Digite seu nome completo: "</span>);
+    <span class="typ">String</span>  nome       = scanner.<span class="mtd">nextLine</span>();
+
+    System.out.<span class="mtd">println</span>(<span class="str">"Digite sua idade: "</span>);
+    <span class="kw">int</span>     idade      = scanner.<span class="mtd">nextInt</span>();
+
+    System.out.<span class="mtd">println</span>(<span class="str">"Digite sua altura (ex: 1.75): "</span>);
+    <span class="kw">double</span>  altura     = scanner.<span class="mtd">nextDouble</span>();
+
+    System.out.<span class="mtd">println</span>(<span class="str">"Você é estudante? (true/false): "</span>);
+    <span class="kw">boolean</span> estudante  = scanner.<span class="mtd">nextBoolean</span>();
+
+    System.out.<span class="mtd">println</span>(<span class="str">"Informe a inicial do seu nome: "</span>);
+    <span class="kw">char</span>    inicial    = scanner.<span class="mtd">next</span>().<span class="mtd">charAt</span>(<span class="num">0</span>);
+
+    System.out.<span class="mtd">println</span>(<span class="str">"\n===== CADASTRO ====="</span>);
+    System.out.<span class="mtd">println</span>(<span class="str">"Nome:      "</span> + nome);
+    System.out.<span class="mtd">println</span>(<span class="str">"Idade:     "</span> + idade     + <span class="str">" anos"</span>);
+    System.out.<span class="mtd">println</span>(<span class="str">"Altura:    "</span> + altura    + <span class="str">" m"</span>);
+    System.out.<span class="mtd">println</span>(<span class="str">"Estudante: "</span> + estudante);
+    System.out.<span class="mtd">println</span>(<span class="str">"Inicial:   "</span> + inicial);
+
+    scanner.<span class="mtd">close</span>();
+  }
+
+}</div>
+      <div style="margin-top:10px;background:#12121e;border:1px solid #2a2a40;border-radius:8px;padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.9">
+        <span style="color:#6c7086">// Terminal — texto azul: programa | rosa: usuário digita | verde: saída</span><br>
+        <span style="color:#89b4fa">Digite seu nome completo: </span><span style="color:#f5c2e7">Maria Lima</span><br>
+        <span style="color:#89b4fa">Digite sua idade: </span><span style="color:#f5c2e7">22</span><br>
+        <span style="color:#89b4fa">Digite sua altura (ex: 1.75): </span><span style="color:#f5c2e7">1.68</span><br>
+        <span style="color:#89b4fa">Você é estudante? (true/false): </span><span style="color:#f5c2e7">true</span><br>
+        <span style="color:#89b4fa">Informe a inicial do seu nome: </span><span style="color:#f5c2e7">M</span><br>
+        <br>
+        <span style="color:#a6e3a1">===== CADASTRO =====</span><br>
+        <span style="color:#a6e3a1">Nome:      Maria Lima</span><br>
+        <span style="color:#a6e3a1">Idade:     22 anos</span><br>
+        <span style="color:#a6e3a1">Altura:    1.68 m</span><br>
+        <span style="color:#a6e3a1">Estudante: true</span><br>
+        <span style="color:#a6e3a1">Inicial:   M</span>
+      </div>
+    </div>
+
+  </div><!-- /entrada-dados -->
+
   <!-- ═══ EXERCÍCIOS ═══ -->
   <div id="exercicios" class="section">
 
@@ -742,6 +920,412 @@ System.out.<span class="mtd">println</span>(<span class="str">"Idade: "</span> +
 
   </div><!-- /aula01 -->
 
+  <!-- ═══════════════ AULA 02 ═══════════════ -->
+  <div id="aula02" class="aula-section">
+
+  <div class="tab-bar">
+    <button class="tab active"  onclick="showTab('resumo2',this,'aula02')">&#x1F4D8; Resumo</button>
+    <button class="tab"         onclick="showTab('simulador2',this,'aula02')">&#x26A1; Simulador</button>
+    <button class="tab"         onclick="showTab('exercicios2',this,'aula02')">&#x1F3AF; Exercícios</button>
+    <button class="tab"         onclick="showTab('questionarios2',this,'aula02')">&#x1F4DD; Questionários</button>
+    <button class="tab"         onclick="showTab('curiosidades2',this,'aula02')">&#x1F680; Curiosidades</button>
+    <button class="tab"         onclick="showTab('links2',this,'aula02')">&#x1F517; Links</button>
+  </div>
+
+  <!-- ═══ RESUMO 2 ═══ -->
+  <div id="resumo2" class="section active">
+
+    <div class="card">
+      <div class="card-title">Controle de Fluxo <span class="pill pill-grad">Fundamento</span></div>
+      <p>Programas em Java são compostos por instruções executadas <strong style="color:var(--text)">sequencialmente</strong>. Muitas vezes precisamos tomar decisões e repetir certas ações de forma controlada — é aí que entram as <strong style="color:var(--text)">estruturas de controle de fluxo</strong>.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+        <span class="pill pill-blue">Estruturas de Decisão</span>
+        <span class="pill pill-green">Estruturas de Repetição</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">if / else <span class="pill pill-blue">Decisão Simples</span></div>
+      <p>A estrutura <strong style="color:var(--text)">if/else</strong> toma decisões com base em condições. A lógica: <em>"se a condição for verdadeira, faça algo; caso contrário, faça outra coisa"</em>.</p>
+      <div class="code-block"><span class="kw">if</span> (condição) {
+  <span class="cmt">// executado se a condição for VERDADEIRA</span>
+} <span class="kw">else</span> {
+  <span class="cmt">// executado se a condição for FALSA</span>
+}</div>
+      <p style="margin-top:10px;font-size:13px;color:var(--muted)"><strong style="color:var(--text)">Exemplo:</strong> verificar maioridade.</p>
+      <div class="code-block"><span class="kw">int</span> idade = <span class="num">20</span>;
+
+<span class="kw">if</span> (idade >= <span class="num">18</span>) {
+  System.out.<span class="mtd">println</span>(<span class="str">"Você é maior de idade."</span>);
+} <span class="kw">else</span> {
+  System.out.<span class="mtd">println</span>(<span class="str">"Você é menor de idade."</span>);
+}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">if / else if / else <span class="pill pill-blue">Decisão Encadeada</span></div>
+      <p>Quando há <strong style="color:var(--text)">múltiplas condições</strong> a verificar, usamos <span class="ic">else if</span>. As condições são testadas em ordem — a primeira verdadeira executa e as demais são ignoradas.</p>
+      <div class="code-block"><span class="kw">int</span> nota = <span class="num">85</span>;
+
+<span class="kw">if</span> (nota >= <span class="num">90</span>) {
+  System.out.<span class="mtd">println</span>(<span class="str">"Conceito A"</span>);
+} <span class="kw">else if</span> (nota >= <span class="num">70</span>) {
+  System.out.<span class="mtd">println</span>(<span class="str">"Conceito B"</span>); <span class="cmt">// ← executado: 85 &gt;= 70</span>
+} <span class="kw">else</span> {
+  System.out.<span class="mtd">println</span>(<span class="str">"Conceito C"</span>);
+}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">switch / case <span class="pill pill-amber">Seleção Múltipla</span></div>
+      <p>O <strong style="color:var(--text)">switch/case</strong> substitui múltiplos if/else para <strong style="color:var(--text)">casos específicos e discretos</strong>. É mais legível quando há muitas opções fixas a comparar.</p>
+      <div style="overflow-x:auto;margin-top:14px">
+        <table>
+          <tr><th>Elemento</th><th>Função</th></tr>
+          <tr><td style="color:#cba6f7;font-weight:700">switch</td><td class="left">Avalia a expressão e busca um case correspondente</td></tr>
+          <tr><td style="color:#89b4fa;font-weight:700">case</td><td class="left">Define um valor específico a comparar</td></tr>
+          <tr><td style="color:#a6e3a1;font-weight:700">break</td><td class="left">Encerra o switch — sem ele, a execução "cai" no próximo case</td></tr>
+          <tr><td style="color:#fab387;font-weight:700">default</td><td class="left">Executado quando nenhum case corresponde</td></tr>
+        </table>
+      </div>
+      <div class="code-block"><span class="kw">int</span> dia = <span class="num">3</span>;
+
+<span class="kw">switch</span> (dia) {
+  <span class="kw">case</span> <span class="num">1</span>:
+    System.out.<span class="mtd">println</span>(<span class="str">"Domingo"</span>);
+    <span class="kw">break</span>;
+  <span class="kw">case</span> <span class="num">2</span>:
+    System.out.<span class="mtd">println</span>(<span class="str">"Segunda"</span>);
+    <span class="kw">break</span>;
+  <span class="kw">case</span> <span class="num">3</span>:
+    System.out.<span class="mtd">println</span>(<span class="str">"Terça"</span>); <span class="cmt">// ← executado: dia == 3</span>
+    <span class="kw">break</span>;
+  <span class="kw">default</span>:
+    System.out.<span class="mtd">println</span>(<span class="str">"Outro dia"</span>);
+}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Estruturas de Repetição <span class="pill pill-grad">Loops</span></div>
+      <p>As estruturas de repetição são utilizadas para <strong style="color:var(--text)">executar um bloco de código várias vezes</strong>, enquanto uma condição específica for verdadeira. Java possui três tipos principais:</p>
+      <div class="op-row">
+        <div class="op-card"><div class="op-sym">for</div><div class="op-name">Iterações fixas</div><div class="op-desc">Quando sabe quantas vezes repetir</div></div>
+        <div class="op-card"><div class="op-sym">while</div><div class="op-name">Pré-teste</div><div class="op-desc">Testa antes de executar</div></div>
+        <div class="op-card"><div class="op-sym">do-while</div><div class="op-name">Pós-teste</div><div class="op-desc">Executa ao menos uma vez</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Loop for <span class="pill pill-green">Iterações Definidas</span></div>
+      <p>Utilizado quando se <strong style="color:var(--text)">sabe exatamente quantas vezes</strong> o loop será executado. Concentra inicialização, condição e incremento em uma única linha.</p>
+      <div class="code-block"><span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">5</span>; i++) {
+  System.out.<span class="mtd">println</span>(<span class="str">"Valor de i: "</span> + i);
+}
+<span class="cmt">// Saída: 0, 1, 2, 3, 4</span></div>
+      <div style="overflow-x:auto;margin-top:12px">
+        <table>
+          <tr><th>Parte</th><th>Código</th><th>Descrição</th></tr>
+          <tr><td>Inicialização</td><td>int i = 0</td><td class="left">Executada 1× no início</td></tr>
+          <tr><td>Condição</td><td>i &lt; 5</td><td class="left">Verificada antes de cada iteração</td></tr>
+          <tr><td>Incremento</td><td>i++</td><td class="left">Executado após cada iteração</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Loop while <span class="pill pill-blue">Pré-Teste</span></div>
+      <p>Utilizado quando <strong style="color:var(--text)">não se sabe o número exato</strong> de repetições. A condição é verificada <strong style="color:var(--text)">antes</strong> de cada execução — se já for falsa no início, o bloco nunca executa.</p>
+      <div class="code-block"><span class="kw">int</span> contador = <span class="num">0</span>;
+
+<span class="kw">while</span> (contador &lt; <span class="num">5</span>) {
+  System.out.<span class="mtd">println</span>(<span class="str">"Contador: "</span> + contador);
+  contador++;  <span class="cmt">// ESSENCIAL: sem isso, loop infinito!</span>
+}
+<span class="cmt">// Saída: 0, 1, 2, 3, 4</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Loop do-while <span class="pill pill-amber">Pós-Teste</span></div>
+      <p>Semelhante ao while, mas garante que o bloco seja executado <strong style="color:var(--text)">pelo menos uma vez</strong>. A condição é verificada <strong style="color:var(--text)">depois</strong> da execução.</p>
+      <div class="code-block"><span class="kw">int</span> numero = <span class="num">0</span>;
+
+<span class="kw">do</span> {
+  System.out.<span class="mtd">println</span>(<span class="str">"Número: "</span> + numero);
+  numero++;
+} <span class="kw">while</span> (numero &lt; <span class="num">3</span>);
+<span class="cmt">// Saída: 0, 1, 2</span></div>
+      <p style="font-size:12px;margin-top:10px;color:var(--muted)">Mesmo que a condição já seja <strong style="color:var(--text)">falsa desde o início</strong>, o bloco <span class="ic">do</span> executa uma vez antes de verificar.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Comparativo: for × while × do-while</div>
+      <div style="overflow-x:auto;margin-top:4px">
+        <table>
+          <tr><th>Critério</th><th>for</th><th>while</th><th>do-while</th></tr>
+          <tr><td>Quando usar</td><td class="left">Nº de iterações conhecido</td><td class="left">Nº desconhecido</td><td class="left">Ao menos 1 execução</td></tr>
+          <tr><td>Teste da condição</td><td>Antes (pré)</td><td>Antes (pré)</td><td>Depois (pós)</td></tr>
+          <tr><td>Pode não executar?</td><td>Sim</td><td>Sim</td><td>Não</td></tr>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /resumo2 -->
+
+  <!-- ═══ SIMULADOR 2 ═══ -->
+  <div id="simulador2" class="section">
+
+    <div class="card">
+      <div class="card-title">Simulador if/else — Maioridade <span class="pill pill-grad">Interativo</span></div>
+      <p>Digite uma idade e veja qual bloco do if/else seria executado em tempo real.</p>
+      <div class="calc-box" style="margin-top:16px">
+        <div class="calc-inputs">
+          <label style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted)">int idade =</label>
+          <input class="calc-input" type="number" id="sim2Age" value="20" oninput="updateSim2()" style="max-width:120px"/>
+          <label style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted)">;</label>
+        </div>
+        <div id="sim2Result" style="margin-top:16px;padding:14px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Simulador de Conceitos <span class="pill pill-blue">if / else if / else</span></div>
+      <p>Digite uma nota de 0 a 100 e veja qual conceito seria atribuído e por quê.</p>
+      <div class="calc-box" style="margin-top:16px">
+        <div class="calc-inputs">
+          <label style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted)">int nota =</label>
+          <input class="calc-input" type="number" id="sim2Nota" value="85" min="0" max="100" oninput="updateSim2Nota()" style="max-width:120px"/>
+          <label style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted)">;</label>
+        </div>
+        <div id="sim2NotaResult" style="margin-top:16px;padding:14px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Visualizador de Loop for <span class="pill pill-green">Iterações</span></div>
+      <p>Configure o limite do loop e veja cada iteração sendo executada.</p>
+      <div class="calc-box" style="margin-top:16px">
+        <div class="calc-inputs">
+          <label style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted)">for (int i = 0; i &lt;</label>
+          <input class="calc-input" type="number" id="sim2ForMax" value="5" min="1" max="10" oninput="updateSim2For()" style="max-width:80px;font-size:16px"/>
+          <label style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted)">; i++)</label>
+        </div>
+        <div id="sim2ForResult" style="margin-top:16px"></div>
+      </div>
+    </div>
+
+  </div><!-- /simulador2 -->
+
+  <!-- ═══ EXERCÍCIOS 2 ═══ -->
+  <div id="exercicios2" class="section">
+
+    <div class="score-bar-area">
+      <div>
+        <div class="score-val" id="scoreVal2">0/5</div>
+        <div class="score-label">acertos</div>
+      </div>
+      <div class="score-track"><div class="score-fill" id="scoreBar2"></div></div>
+    </div>
+
+    <div class="ex-block" id="ex2-0">
+      <div style="margin-bottom:8px"><span class="pill pill-blue">Exercício 1</span></div>
+      <div class="ex-q">Com <span class="ic">int nota = 75;</span>, qual será o resultado impresso?</div>
+      <div class="ex-scenario">Código: <span class="ic">if (nota &gt;= 90) { print("A"); } else if (nota &gt;= 70) { print("B"); } else { print("C"); }</span><br/>As condições são avaliadas em ordem. Qual é a primeira verdadeira?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer2(0,this,false)">Conceito A</button>
+        <button class="choice" onclick="answer2(0,this,true)">Conceito B</button>
+        <button class="choice" onclick="answer2(0,this,false)">Conceito C</button>
+        <button class="choice" onclick="answer2(0,this,false)">Erro de compilação</button>
+      </div>
+      <div class="feedback" id="fb2-0"></div>
+    </div>
+
+    <div class="ex-block" id="ex2-1">
+      <div style="margin-bottom:8px"><span class="pill pill-blue">Exercício 2</span></div>
+      <div class="ex-q">Com <span class="ic">int dia = 5;</span>, o que o switch abaixo imprime?</div>
+      <div class="ex-scenario">Código: <span class="ic">switch(dia) { case 1: print("Dom"); break; case 2: print("Seg"); break; default: print("Outro"); }</span><br/>O que acontece quando nenhum case tem o valor de <strong>dia</strong>?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer2(1,this,false)">Dom</button>
+        <button class="choice" onclick="answer2(1,this,false)">Seg</button>
+        <button class="choice" onclick="answer2(1,this,true)">Outro</button>
+        <button class="choice" onclick="answer2(1,this,false)">Nada — erro</button>
+      </div>
+      <div class="feedback" id="fb2-1"></div>
+    </div>
+
+    <div class="ex-block" id="ex2-2">
+      <div style="margin-bottom:8px"><span class="pill pill-blue">Exercício 3</span></div>
+      <div class="ex-q">Quantas vezes o bloco abaixo é executado?</div>
+      <div class="ex-scenario"><span class="ic">for (int i = 0; i &lt; 5; i++) { System.out.println(i); }</span><br/>Lembre: i começa em 0 e o loop roda enquanto a condição for verdadeira.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer2(2,this,false)">4 vezes</button>
+        <button class="choice" onclick="answer2(2,this,true)">5 vezes</button>
+        <button class="choice" onclick="answer2(2,this,false)">6 vezes</button>
+        <button class="choice" onclick="answer2(2,this,false)">0 vezes</button>
+      </div>
+      <div class="feedback" id="fb2-2"></div>
+    </div>
+
+    <div class="ex-block" id="ex2-3">
+      <div style="margin-bottom:8px"><span class="pill pill-blue">Exercício 4</span></div>
+      <div class="ex-q">Qual é o valor de <span class="ic">x</span> após o loop terminar?</div>
+      <div class="ex-scenario"><span class="ic">int x = 0; while (x &lt; 3) { x++; }</span><br/>O while incrementa x a cada iteração. Quando a condição se torna falsa, o loop para.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer2(3,this,false)">2</button>
+        <button class="choice" onclick="answer2(3,this,true)">3</button>
+        <button class="choice" onclick="answer2(3,this,false)">4</button>
+        <button class="choice" onclick="answer2(3,this,false)">0</button>
+      </div>
+      <div class="feedback" id="fb2-3"></div>
+    </div>
+
+    <div class="ex-block" id="ex2-4">
+      <div style="margin-bottom:8px"><span class="pill pill-amber">Exercício 5 — Desafio</span></div>
+      <div class="ex-q">Com <span class="ic">int n = 5;</span>, quantas vezes o bloco <span class="ic">do</span> é executado?</div>
+      <div class="ex-scenario"><span class="ic">do { n++; } while (n &lt; 3);</span><br/>n já começa com 5, e 5 &lt; 3 é falso. Mas o do-while tem um comportamento especial: ele sempre executa o bloco <strong>antes</strong> de verificar a condição.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer2(4,this,false)">0 vezes</button>
+        <button class="choice" onclick="answer2(4,this,true)">1 vez</button>
+        <button class="choice" onclick="answer2(4,this,false)">3 vezes</button>
+        <button class="choice" onclick="answer2(4,this,false)">5 vezes</button>
+      </div>
+      <div class="feedback" id="fb2-4"></div>
+    </div>
+
+  </div><!-- /exercicios2 -->
+
+  <!-- ═══ QUESTIONÁRIOS 2 ═══ -->
+  <div id="questionarios2" class="section">
+    <div class="card">
+      <div class="card-title">Questionários <span class="pill pill-grad">Prática</span></div>
+      <p>Teste seu conhecimento sobre os conteúdos da Aula 02 com questões de verdadeiro ou falso. Cada questão traz uma explicação detalhada ao final.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Quiz — Estruturas de Decisão <span class="pill pill-green">10 questões</span></div>
+      <p>Conceitos essenciais: if/else simples, if/else encadeado, switch/case e casos especiais como o fall-through.</p>
+      <a class="grad-btn" href="questoes-aula02-1.html" style="text-decoration:none">Abrir questionário &rarr;</a>
+    </div>
+    <div class="card">
+      <div class="card-title">Quiz — Estruturas de Repetição <span class="pill pill-blue">10 questões</span></div>
+      <p>Loops <strong style="color:var(--text)">for, while e do-while</strong> com foco em condições de parada, contadores e diferenças entre pré-teste e pós-teste.</p>
+      <a class="grad-btn" href="questoes-aula02-2.html" style="text-decoration:none">Abrir questionário &rarr;</a>
+    </div>
+    <div class="card">
+      <div class="card-title">Implementação em Java <span class="pill pill-red">5 questões</span></div>
+      <p>Exercícios de implementação prática: escreva código Java real usando <strong style="color:var(--text)">estruturas de decisão e repetição</strong>. As soluções são reveladas sob demanda para você conferir seu raciocínio.</p>
+      <a class="grad-btn" href="questoes-aula02-implementacao.html" style="text-decoration:none">Abrir questionário &rarr;</a>
+    </div>
+  </div><!-- /questionarios2 -->
+
+  <!-- ═══ CURIOSIDADES 2 ═══ -->
+  <div id="curiosidades2" class="section">
+    <div class="card">
+      <div class="card-title">Curiosidades sobre Controle de Fluxo &#x1F9E0;</div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F9E0;</div>
+        <div>
+          <div class="curi-title">if/else existe desde os anos 1950</div>
+          <div class="curi-body">A estrutura if/else foi introduzida na linguagem <strong>FORTRAN</strong> em 1957, uma das primeiras linguagens de alto nível. Desde então tornou-se parte fundamental de praticamente todas as linguagens de programação do mundo.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x26A0;</div>
+        <div>
+          <div class="curi-title">Cuidado com o "fall-through" do switch</div>
+          <div class="curi-body">Sem o <code>break</code>, a execução "cai" para o próximo case — comportamento chamado <strong>fall-through</strong>. Isso pode causar bugs sutis e difíceis de encontrar. Em Java 14+, o <code>switch expression</code> com <code>-></code> elimina esse problema automaticamente.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x267E;</div>
+        <div>
+          <div class="curi-title">O perigo do loop infinito</div>
+          <div class="curi-body">Um while sem condição de parada válida roda para sempre e trava o programa — isso é chamado de <strong>loop infinito</strong>. Sempre garanta que a condição eventualmente se tornará <code>false</code>, normalmente incrementando um contador ou alterando uma variável de controle.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x26A1;</div>
+        <div>
+          <div class="curi-title">for-each — o loop mais moderno</div>
+          <div class="curi-body">Java possui uma variante do for chamada <strong>for-each</strong> (enhanced for), usada para percorrer arrays e coleções: <code>for (int n : numeros) { ... }</code>. É mais legível e evita erros de índice. Você aprenderá isso nas próximas aulas!</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F914;</div>
+        <div>
+          <div class="curi-title">switch vs if/else — quando usar cada um?</div>
+          <div class="curi-body">Use <strong>switch</strong> quando comparar a mesma variável com valores fixos e discretos (dias da semana, opções de menu). Use <strong>if/else</strong> para intervalos (<code>&gt;=</code>, <code>&lt;</code>), condições compostas (<code>&amp;&amp;</code>, <code>||</code>) ou tipos não suportados pelo switch, como <code>boolean</code>.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F504;</div>
+        <div>
+          <div class="curi-title">do-while é ideal para menus interativos</div>
+          <div class="curi-body">O do-while é perfeito para menus de console: o menu precisa ser exibido pelo menos uma vez, e continua aparecendo enquanto o usuário não escolher "Sair". É um dos poucos cenários onde o pós-teste é claramente superior ao pré-teste.</div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /curiosidades2 -->
+
+  <!-- ═══ LINKS 2 ═══ -->
+  <div id="links2" class="section">
+    <div class="card">
+      <div class="card-title">&#x23EA; Módulo Anterior</div>
+      <table>
+        <tr><th>Nome</th><th>Link</th></tr>
+        <tr>
+          <td class="left">Lógica</td>
+          <td class="left"><a href="https://alex-girao.github.io/irede-ciclo2-as1/logica/index.html" target="_blank" class="link-item">Acessar</a></td>
+        </tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">&#x1F4DA; Documentação Oficial</div>
+      <table>
+        <tr><th>Nome</th><th>Link</th></tr>
+        <tr>
+          <td class="left">Java Tutorial — Control Flow</td>
+          <td class="left"><a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/flow.html" target="_blank" class="link-item">Oracle Docs</a></td>
+        </tr>
+        <tr>
+          <td class="left">Switch Expressions (Java 14+)</td>
+          <td class="left"><a href="https://docs.oracle.com/en/java/javase/14/language/switch-expressions.html" target="_blank" class="link-item">Oracle Docs</a></td>
+        </tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">&#x1F4E6; Instaladores</div>
+      <table>
+        <tr><th>Nome</th><th>Link</th></tr>
+        <tr>
+          <td class="left">Netbeans</td>
+          <td class="left"><a href="https://netbeans.apache.org/front/main/download/nb29/" target="_blank" class="link-item">Página de Download</a></td>
+        </tr>
+        <tr>
+          <td class="left">Git</td>
+          <td class="left"><a href="https://git-scm.com/install/windows" target="_blank" class="link-item">Página de Download</a></td>
+        </tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">&#x1F310; Praticar Online</div>
+      <table>
+        <tr><th>Nome</th><th>Link</th></tr>
+        <tr>
+          <td class="left">JDoodle — Compilador Java Online</td>
+          <td class="left"><a href="https://www.jdoodle.com/online-java-compiler" target="_blank" class="link-item">Acessar</a></td>
+        </tr>
+      </table>
+    </div>
+  </div><!-- /links2 -->
+
+  </div><!-- /aula02 -->
+
   <footer>
     Material didático desenvolvido para <span>Capacita Brasil</span> &nbsp;&mdash;&nbsp; iRede &nbsp;&middot;&nbsp; Desenvolvimento Java
   </footer>
@@ -861,6 +1445,104 @@ function answer(i, btn, isCorrect) {
   }
   document.getElementById('scoreVal').textContent = scores + '/5';
   document.getElementById('scoreBar').style.width  = (scores / 5 * 100) + '%';
+}
+
+// ── AULA 02 — SIMULADORES ────────────────────────────────────────────────────
+
+function updateSim2() {
+  const age = parseInt(document.getElementById('sim2Age').value) || 0;
+  const adult = age >= 18;
+  const ok = 'color:#0a8a5c;font-weight:700';
+  const off = 'color:var(--muted);text-decoration:line-through';
+  document.getElementById('sim2Result').innerHTML =
+    '<span style="color:#cba6f7">if</span> (<span style="color:' + (adult ? '#0a8a5c' : '#d63030') + '">idade &gt;= 18</span>) {<br/>' +
+    '&nbsp;&nbsp;<span style="' + (adult ? ok : off) + '">&rarr; "Você é maior de idade." ' + (adult ? '&#x2713; EXECUTADO' : '') + '</span><br/>' +
+    '} <span style="color:#cba6f7">else</span> {<br/>' +
+    '&nbsp;&nbsp;<span style="' + (!adult ? ok : off) + '">&rarr; "Você é menor de idade." ' + (!adult ? '&#x2713; EXECUTADO' : '') + '</span><br/>' +
+    '}<br/><br/><strong style="color:var(--text)">idade = ' + age + ' &rarr; ' + (adult ? 'maior de idade &#x2705;' : 'menor de idade &#x274C;') + '</strong>';
+}
+
+function updateSim2Nota() {
+  const nota = Math.min(100, Math.max(0, parseInt(document.getElementById('sim2Nota').value) || 0));
+  const a = nota >= 90, b = nota >= 70 && nota < 90, c = nota < 70;
+  const ok = 'color:#0a8a5c;font-weight:700';
+  const off = 'color:var(--muted);text-decoration:line-through';
+  const conceito = a ? 'A' : b ? 'B' : 'C';
+  document.getElementById('sim2NotaResult').innerHTML =
+    '<span style="color:#cba6f7">if</span> (<span style="color:' + (a ? '#0a8a5c' : '#d63030') + '">nota &gt;= 90</span>) {' +
+    ' <span style="' + (a ? ok : off) + '">"Conceito A" ' + (a ? '&#x2713;' : '') + '</span> }<br/>' +
+    '<span style="color:#cba6f7">else if</span> (<span style="color:' + (b ? '#0a8a5c' : '#d63030') + '">nota &gt;= 70</span>) {' +
+    ' <span style="' + (b ? ok : off) + '">"Conceito B" ' + (b ? '&#x2713;' : '') + '</span> }<br/>' +
+    '<span style="color:#cba6f7">else</span> {' +
+    ' <span style="' + (c ? ok : off) + '">"Conceito C" ' + (c ? '&#x2713;' : '') + '</span> }<br/><br/>' +
+    '<strong style="color:var(--text)">Resultado: Conceito ' + conceito + '</strong>';
+}
+
+function updateSim2For() {
+  const max = Math.min(10, Math.max(1, parseInt(document.getElementById('sim2ForMax').value) || 5));
+  let items = '';
+  for (let i = 0; i < max; i++) {
+    items +=
+      '<div class="calc-result-item">' +
+        '<div class="calc-op">iteração ' + (i + 1) + '</div>' +
+        '<div class="calc-val">' + i + '</div>' +
+        '<div class="calc-expr">i = ' + i + '</div>' +
+      '</div>';
+  }
+  document.getElementById('sim2ForResult').innerHTML =
+    '<div style="font-family:\'JetBrains Mono\',monospace;font-size:12px;color:var(--muted);margin-bottom:10px">' +
+    'for (int i = 0; i &lt; <strong style="color:var(--text)">' + max + '</strong>; i++) &mdash; <strong style="color:var(--text)">' + max + ' iterações</strong>' +
+    ', valores impressos: 0 a ' + (max - 1) + '</div>' +
+    '<div class="calc-results">' + items + '</div>';
+}
+
+updateSim2();
+updateSim2Nota();
+updateSim2For();
+
+// ── AULA 02 — EXERCÍCIOS ─────────────────────────────────────────────────────
+
+let scores2 = 0;
+const answered2 = [false, false, false, false, false];
+
+const feedbacksOk2 = [
+  'Correto! ✓ nota=75 não satisfaz nota>=90, mas satisfaz nota>=70 (segunda condição). O else if é avaliado em ordem — a primeira verdadeira vence.',
+  'Correto! ✓ dia=5 não corresponde a nenhum case (1 ou 2). A cláusula default é executada, imprimindo "Outro".',
+  'Correto! ✓ O for executa com i=0,1,2,3,4 (enquanto i<5). São 5 iterações, imprimindo os valores de 0 a 4.',
+  'Correto! ✓ O while incrementa x enquanto x<3: 0→1→2→3. Quando x=3, a condição 3<3 é falsa e o loop encerra. Valor final: 3.',
+  'Correto! ✓ O do-while SEMPRE executa o bloco pelo menos 1 vez. Com n=5: executa (n vira 6), depois verifica 6<3 — falso. Encerra após 1 execução.'
+];
+
+const feedbacksErr2 = [
+  'Errado. ✗ nota=75 não atinge 90, mas atinge 70. A segunda condição (else if nota>=70) é verdadeira — o resultado é "Conceito B".',
+  'Errado. ✗ dia=5 não tem case correspondente. Quando nenhum case corresponde, o bloco default é executado: "Outro".',
+  'Errado. ✗ i vai de 0 até 4 (i<5). Contando: 0,1,2,3,4 — são exatamente 5 iterações.',
+  'Errado. ✗ x começa em 0 e é incrementado enquanto x<3: 0→1→2→3. Quando chega a 3, a condição 3<3 é falsa. Valor final: 3.',
+  'Errado. ✗ do-while garante 1 execução antes de verificar a condição. Mesmo que n=5 e 5<3 seja falso, o bloco executa 1 vez.'
+];
+
+function answer2(i, btn, isCorrect) {
+  if (answered2[i]) return;
+  answered2[i] = true;
+  const btns = btn.closest('.ex-block').querySelectorAll('.choice');
+  btns.forEach(b => b.disabled = true);
+  const fb    = document.getElementById('fb2-' + i);
+  const block = document.getElementById('ex2-' + i);
+  fb.classList.add('show');
+  if (isCorrect) {
+    btn.classList.add('correct');
+    fb.className   = 'feedback show ok';
+    fb.textContent = feedbacksOk2[i];
+    block.classList.add('done');
+    scores2++;
+  } else {
+    btn.classList.add('wrong');
+    fb.className   = 'feedback show ko';
+    fb.textContent = feedbacksErr2[i];
+    btns.forEach(b => { if (b !== btn) b.classList.add('correct'); });
+  }
+  document.getElementById('scoreVal2').textContent = scores2 + '/5';
+  document.getElementById('scoreBar2').style.width  = (scores2 / 5 * 100) + '%';
 }
 </script>
 </body>
