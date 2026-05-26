@@ -310,6 +310,16 @@ tr:hover td { background: rgba(141,98,255,.04); }
 /* ── INLINE CODE ── */
 .ic { background: rgba(141,98,255,.12); color: #5a30cc; padding: 1px 7px; border-radius: 4px; font-size: 12px; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
 
+/* ── ARRAY CELL ── */
+.arr-cell {
+  background: var(--surface2); border: 1.5px solid var(--border); border-radius: 10px;
+  padding: 12px 16px; cursor: pointer; min-width: 64px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.arr-cell:hover { border-color: var(--accent); box-shadow: var(--glow); }
+.arr-cell.selected { border-color: var(--accent); background: rgba(141,98,255,.12); box-shadow: var(--glow); }
+.arr-cell.selected > div:last-child { background: var(--grad); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
 footer { text-align: center; margin-top: 3rem; font-size: 11px; color: var(--muted); letter-spacing: .04em; }
 footer span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700; }
 
@@ -333,7 +343,8 @@ footer span { background: var(--grad); -webkit-background-clip: text; -webkit-te
 
   <div class="aula-bar">
     <button class="aula-tab active" onclick="showAula('aula01',this)">&#x1F4DA; Aula 01 &mdash; Introdução</button>
-    <button class="aula-tab" onclick="showAula('aula02',this)">&#x1F9E0; Aula 02 &mdash; Decisão</button>
+    <button class="aula-tab" onclick="showAula('aula02',this)">&#x1F9E0; Aula 02 e 03 &mdash; Decisão e Repetição</button>
+    <button class="aula-tab" onclick="showAula('aula04',this)">&#x1F9F5; Aula 04 &mdash; Arrays e Strings</button>
   </div>
 
   <!-- ═══════════════ AULA 01 ═══════════════ -->
@@ -1326,6 +1337,395 @@ System.out.<span class="mtd">println</span>(<span class="str">"Inicial: "</span>
 
   </div><!-- /aula02 -->
 
+  <!-- ═══════════════ AULA 04 ═══════════════ -->
+  <div id="aula04" class="aula-section">
+
+  <div class="tab-bar">
+    <button class="tab active"  onclick="showTab('resumo4',this,'aula04')">&#x1F4D8; Resumo</button>
+    <button class="tab"         onclick="showTab('simulador4',this,'aula04')">&#x26A1; Simulador</button>
+    <button class="tab"         onclick="showTab('exercicios4',this,'aula04')">&#x1F3AF; Exercícios</button>
+    <button class="tab"         onclick="showTab('questionarios4',this,'aula04')">&#x1F4DD; Questionários</button>
+    <button class="tab"         onclick="showTab('curiosidades4',this,'aula04')">&#x1F680; Curiosidades</button>
+    <button class="tab"         onclick="showTab('links4',this,'aula04')">&#x1F517; Links</button>
+  </div>
+
+  <!-- ═══ RESUMO 4 ═══ -->
+  <div id="resumo4" class="section active">
+
+    <div class="card">
+      <div class="card-title">O que é um Array? <span class="pill pill-java">Estrutura de Dados</span></div>
+      <p>Um array é uma <strong style="color:var(--text)">estrutura de dados que armazena uma coleção indexada de elementos do mesmo tipo</strong>. Útil quando precisamos trabalhar com múltiplos dados de forma organizada, sem declarar diversas variáveis separadas.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+        <span class="pill pill-blue">Mesmo Tipo</span>
+        <span class="pill pill-amber">Tamanho Fixo</span>
+        <span class="pill pill-green">Indexado a partir do 0</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Declaração e Acesso <span class="pill pill-blue">Sintaxe</span></div>
+      <p>Um array é declarado com <span class="ic">tipo[]</span> e os elementos são acessados pelo índice entre colchetes. O primeiro elemento sempre está na posição <strong style="color:var(--text)">índice 0</strong> e o último em <span class="ic">length - 1</span>.</p>
+      <div class="code-block"><span class="cmt">// Declaração com valores iniciais</span>
+<span class="kw">int</span>[] numeros = {<span class="num">10</span>, <span class="num">25</span>, <span class="num">37</span>, <span class="num">42</span>, <span class="num">56</span>};
+
+<span class="cmt">// Acessando elementos pelo índice</span>
+System.out.<span class="mtd">println</span>(numeros[<span class="num">0</span>]);     <span class="cmt">// 10 — primeiro elemento</span>
+System.out.<span class="mtd">println</span>(numeros[<span class="num">4</span>]);     <span class="cmt">// 56 — último elemento</span>
+System.out.<span class="mtd">println</span>(numeros.length); <span class="cmt">// 5  — tamanho do array</span>
+
+<span class="cmt">// Declaração com tamanho fixo (valores inicializados em 0)</span>
+<span class="kw">int</span>[] notas = <span class="kw">new int</span>[<span class="num">5</span>];</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Percorrendo Arrays <span class="pill pill-green">for e for-each</span></div>
+      <p>Use o laço <span class="ic">for</span> com índice quando precisar da posição, ou o <span class="ic">for-each</span> para percorrer todos os elementos de forma mais simples.</p>
+      <div class="code-block"><span class="kw">int</span>[] notas = {<span class="num">7</span>, <span class="num">9</span>, <span class="num">5</span>, <span class="num">8</span>, <span class="num">10</span>};
+
+<span class="cmt">// for com índice — acessa por posição</span>
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; notas.length; i++) {
+  System.out.<span class="mtd">println</span>(<span class="str">"Nota "</span> + i + <span class="str">": "</span> + notas[i]);
+}
+
+<span class="cmt">// for-each — mais simples, sem acesso ao índice</span>
+<span class="kw">for</span> (<span class="kw">int</span> nota : notas) {
+  System.out.<span class="mtd">println</span>(nota);
+}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">ArrayList — Arrays Dinâmicos <span class="pill pill-grad">java.util</span></div>
+      <p>Arrays tradicionais têm <strong style="color:var(--text)">tamanho fixo</strong>. O <strong style="color:var(--text)">ArrayList</strong> redimensiona automaticamente, sendo ideal quando o número de elementos não é conhecido antecipadamente.</p>
+      <div class="code-block"><span class="kw">import</span> java.util.<span class="cls">ArrayList</span>;
+
+<span class="cls">ArrayList</span>&lt;<span class="typ">Integer</span>&gt; numeros = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();
+
+numeros.<span class="mtd">add</span>(<span class="num">1</span>);                           <span class="cmt">// adiciona ao final</span>
+numeros.<span class="mtd">add</span>(<span class="num">2</span>);
+numeros.<span class="mtd">add</span>(<span class="num">3</span>);
+
+System.out.<span class="mtd">println</span>(numeros.<span class="mtd">get</span>(<span class="num">0</span>));    <span class="cmt">// 1  — acessa por índice</span>
+numeros.<span class="mtd">set</span>(<span class="num">1</span>, <span class="num">5</span>);                      <span class="cmt">// substitui posição 1 por 5</span>
+numeros.<span class="mtd">remove</span>(<span class="num">0</span>);                     <span class="cmt">// remove elemento no índice 0</span>
+System.out.<span class="mtd">println</span>(numeros.<span class="mtd">size</span>());   <span class="cmt">// tamanho atual da lista</span>
+
+<span class="kw">for</span> (<span class="kw">int</span> num : numeros) {
+  System.out.<span class="mtd">println</span>(num);
+}</div>
+      <div style="overflow-x:auto;margin-top:14px">
+        <table>
+          <tr><th>Método</th><th>Descrição</th><th>Exemplo</th></tr>
+          <tr><td><span class="ic">add(val)</span></td><td class="left">Adiciona ao final</td><td class="left"><span class="ic">lista.add(10)</span></td></tr>
+          <tr><td><span class="ic">get(i)</span></td><td class="left">Acessa pelo índice</td><td class="left"><span class="ic">lista.get(0)</span></td></tr>
+          <tr><td><span class="ic">set(i, val)</span></td><td class="left">Substitui na posição i</td><td class="left"><span class="ic">lista.set(1, 5)</span></td></tr>
+          <tr><td><span class="ic">remove(i)</span></td><td class="left">Remove na posição i</td><td class="left"><span class="ic">lista.remove(0)</span></td></tr>
+          <tr><td><span class="ic">size()</span></td><td class="left">Retorna o tamanho</td><td class="left"><span class="ic">lista.size()</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Arrays Multidimensionais <span class="pill pill-blue">Matrizes</span></div>
+      <p>Um array bidimensional funciona como uma <strong style="color:var(--text)">tabela de linhas e colunas</strong>. O acesso usa dois índices: <span class="ic">matriz[linha][coluna]</span>.</p>
+      <div class="code-block"><span class="kw">int</span>[][] matriz = {
+  {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>},
+  {<span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>},
+  {<span class="num">7</span>, <span class="num">8</span>, <span class="num">9</span>}
+};
+
+System.out.<span class="mtd">println</span>(matriz[<span class="num">0</span>][<span class="num">0</span>]); <span class="cmt">// 1 — linha 0, coluna 0</span>
+System.out.<span class="mtd">println</span>(matriz[<span class="num">1</span>][<span class="num">2</span>]); <span class="cmt">// 6 — linha 1, coluna 2</span>
+System.out.<span class="mtd">println</span>(matriz[<span class="num">2</span>][<span class="num">1</span>]); <span class="cmt">// 8 — linha 2, coluna 1</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">String em Java <span class="pill pill-grad">Classe especial</span></div>
+      <p>Em Java, <strong style="color:var(--text)">String é uma classe</strong> usada para representar texto. Strings são <strong style="color:var(--text)">objetos imutáveis</strong> — cada operação que parece alterá-la na verdade cria um novo objeto na memória.</p>
+      <div class="code-block"><span class="cmt">// Forma 1 — literal (mais comum e eficiente)</span>
+<span class="typ">String</span> nome = <span class="str">"Maria"</span>;
+
+<span class="cmt">// Forma 2 — via construtor (evite quando possível)</span>
+<span class="typ">String</span> sobrenome = <span class="kw">new</span> <span class="cls">String</span>(<span class="str">"Silva"</span>);</div>
+      <p style="font-size:12px;margin-top:10px;color:var(--muted)">Prefira sempre a <strong style="color:var(--text)">Forma 1</strong> — o Java reutiliza strings literais de um pool de memória compartilhado, consumindo menos recursos.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Principais Métodos de String <span class="pill pill-green">Referência rápida</span></div>
+      <div style="overflow-x:auto;margin-top:10px">
+        <table>
+          <tr><th>Método</th><th>Descrição</th><th>Resultado</th></tr>
+          <tr><td><span class="ic">length()</span></td><td class="left">Tamanho da string</td><td class="left"><span class="ic">"Java".length()</span> → 4</td></tr>
+          <tr><td><span class="ic">charAt(i)</span></td><td class="left">Caractere na posição i</td><td class="left"><span class="ic">"Java".charAt(2)</span> → 'v'</td></tr>
+          <tr><td><span class="ic">+ / concat()</span></td><td class="left">Concatenação de strings</td><td class="left"><span class="ic">"Olá, " + "João"</span> → "Olá, João"</td></tr>
+          <tr><td><span class="ic">toUpperCase()</span></td><td class="left">Converte para maiúsculas</td><td class="left"><span class="ic">"java".toUpperCase()</span> → "JAVA"</td></tr>
+          <tr><td><span class="ic">toLowerCase()</span></td><td class="left">Converte para minúsculas</td><td class="left"><span class="ic">"JAVA".toLowerCase()</span> → "java"</td></tr>
+          <tr><td><span class="ic">contains(s)</span></td><td class="left">Contém a substring s?</td><td class="left"><span class="ic">"Java".contains("av")</span> → true</td></tr>
+          <tr><td><span class="ic">startsWith(s)</span></td><td class="left">Começa com s?</td><td class="left"><span class="ic">"Java".startsWith("Ja")</span> → true</td></tr>
+          <tr><td><span class="ic">endsWith(s)</span></td><td class="left">Termina com s?</td><td class="left"><span class="ic">"Java".endsWith("va")</span> → true</td></tr>
+          <tr><td><span class="ic">substring(i)</span></td><td class="left">Extrai do índice i até o fim</td><td class="left"><span class="ic">"Hello World".substring(6)</span> → "World"</td></tr>
+          <tr><td><span class="ic">substring(i,j)</span></td><td class="left">Extrai do índice i até j-1</td><td class="left"><span class="ic">"Hello World".substring(0,5)</span> → "Hello"</td></tr>
+          <tr><td><span class="ic">trim()</span></td><td class="left">Remove espaços no início/fim</td><td class="left"><span class="ic">" texto ".trim()</span> → "texto"</td></tr>
+          <tr><td><span class="ic">split(sep)</span></td><td class="left">Divide por separador</td><td class="left"><span class="ic">"a-b-c".split("-")</span> → ["a","b","c"]</td></tr>
+          <tr><td><span class="ic">equals(s)</span></td><td class="left">Compara (case-sensitive)</td><td class="left"><span class="ic">"java".equals("Java")</span> → false</td></tr>
+          <tr><td><span class="ic">equalsIgnoreCase(s)</span></td><td class="left">Compara (ignora maiúsc.)</td><td class="left"><span class="ic">"java".equalsIgnoreCase("Java")</span> → true</td></tr>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /resumo4 -->
+
+  <!-- ═══ SIMULADOR 4 ═══ -->
+  <div id="simulador4" class="section">
+
+    <div class="card">
+      <div class="card-title">Visualizador de Array <span class="pill pill-grad">Interativo</span></div>
+      <p>Clique em um índice para inspecionar o elemento do array e ver a expressão Java correspondente.</p>
+      <div class="calc-box" style="margin-top:16px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted);margin-bottom:12px">
+          <span class="ic">int[] numeros = {10, 25, 37, 42, 56};</span>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px" id="arrBoxes">
+          <div class="arr-cell" data-i="0" data-v="10" onclick="selectArr(this)">
+            <div style="font-size:10px;color:var(--muted);text-align:center;margin-bottom:3px;font-family:'JetBrains Mono',monospace">[0]</div>
+            <div style="font-size:20px;font-weight:700;text-align:center;font-family:'JetBrains Mono',monospace;color:var(--text)">10</div>
+          </div>
+          <div class="arr-cell" data-i="1" data-v="25" onclick="selectArr(this)">
+            <div style="font-size:10px;color:var(--muted);text-align:center;margin-bottom:3px;font-family:'JetBrains Mono',monospace">[1]</div>
+            <div style="font-size:20px;font-weight:700;text-align:center;font-family:'JetBrains Mono',monospace;color:var(--text)">25</div>
+          </div>
+          <div class="arr-cell" data-i="2" data-v="37" onclick="selectArr(this)">
+            <div style="font-size:10px;color:var(--muted);text-align:center;margin-bottom:3px;font-family:'JetBrains Mono',monospace">[2]</div>
+            <div style="font-size:20px;font-weight:700;text-align:center;font-family:'JetBrains Mono',monospace;color:var(--text)">37</div>
+          </div>
+          <div class="arr-cell" data-i="3" data-v="42" onclick="selectArr(this)">
+            <div style="font-size:10px;color:var(--muted);text-align:center;margin-bottom:3px;font-family:'JetBrains Mono',monospace">[3]</div>
+            <div style="font-size:20px;font-weight:700;text-align:center;font-family:'JetBrains Mono',monospace;color:var(--text)">42</div>
+          </div>
+          <div class="arr-cell" data-i="4" data-v="56" onclick="selectArr(this)">
+            <div style="font-size:10px;color:var(--muted);text-align:center;margin-bottom:3px;font-family:'JetBrains Mono',monospace">[4]</div>
+            <div style="font-size:20px;font-weight:700;text-align:center;font-family:'JetBrains Mono',monospace;color:var(--text)">56</div>
+          </div>
+        </div>
+        <div id="arrResult" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted)">
+          Clique em uma célula do array acima para inspecioná-la.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Laboratório de String <span class="pill pill-green">Interativo</span></div>
+      <p>Digite qualquer texto e veja os resultados dos principais métodos de String em tempo real.</p>
+      <div class="calc-box" style="margin-top:16px">
+        <div class="calc-inputs" style="margin-bottom:14px">
+          <input class="calc-input" type="text" id="strInput" value="Java é incrível!" oninput="updateStrLab()" style="font-size:15px;text-align:left;flex:1"/>
+        </div>
+        <div id="strLabResult" class="calc-results"></div>
+      </div>
+    </div>
+
+  </div><!-- /simulador4 -->
+
+  <!-- ═══ EXERCÍCIOS 4 ═══ -->
+  <div id="exercicios4" class="section">
+
+    <div class="score-bar-area">
+      <div>
+        <div class="score-val" id="scoreVal4">0/5</div>
+        <div class="score-label">acertos</div>
+      </div>
+      <div class="score-track"><div class="score-fill" id="scoreBar4"></div></div>
+    </div>
+
+    <div class="ex-block" id="ex4-0">
+      <div style="margin-bottom:8px"><span class="pill pill-blue">Exercício 1</span></div>
+      <div class="ex-q">Qual é o índice do <strong>primeiro elemento</strong> de um array em Java?</div>
+      <div class="ex-scenario">Dado <span class="ic">int[] numeros = {10, 25, 37};</span> — como acessamos o valor <strong>10</strong>?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer4(0,this,true)">0</button>
+        <button class="choice" onclick="answer4(0,this,false)">1</button>
+        <button class="choice" onclick="answer4(0,this,false)">-1</button>
+        <button class="choice" onclick="answer4(0,this,false)">Depende do tipo</button>
+      </div>
+      <div class="feedback" id="fb4-0"></div>
+    </div>
+
+    <div class="ex-block" id="ex4-1">
+      <div style="margin-bottom:8px"><span class="pill pill-blue">Exercício 2</span></div>
+      <div class="ex-q">O que <span class="ic">int[] notas = new int[3];</span> cria?</div>
+      <div class="ex-scenario">O operador <strong>new</strong> aloca memória para o array. Em Java, cada tipo tem um valor padrão de inicialização. Para <strong>int</strong>, qual é esse valor?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer4(1,this,true)">Array de 3 inteiros, todos iniciados em 0</button>
+        <button class="choice" onclick="answer4(1,this,false)">Array de 3 posições com valores aleatórios</button>
+        <button class="choice" onclick="answer4(1,this,false)">Uma lista dinâmica de inteiros</button>
+        <button class="choice" onclick="answer4(1,this,false)">Erro de compilação</button>
+      </div>
+      <div class="feedback" id="fb4-1"></div>
+    </div>
+
+    <div class="ex-block" id="ex4-2">
+      <div style="margin-bottom:8px"><span class="pill pill-blue">Exercício 3</span></div>
+      <div class="ex-q">Qual método do <span class="ic">ArrayList</span> adiciona um novo elemento ao final da lista?</div>
+      <div class="ex-scenario">No ArrayList, usamos um método específico para inserir elementos. Ele é diferente do que outras linguagens chamam de <em>push</em> ou <em>append</em>.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer4(2,this,true)">add()</button>
+        <button class="choice" onclick="answer4(2,this,false)">insert()</button>
+        <button class="choice" onclick="answer4(2,this,false)">push()</button>
+        <button class="choice" onclick="answer4(2,this,false)">append()</button>
+      </div>
+      <div class="feedback" id="fb4-2"></div>
+    </div>
+
+    <div class="ex-block" id="ex4-3">
+      <div style="margin-bottom:8px"><span class="pill pill-blue">Exercício 4</span></div>
+      <div class="ex-q">O que <span class="ic">"Java".length()</span> retorna?</div>
+      <div class="ex-scenario">O método <strong>length()</strong> conta todos os caracteres da string, um a um. Conte: J, a, v, a — quantos são?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer4(3,this,true)">4</button>
+        <button class="choice" onclick="answer4(3,this,false)">5</button>
+        <button class="choice" onclick="answer4(3,this,false)">3</button>
+        <button class="choice" onclick="answer4(3,this,false)">6</button>
+      </div>
+      <div class="feedback" id="fb4-3"></div>
+    </div>
+
+    <div class="ex-block" id="ex4-4">
+      <div style="margin-bottom:8px"><span class="pill pill-amber">Exercício 5 — Desafio</span></div>
+      <div class="ex-q">Qual é o resultado de <span class="ic">"java".equals("Java")</span>?</div>
+      <div class="ex-scenario">O método <strong>equals()</strong> é <em>case-sensitive</em>: ele diferencia maiúsculas de minúsculas. Compare as duas strings letra por letra: "java" vs "Java" — são idênticas?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer4(4,this,true)">false</button>
+        <button class="choice" onclick="answer4(4,this,false)">true</button>
+        <button class="choice" onclick="answer4(4,this,false)">null</button>
+        <button class="choice" onclick="answer4(4,this,false)">Erro em execução</button>
+      </div>
+      <div class="feedback" id="fb4-4"></div>
+    </div>
+
+  </div><!-- /exercicios4 -->
+
+  <!-- ═══ QUESTIONÁRIOS 4 ═══ -->
+  <div id="questionarios4" class="section">
+    <div class="card">
+      <div class="card-title">Questionários <span class="pill pill-grad">Prática</span></div>
+      <p>Teste seu conhecimento sobre os conteúdos da Aula 04 com questões de verdadeiro ou falso. Cada questão traz uma explicação detalhada ao final.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Quiz — Arrays e ArrayList <span class="pill pill-green">10 questões</span></div>
+      <p>Conceitos essenciais: declaração de arrays, acesso por índice, tamanho fixo, ArrayList e suas principais operações.</p>
+      <a class="grad-btn" href="questoes-aula04-1.html" style="text-decoration:none">Abrir questionário &rarr;</a>
+    </div>
+    <div class="card">
+      <div class="card-title">Quiz — Strings <span class="pill pill-blue">10 questões</span></div>
+      <p>Operações com strings: <strong style="color:var(--text)">length, charAt, concat, substring, split, equals, contains</strong> e comportamento de imutabilidade.</p>
+      <a class="grad-btn" href="questoes-aula04-2.html" style="text-decoration:none">Abrir questionário &rarr;</a>
+    </div>
+    <div class="card">
+      <div class="card-title">Implementação em Java <span class="pill pill-red">5 questões</span></div>
+      <p>Exercícios de implementação prática: escreva código Java real usando <strong style="color:var(--text)">arrays, ArrayList e manipulação de Strings</strong>. As soluções são reveladas sob demanda.</p>
+      <a class="grad-btn" href="questoes-aula04-implementacao.html" style="text-decoration:none">Abrir questionário &rarr;</a>
+    </div>
+  </div><!-- /questionarios4 -->
+
+  <!-- ═══ CURIOSIDADES 4 ═══ -->
+  <div id="curiosidades4" class="section">
+    <div class="card">
+      <div class="card-title">Curiosidades sobre Arrays e Strings &#x1F9F5;</div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x30;</div>
+        <div>
+          <div class="curi-title">Por que arrays começam no índice 0?</div>
+          <div class="curi-body">O índice 0 tem origem na aritmética de ponteiros: o índice representa o <strong>deslocamento</strong> em relação ao início do array na memória. O primeiro elemento está a "0 posições" do início. O matemático Dijkstra também argumentou que começar em 0 torna as expressões de faixa (<code>0 ≤ i &lt; n</code>) mais elegantes e menos propensas a erros.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F512;</div>
+        <div>
+          <div class="curi-title">Strings são imutáveis — mas por quê?</div>
+          <div class="curi-body">A imutabilidade de String em Java é uma decisão de design intencional: permite que a JVM reutilize objetos String em um <strong>String Pool</strong>, economizando memória. Também torna Strings <em>thread-safe</em> por natureza — múltiplas threads podem compartilhar a mesma string sem risco de corrupção de dados.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F4C8;</div>
+        <div>
+          <div class="curi-title">ArrayList dobra de tamanho automaticamente</div>
+          <div class="curi-body">Internamente, o ArrayList usa um array comum. Quando esse array fica cheio, o ArrayList cria um novo array com o <strong>dobro da capacidade</strong> e copia todos os elementos. Isso acontece de forma transparente. Por isso, é recomendado inicializar o ArrayList com uma capacidade estimada quando o número de elementos for conhecido: <code>new ArrayList&lt;&gt;(100)</code>.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x26A0;</div>
+        <div>
+          <div class="curi-title">Nunca compare Strings com == em Java</div>
+          <div class="curi-body">O operador <code>==</code> compara <strong>referências de memória</strong>, não o conteúdo. Duas strings com o mesmo texto podem estar em endereços de memória diferentes. Use sempre <code>equals()</code> para comparar conteúdo: <code>a.equals(b)</code>. É um dos erros mais comuns de iniciantes em Java!</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x26A1;</div>
+        <div>
+          <div class="curi-title">StringBuilder é muito mais rápido que String +</div>
+          <div class="curi-body">Como strings são imutáveis, cada uso de <code>+</code> cria um novo objeto. Em loops com muitas concatenações, isso gera um enorme consumo de memória. A classe <strong>StringBuilder</strong> resolve isso acumulando as partes antes de criar a string final: <code>sb.append("texto")</code>. Em 10.000 concatenações, pode ser <em>100x mais rápido</em>.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F4CA;</div>
+        <div>
+          <div class="curi-title">String é a classe mais usada em Java</div>
+          <div class="curi-body">Praticamente todo programa Java manipula strings — nomes, mensagens, arquivos, URLs, JSON. A classe <code>String</code> possui mais de <strong>60 métodos</strong> na sua API. Além dos métodos de instância, a classe <code>String</code> também oferece métodos estáticos úteis como <code>String.format()</code> para formatar texto com precisão.</div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /curiosidades4 -->
+
+  <!-- ═══ LINKS 4 ═══ -->
+  <div id="links4" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F4DA; Documentação Oficial</div>
+      <table>
+        <tr><th>Nome</th><th>Link</th></tr>
+        <tr>
+          <td class="left">Java Tutorial — Arrays</td>
+          <td class="left"><a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/arrays.html" target="_blank" class="link-item">Oracle Docs</a></td>
+        </tr>
+        <tr>
+          <td class="left">ArrayList — Java 21 API</td>
+          <td class="left"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ArrayList.html" target="_blank" class="link-item">Oracle Docs</a></td>
+        </tr>
+        <tr>
+          <td class="left">String — Java 21 API</td>
+          <td class="left"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" target="_blank" class="link-item">Oracle Docs</a></td>
+        </tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">&#x1F310; Praticar Online</div>
+      <table>
+        <tr><th>Nome</th><th>Link</th></tr>
+        <tr>
+          <td class="left">JDoodle — Compilador Java Online</td>
+          <td class="left"><a href="https://www.jdoodle.com/online-java-compiler" target="_blank" class="link-item">Acessar</a></td>
+        </tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">&#x1F4E6; Instaladores</div>
+      <table>
+        <tr><th>Nome</th><th>Link</th></tr>
+        <tr>
+          <td class="left">Netbeans</td>
+          <td class="left"><a href="https://netbeans.apache.org/front/main/download/nb29/" target="_blank" class="link-item">Página de Download</a></td>
+        </tr>
+      </table>
+    </div>
+  </div><!-- /links4 -->
+
+  </div><!-- /aula04 -->
+
   <footer>
     Material didático desenvolvido para <span>Capacita Brasil</span> &nbsp;&mdash;&nbsp; iRede &nbsp;&middot;&nbsp; Desenvolvimento Java
   </footer>
@@ -1445,6 +1845,89 @@ function answer(i, btn, isCorrect) {
   }
   document.getElementById('scoreVal').textContent = scores + '/5';
   document.getElementById('scoreBar').style.width  = (scores / 5 * 100) + '%';
+}
+
+// ── AULA 04 — SIMULADORES ────────────────────────────────────────────────────
+
+function selectArr(cell) {
+  document.querySelectorAll('.arr-cell').forEach(c => c.classList.remove('selected'));
+  cell.classList.add('selected');
+  const i = cell.dataset.i;
+  const v = cell.dataset.v;
+  document.getElementById('arrResult').innerHTML =
+    '<span style="color:#cba6f7">int</span>[] numeros = {10, 25, 37, 42, 56};<br/><br/>' +
+    '<span style="color:#cba6f7">numeros</span>[<span style="color:#fab387">' + i + '</span>]' +
+    ' &nbsp;<span style="color:var(--muted)">→</span>&nbsp; ' +
+    '<strong style="font-size:20px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">' + v + '</strong>' +
+    '<br/><br/><span style="color:var(--muted);font-size:11px">numeros.length = 5 &nbsp;|&nbsp; índice ' + i + ' de 0 a 4</span>';
+}
+
+function updateStrLab() {
+  const s = document.getElementById('strInput').value;
+  const safe = s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const methods = [
+    { op: 'length()',         val: s.length,                                   expr: safe + '.length()' },
+    { op: 'charAt(0)',        val: s.length ? "'" + s.charAt(0) + "'" : '—',   expr: safe + '.charAt(0)' },
+    { op: 'toUpperCase()',    val: s.toUpperCase(),                             expr: safe + '.toUpperCase()' },
+    { op: 'toLowerCase()',    val: s.toLowerCase(),                             expr: safe + '.toLowerCase()' },
+    { op: 'trim()',           val: '"' + s.trim() + '"',                        expr: safe + '.trim()' },
+    { op: 'contains("Java")',val: s.includes('Java'),                           expr: safe + '.contains("Java")' },
+    { op: 'startsWith(s[0])', val: s.length ? s.startsWith(s[0]) : '—',        expr: safe + '.startsWith("' + (s[0]||'') + '")' },
+    { op: 'substring(0,4)',  val: s.length >= 4 ? '"' + s.substring(0,4) + '"' : '"' + s + '"', expr: safe + '.substring(0,4)' },
+  ];
+  document.getElementById('strLabResult').innerHTML = methods.map(m =>
+    '<div class="calc-result-item">' +
+      '<div class="calc-op">' + m.op + '</div>' +
+      '<div class="calc-val" style="font-size:14px;word-break:break-all">' + m.val + '</div>' +
+    '</div>'
+  ).join('');
+}
+
+updateStrLab();
+
+// ── AULA 04 — EXERCÍCIOS ─────────────────────────────────────────────────────
+
+let scores4 = 0;
+const answered4 = [false, false, false, false, false];
+
+const feedbacksOk4 = [
+  'Correto! ✓ Em Java, arrays sempre começam no índice 0. numeros[0] retorna o primeiro elemento — neste caso, 10.',
+  'Correto! ✓ new int[3] cria um array de 3 posições. Em Java, inteiros são inicializados em 0 automaticamente — o valor padrão do tipo int.',
+  'Correto! ✓ O método add() insere elementos no final do ArrayList. Diferente de arrays tradicionais, o tamanho é ajustado automaticamente.',
+  'Correto! ✓ "Java" tem 4 caracteres: J, a, v, a. O método length() conta todos os caracteres, incluindo espaços e acentos.',
+  'Correto! ✓ equals() é case-sensitive. "java" ≠ "Java" (a primeira letra difere em maiúsculo/minúsculo), então o resultado é false. Use equalsIgnoreCase() para ignorar o caso.'
+];
+
+const feedbacksErr4 = [
+  'Errado. ✗ Arrays em Java são indexados a partir do zero. numeros[0] acessa o primeiro elemento, não numeros[1]. Este é um dos primeiros conceitos que todo programador precisa memorizar!',
+  'Errado. ✗ new int[3] cria um array de 3 posições e inicializa todos os valores em 0 (valor padrão do tipo int). Os valores não são aleatórios — o Java garante a inicialização.',
+  'Errado. ✗ Em Java, o método correto do ArrayList para adicionar elementos é add(). Os métodos insert(), push() e append() não existem na classe ArrayList do Java.',
+  'Errado. ✗ Conte os caracteres de "Java": J-a-v-a = 4 caracteres. length() retorna exatamente 4. Lembre: os índices vão de 0 a 3, mas o tamanho é 4.',
+  'Errado. ✗ equals() diferencia maiúsculas de minúsculas (é case-sensitive). "java" começa com minúsculo e "Java" com maiúsculo — são strings diferentes, então o resultado é false.'
+];
+
+function answer4(i, btn, isCorrect) {
+  if (answered4[i]) return;
+  answered4[i] = true;
+  const btns = btn.closest('.ex-block').querySelectorAll('.choice');
+  btns.forEach(b => b.disabled = true);
+  const fb    = document.getElementById('fb4-' + i);
+  const block = document.getElementById('ex4-' + i);
+  fb.classList.add('show');
+  if (isCorrect) {
+    btn.classList.add('correct');
+    fb.className   = 'feedback show ok';
+    fb.textContent = feedbacksOk4[i];
+    block.classList.add('done');
+    scores4++;
+  } else {
+    btn.classList.add('wrong');
+    fb.className   = 'feedback show ko';
+    fb.textContent = feedbacksErr4[i];
+    btns.forEach(b => { if (b !== btn) b.classList.add('correct'); });
+  }
+  document.getElementById('scoreVal4').textContent = scores4 + '/5';
+  document.getElementById('scoreBar4').style.width  = (scores4 / 5 * 100) + '%';
 }
 
 // ── AULA 02 — SIMULADORES ────────────────────────────────────────────────────
