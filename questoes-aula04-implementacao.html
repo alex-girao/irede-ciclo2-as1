@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Implementação Java — Arrays e Strings</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:          #f0f0f5;
+  --surface:     #ffffff;
+  --border:      #d8d5e8;
+  --accent:      #8d62ff;
+  --accent2:     #00c896;
+  --text:        #1a1730;
+  --muted:       #7a748f;
+  --green:       #155e35;
+  --green-bg:    #d6f5e5;
+  --green-border:#6edaa8;
+  --radius:      10px;
+  --glow:        0 0 18px rgba(141,98,255,0.15);
+  --grad:        linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
+  --surface2:    #f7f5ff;
+  --danger:      #d63030;
+  --warn:        #d48a00;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  padding: 0 0 60px;
+  background-image:
+    radial-gradient(ellipse 70% 40% at 50% -10%, rgba(141,98,255,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 30% at 80% 110%, rgba(0,200,150,0.06) 0%, transparent 70%);
+}
+
+header {
+  text-align: center;
+  padding: 36px 20px 28px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  background: var(--surface);
+  box-shadow: 0 2px 16px rgba(141,98,255,0.07);
+}
+header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 2px;
+  background: linear-gradient(90deg, transparent, #8d62ff, transparent);
+}
+.header-logo { height: 48px; margin-bottom: 14px; display: block; margin-left: auto; margin-right: auto; }
+.logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+  font-weight: 700; letter-spacing: -0.5px;
+  background: var(--grad);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.logo span { opacity: 0.6; }
+.subtitle { color: var(--muted); font-size: .85rem; margin-top: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
+.header-badge {
+  display: inline-block; margin-top: 12px; padding: 4px 16px; border-radius: 99px;
+  font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace;
+  background: linear-gradient(270deg, rgba(141,98,255,.15), rgba(0,255,188,.1));
+  border: 1px solid rgba(141,98,255,.3); color: var(--accent); letter-spacing: .06em;
+}
+
+.wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+.back-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--muted); font-size: 13px; text-decoration: none;
+  font-family: 'JetBrains Mono', monospace; margin-bottom: 1.5rem;
+  transition: color .15s;
+}
+.back-link:hover { color: var(--accent); }
+
+.info-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem 1.5rem; margin-bottom: 1.75rem;
+  box-shadow: 0 2px 8px rgba(141,98,255,0.06); position: relative; overflow: hidden;
+}
+.info-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(141,98,255,.35), transparent);
+}
+.info-card-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700;
+  margin-bottom: .6rem; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.info-card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+.pill { display: inline-block; padding: 3px 11px; border-radius: 99px; font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+.pill-grad  { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.3);  color: var(--accent); }
+.pill-green { background: rgba(0,200,150,.12);  border: 1px solid rgba(0,200,150,.3);   color: #0a7a5a; }
+.pill-amber { background: rgba(212,138,0,.1);   border: 1px solid rgba(212,138,0,.25);  color: var(--warn); }
+.pill-red   { background: rgba(214,48,48,.1);   border: 1px solid rgba(214,48,48,.25);  color: var(--danger); }
+.pill-blue  { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.25); color: #5a30cc; }
+
+.ex-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  margin-bottom: 1.5rem; overflow: hidden;
+  box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.ex-header {
+  padding: 1.1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  background: var(--surface2);
+}
+.ex-number {
+  font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700;
+  background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  min-width: 36px;
+}
+.ex-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700; color: var(--text); flex: 1;
+}
+.ex-body { padding: 1.25rem 1.5rem; }
+.ex-enunciado {
+  font-size: 14px; color: var(--text); line-height: 1.75; margin-bottom: 1rem;
+}
+.ex-enunciado strong { color: var(--accent); }
+.ex-requisitos {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 14px 16px; margin-bottom: 1.25rem;
+}
+.ex-requisitos-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  color: var(--muted); letter-spacing: .07em; text-transform: uppercase; margin-bottom: 10px;
+}
+.ex-requisitos ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.ex-requisitos li {
+  font-size: 13px; color: var(--muted); display: flex; align-items: flex-start; gap: 8px; line-height: 1.55;
+}
+.ex-requisitos li::before {
+  content: '›'; color: var(--accent); font-weight: 700; font-size: 16px;
+  line-height: 1; flex-shrink: 0; margin-top: 1px;
+}
+.ic { background: rgba(141,98,255,.12); color: #5a30cc; padding: 1px 6px; border-radius: 4px; font-size: 12px; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+.reveal-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 22px; border-radius: 8px; border: 1.5px solid var(--accent);
+  background: transparent; color: var(--accent);
+  cursor: pointer; font-size: 13px; font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  transition: all .2s; margin-bottom: 0;
+}
+.reveal-btn:hover { background: rgba(141,98,255,.1); transform: translateY(-1px); box-shadow: var(--glow); }
+.reveal-btn.revealed {
+  background: var(--grad); color: #fff; border-color: transparent;
+  box-shadow: 0 3px 14px rgba(141,98,255,.3);
+}
+.reveal-btn svg { transition: transform .3s; }
+.reveal-btn.revealed svg { transform: rotate(180deg); }
+
+.solution-area { margin-top: 1rem; display: none; }
+.solution-area.visible { display: block; }
+.solution-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  color: var(--muted); letter-spacing: .07em; text-transform: uppercase;
+  margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+}
+.solution-label::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); }
+
+.code-block {
+  background: #1e1e2e; border: 1px solid #3a3a5c; border-radius: 10px;
+  padding: 18px 20px; font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; line-height: 1.85; color: #cdd6f4; overflow-x: auto; white-space: pre;
+}
+.code-block .kw  { color: #cba6f7; }
+.code-block .typ { color: #89b4fa; }
+.code-block .str { color: #a6e3a1; }
+.code-block .num { color: #fab387; }
+.code-block .cmt { color: #6c7086; font-style: italic; }
+.code-block .cls { color: #f5c2e7; }
+.code-block .mtd { color: #89dceb; }
+
+.output-block {
+  background: #12121e; border: 1px solid #2a2a40; border-radius: 8px;
+  padding: 14px 18px; margin-top: 10px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.8;
+  color: #a6e3a1; overflow-x: auto; white-space: pre;
+}
+.output-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  color: var(--muted); letter-spacing: .07em; text-transform: uppercase;
+  margin: 12px 0 6px; display: flex; align-items: center; gap: 6px;
+}
+.output-label::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #a6e3a1; }
+
+.diff-bar { display: flex; gap: 4px; align-items: center; }
+.diff-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); }
+.diff-dot.filled-easy   { background: #00c896; }
+.diff-dot.filled-medium { background: #d48a00; }
+
+.progress-area {
+  display: flex; align-items: center; gap: 16px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px 18px; margin-bottom: 1.75rem; box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.progress-val {
+  font-size: 28px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+  background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  min-width: 50px;
+}
+.progress-label { font-size: 11px; color: var(--muted); }
+.progress-track { flex: 1; background: #e5e2f0; border-radius: 99px; height: 8px; overflow: hidden; }
+.progress-fill  { height: 100%; border-radius: 99px; background: var(--grad); width: 0%; transition: width .4s cubic-bezier(.4,0,.2,1); }
+
+.tip-box {
+  margin-top: 12px; padding: 12px 14px;
+  background: rgba(141,98,255,.08); border: 1px solid rgba(141,98,255,.2);
+  border-radius: 8px; font-size: 13px; color: var(--muted); line-height: 1.65;
+}
+
+footer { text-align: center; margin-top: 3rem; font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+footer span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700; }
+
+@media (max-width: 540px) {
+  .ex-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .code-block { font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img class="header-logo" src="https://capacitabrasil.irede.org.br/assets/capacitaLogo-Ct3BEyem.png" alt="Capacita Brasil"/>
+  <div class="logo">&#x2615; <span>//</span> Java</div>
+  <div class="subtitle">Desenvolvimento Java &mdash; Aula 04</div>
+  <div class="header-badge">Questões de Implementação</div>
+</header>
+
+<div class="wrap">
+
+  <a class="back-link" href="index.html">&#x2190; Voltar para a Aula 04</a>
+
+  <div class="info-card">
+    <div class="info-card-title">
+      Implementação em Java
+      <span class="pill pill-grad">5 questões</span>
+      <span class="pill pill-green">Nível Básico</span>
+    </div>
+    <p>Pratique escrevendo código Java real. Cada questão apresenta um problema a ser resolvido com os conceitos da Aula 04: <strong style="color:var(--text)">arrays, ArrayList e manipulação de Strings</strong>. Leia o enunciado, tente resolver por conta própria e depois revele a solução para conferir.</p>
+  </div>
+
+  <div class="progress-area">
+    <div>
+      <div class="progress-val" id="progressVal">0/5</div>
+      <div class="progress-label">reveladas</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <!-- ═══════════ QUESTÃO 1 ═══════════ -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-number">1)</div>
+      <div class="ex-title">Percorrer Array com for</div>
+      <span class="pill pill-green">Básico</span>
+      <div class="diff-bar" title="Dificuldade: Básico">
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot"></div>
+        <div class="diff-dot"></div>
+        <div class="diff-dot"></div>
+        <div class="diff-dot"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="ex-enunciado">
+        Crie um programa Java chamado <strong>PercorrerArray</strong> que declare um array de notas e percorra-o com um laço <strong>for</strong>, imprimindo cada elemento com seu respectivo índice.
+      </div>
+      <div class="ex-requisitos">
+        <div class="ex-requisitos-title">Requisitos</div>
+        <ul>
+          <li>Declare <span class="ic">int[] notas = {7, 9, 5, 8, 10}</span></li>
+          <li>Use um laço <span class="ic">for</span> com índice para percorrer o array</li>
+          <li>Em cada iteração, imprima o índice e o valor no formato <span class="ic">Nota[i]: valor</span></li>
+          <li>Após o laço, imprima o total de notas usando <span class="ic">notas.length</span></li>
+        </ul>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(1, this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Ver solução
+      </button>
+      <div class="solution-area" id="sol1">
+        <div class="solution-label">Solução</div>
+        <div class="code-block"><span class="kw">public class</span> <span class="cls">PercorrerArray</span> {
+
+  <span class="kw">public static void</span> <span class="mtd">main</span>(<span class="typ">String</span>[] args) {
+    <span class="kw">int</span>[] notas = {<span class="num">7</span>, <span class="num">9</span>, <span class="num">5</span>, <span class="num">8</span>, <span class="num">10</span>};
+
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; notas.length; i++) {
+      System.out.<span class="mtd">println</span>(<span class="str">"Nota["</span> + i + <span class="str">"]: "</span> + notas[i]);
+    }
+
+    System.out.<span class="mtd">println</span>(<span class="str">"Total de notas: "</span> + notas.length);
+  }
+
+}</div>
+        <div class="output-label">Saída esperada no console</div>
+        <div class="output-block">Nota[0]: 7
+Nota[1]: 9
+Nota[2]: 5
+Nota[3]: 8
+Nota[4]: 10
+Total de notas: 5</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ QUESTÃO 2 ═══════════ -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-number">2)</div>
+      <div class="ex-title">Calcular Média de um Array</div>
+      <span class="pill pill-green">Básico</span>
+      <div class="diff-bar" title="Dificuldade: Básico">
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot"></div>
+        <div class="diff-dot"></div>
+        <div class="diff-dot"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="ex-enunciado">
+        Crie um programa Java chamado <strong>MediaNotas</strong> que some todos os elementos de um array de notas usando um laço e calcule a média, exibindo a soma e o resultado final.
+      </div>
+      <div class="ex-requisitos">
+        <div class="ex-requisitos-title">Requisitos</div>
+        <ul>
+          <li>Declare <span class="ic">int[] notas = {6, 8, 7, 9, 10}</span></li>
+          <li>Declare <span class="ic">int soma = 0</span> antes do laço</li>
+          <li>Use um <span class="ic">for</span> para acumular a soma de todos os elementos</li>
+          <li>Calcule a média: <span class="ic">double media = (double) soma / notas.length</span></li>
+          <li>Imprima a soma e a média</li>
+        </ul>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(2, this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Ver solução
+      </button>
+      <div class="solution-area" id="sol2">
+        <div class="solution-label">Solução</div>
+        <div class="code-block"><span class="kw">public class</span> <span class="cls">MediaNotas</span> {
+
+  <span class="kw">public static void</span> <span class="mtd">main</span>(<span class="typ">String</span>[] args) {
+    <span class="kw">int</span>[] notas = {<span class="num">6</span>, <span class="num">8</span>, <span class="num">7</span>, <span class="num">9</span>, <span class="num">10</span>};
+    <span class="kw">int</span>   soma  = <span class="num">0</span>;
+
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; notas.length; i++) {
+      soma += notas[i];
+    }
+
+    <span class="kw">double</span> media = (<span class="kw">double</span>) soma / notas.length;
+
+    System.out.<span class="mtd">println</span>(<span class="str">"Soma:  "</span> + soma);
+    System.out.<span class="mtd">println</span>(<span class="str">"Média: "</span> + media);
+  }
+
+}</div>
+        <div class="output-label">Saída esperada no console</div>
+        <div class="output-block">Soma:  40
+Média: 8.0</div>
+        <div class="tip-box">
+          <strong style="color:var(--accent);font-family:'JetBrains Mono',monospace">Dica:</strong>
+          O cast <span class="ic">(double) soma</span> é necessário porque ambos <span class="ic">soma</span> e <span class="ic">notas.length</span> são <span class="ic">int</span>. Sem o cast, Java faria divisão inteira e <span class="ic">40 / 5</span> retornaria <span class="ic">8</span> (int), não <span class="ic">8.0</span> (double).
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ QUESTÃO 3 ═══════════ -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-number">3)</div>
+      <div class="ex-title">Lista de Compras com ArrayList</div>
+      <span class="pill pill-green">Básico</span>
+      <div class="diff-bar" title="Dificuldade: Básico">
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot"></div>
+        <div class="diff-dot"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="ex-enunciado">
+        Crie um programa Java chamado <strong>ListaCompras</strong> que gerencie uma lista de compras usando <strong>ArrayList</strong>: adicione itens, remova um e exiba a lista final com o total de itens.
+      </div>
+      <div class="ex-requisitos">
+        <div class="ex-requisitos-title">Requisitos</div>
+        <ul>
+          <li>Importe <span class="ic">java.util.ArrayList</span> e crie <span class="ic">ArrayList&lt;String&gt; compras</span></li>
+          <li>Adicione 4 itens com <span class="ic">add()</span>: <span class="ic">"Leite"</span>, <span class="ic">"Pão"</span>, <span class="ic">"Ovos"</span>, <span class="ic">"Queijo"</span></li>
+          <li>Remova <span class="ic">"Ovos"</span> pelo índice com <span class="ic">remove(2)</span></li>
+          <li>Imprima o total de itens com <span class="ic">size()</span></li>
+          <li>Percorra a lista com <span class="ic">for-each</span> e imprima cada item com <span class="ic">"- "</span> na frente</li>
+        </ul>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(3, this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Ver solução
+      </button>
+      <div class="solution-area" id="sol3">
+        <div class="solution-label">Solução</div>
+        <div class="code-block"><span class="kw">import</span> java.util.<span class="cls">ArrayList</span>;
+
+<span class="kw">public class</span> <span class="cls">ListaCompras</span> {
+
+  <span class="kw">public static void</span> <span class="mtd">main</span>(<span class="typ">String</span>[] args) {
+    <span class="cls">ArrayList</span>&lt;<span class="typ">String</span>&gt; compras = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();
+
+    compras.<span class="mtd">add</span>(<span class="str">"Leite"</span>);
+    compras.<span class="mtd">add</span>(<span class="str">"Pão"</span>);
+    compras.<span class="mtd">add</span>(<span class="str">"Ovos"</span>);
+    compras.<span class="mtd">add</span>(<span class="str">"Queijo"</span>);
+
+    compras.<span class="mtd">remove</span>(<span class="num">2</span>);  <span class="cmt">// remove "Ovos" (índice 2)</span>
+
+    System.out.<span class="mtd">println</span>(<span class="str">"Itens na lista: "</span> + compras.<span class="mtd">size</span>());
+
+    <span class="kw">for</span> (<span class="typ">String</span> item : compras) {
+      System.out.<span class="mtd">println</span>(<span class="str">"- "</span> + item);
+    }
+  }
+
+}</div>
+        <div class="output-label">Saída esperada no console</div>
+        <div class="output-block">Itens na lista: 3
+- Leite
+- Pão
+- Queijo</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ QUESTÃO 4 ═══════════ -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-number">4)</div>
+      <div class="ex-title">Analisando uma String</div>
+      <span class="pill pill-green">Básico</span>
+      <div class="diff-bar" title="Dificuldade: Básico">
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="ex-enunciado">
+        Crie um programa Java chamado <strong>AnalisarString</strong> que declare uma String com um nome completo e aplique diferentes métodos, exibindo os resultados de cada operação.
+      </div>
+      <div class="ex-requisitos">
+        <div class="ex-requisitos-title">Requisitos</div>
+        <ul>
+          <li>Declare <span class="ic">String nome = "Maria da Silva"</span></li>
+          <li>Imprima o tamanho com <span class="ic">length()</span></li>
+          <li>Imprima o nome em maiúsculas com <span class="ic">toUpperCase()</span></li>
+          <li>Imprima o nome em minúsculas com <span class="ic">toLowerCase()</span></li>
+          <li>Verifique e imprima se contém <span class="ic">"Silva"</span> com <span class="ic">contains()</span></li>
+          <li>Imprima o primeiro caractere com <span class="ic">charAt(0)</span></li>
+          <li>Imprima os 5 primeiros caracteres com <span class="ic">substring(0, 5)</span></li>
+        </ul>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(4, this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Ver solução
+      </button>
+      <div class="solution-area" id="sol4">
+        <div class="solution-label">Solução</div>
+        <div class="code-block"><span class="kw">public class</span> <span class="cls">AnalisarString</span> {
+
+  <span class="kw">public static void</span> <span class="mtd">main</span>(<span class="typ">String</span>[] args) {
+    <span class="typ">String</span> nome = <span class="str">"Maria da Silva"</span>;
+
+    System.out.<span class="mtd">println</span>(<span class="str">"Nome:            "</span> + nome);
+    System.out.<span class="mtd">println</span>(<span class="str">"Tamanho:         "</span> + nome.<span class="mtd">length</span>());
+    System.out.<span class="mtd">println</span>(<span class="str">"Maiúsculas:      "</span> + nome.<span class="mtd">toUpperCase</span>());
+    System.out.<span class="mtd">println</span>(<span class="str">"Minúsculas:      "</span> + nome.<span class="mtd">toLowerCase</span>());
+    System.out.<span class="mtd">println</span>(<span class="str">"Contém \"Silva\": "</span> + nome.<span class="mtd">contains</span>(<span class="str">"Silva"</span>));
+    System.out.<span class="mtd">println</span>(<span class="str">"1º caractere:    "</span> + nome.<span class="mtd">charAt</span>(<span class="num">0</span>));
+    System.out.<span class="mtd">println</span>(<span class="str">"Primeiros 5:     "</span> + nome.<span class="mtd">substring</span>(<span class="num">0</span>, <span class="num">5</span>));
+  }
+
+}</div>
+        <div class="output-label">Saída esperada no console</div>
+        <div class="output-block">Nome:            Maria da Silva
+Tamanho:         14
+Maiúsculas:      MARIA DA SILVA
+Minúsculas:      maria da silva
+Contém "Silva": true
+1º caractere:    M
+Primeiros 5:     Maria</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ QUESTÃO 5 ═══════════ -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-number">5)</div>
+      <div class="ex-title">Processar Data com split()</div>
+      <span class="pill pill-amber">Básico–Médio</span>
+      <div class="diff-bar" title="Dificuldade: Básico-Médio">
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot filled-medium"></div>
+        <div class="diff-dot filled-medium"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="ex-enunciado">
+        Crie um programa Java chamado <strong>ProcessarData</strong> que receba uma data no formato <strong>"AAAA-MM-DD"</strong>, use <strong>split()</strong> para separar suas partes e exiba o ano, mês e dia individualmente — além de remontar a data no formato brasileiro <strong>"DD/MM/AAAA"</strong>.
+      </div>
+      <div class="ex-requisitos">
+        <div class="ex-requisitos-title">Requisitos</div>
+        <ul>
+          <li>Declare <span class="ic">String data = "2025-05-26"</span></li>
+          <li>Use <span class="ic">split("-")</span> para dividir a data em um array <span class="ic">String[] partes</span></li>
+          <li>Armazene as partes em variáveis: <span class="ic">ano = partes[0]</span>, <span class="ic">mes = partes[1]</span>, <span class="ic">dia = partes[2]</span></li>
+          <li>Imprima a data original, o ano, o mês e o dia separadamente</li>
+          <li>Monte e imprima a data no formato brasileiro usando concatenação: <span class="ic">dia + "/" + mes + "/" + ano</span></li>
+        </ul>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(5, this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Ver solução
+      </button>
+      <div class="solution-area" id="sol5">
+        <div class="solution-label">Solução</div>
+        <div class="code-block"><span class="kw">public class</span> <span class="cls">ProcessarData</span> {
+
+  <span class="kw">public static void</span> <span class="mtd">main</span>(<span class="typ">String</span>[] args) {
+    <span class="typ">String</span>   data   = <span class="str">"2025-05-26"</span>;
+    <span class="typ">String</span>[] partes = data.<span class="mtd">split</span>(<span class="str">"-"</span>);
+
+    <span class="typ">String</span> ano = partes[<span class="num">0</span>];
+    <span class="typ">String</span> mes = partes[<span class="num">1</span>];
+    <span class="typ">String</span> dia = partes[<span class="num">2</span>];
+
+    System.out.<span class="mtd">println</span>(<span class="str">"Data original: "</span> + data);
+    System.out.<span class="mtd">println</span>(<span class="str">"Ano:  "</span> + ano);
+    System.out.<span class="mtd">println</span>(<span class="str">"Mês:  "</span> + mes);
+    System.out.<span class="mtd">println</span>(<span class="str">"Dia:  "</span> + dia);
+    System.out.<span class="mtd">println</span>(<span class="str">"Formatada: "</span> + dia + <span class="str">"/"</span> + mes + <span class="str">"/"</span> + ano);
+  }
+
+}</div>
+        <div class="output-label">Saída esperada no console</div>
+        <div class="output-block">Data original: 2025-05-26
+Ano:  2025
+Mês:  05
+Dia:  26
+Formatada: 26/05/2025</div>
+        <div class="tip-box">
+          <strong style="color:var(--accent);font-family:'JetBrains Mono',monospace">Conceitos aplicados:</strong>
+          <span class="ic">split()</span> retorna um <span class="ic">String[]</span> — ou seja, um array de Strings. Combinamos aqui o conhecimento de arrays (acesso por índice), Strings (<span class="ic">split</span> e concatenação com <span class="ic">+</span>) e a leitura de partes individuais de um dado estruturado.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Material didático desenvolvido para <span>Capacita Brasil</span> &nbsp;&mdash;&nbsp; iRede &nbsp;&middot;&nbsp; Desenvolvimento Java
+  </footer>
+
+</div><!-- /wrap -->
+
+<script>
+let revealed = 0;
+
+function toggleSolution(num, btn) {
+  const sol = document.getElementById('sol' + num);
+  const isVisible = sol.classList.contains('visible');
+
+  if (!isVisible) {
+    sol.classList.add('visible');
+    btn.classList.add('revealed');
+    btn.innerHTML =
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transform:rotate(180deg)"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>' +
+      'Ocultar solução';
+    if (!btn.dataset.counted) {
+      btn.dataset.counted = '1';
+      revealed++;
+      updateProgress();
+    }
+  } else {
+    sol.classList.remove('visible');
+    btn.classList.remove('revealed');
+    btn.innerHTML =
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>' +
+      'Ver solução';
+  }
+}
+
+function updateProgress() {
+  document.getElementById('progressVal').textContent = revealed + '/5';
+  document.getElementById('progressFill').style.width = (revealed / 5 * 100) + '%';
+}
+</script>
+</body>
+</html>
