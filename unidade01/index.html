@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Java — Fundamentos de POO</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:          #f0f0f5;
+  --surface:     #ffffff;
+  --border:      #d8d5e8;
+  --accent:      #8d62ff;
+  --accent2:     #00c896;
+  --text:        #1a1730;
+  --muted:       #7a748f;
+  --green:       #155e35;
+  --green-bg:    #d6f5e5;
+  --green-border:#6edaa8;
+  --red:         #7a1f1f;
+  --red-bg:      #fde8e8;
+  --red-border:  #f0a0a0;
+  --radius:      10px;
+  --glow:        0 0 18px rgba(141,98,255,0.15);
+  --grad:        linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
+  --surface2:    #f7f5ff;
+  --mint:        #00c896;
+  --danger:      #d63030;
+  --warn:        #d48a00;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  padding: 0 0 60px;
+  background-image:
+    radial-gradient(ellipse 70% 40% at 50% -10%, rgba(141,98,255,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 30% at 80% 110%, rgba(0,200,150,0.06) 0%, transparent 70%);
+}
+header {
+  text-align: center;
+  padding: 36px 20px 28px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  background: var(--surface);
+  box-shadow: 0 2px 16px rgba(141,98,255,0.07);
+}
+header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 2px;
+  background: linear-gradient(90deg, transparent, #8d62ff, transparent);
+}
+.header-logo { height: 48px; margin-bottom: 14px; display: block; margin-left: auto; margin-right: auto; }
+.logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.logo span { opacity: 0.6; }
+.subtitle { color: var(--muted); font-size: .85rem; margin-top: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
+.header-badge {
+  display: inline-block; margin-top: 12px; padding: 4px 16px; border-radius: 99px;
+  font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace;
+  background: linear-gradient(270deg, rgba(141,98,255,.15), rgba(0,255,188,.1));
+  border: 1px solid rgba(141,98,255,.3); color: var(--accent); letter-spacing: .06em;
+}
+.wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+/* ── AULA TABS ── */
+.aula-bar {
+  display: flex; gap: 4px; margin-bottom: 1.5rem;
+  background: var(--text); border-radius: 14px; padding: 6px;
+  box-shadow: 0 4px 20px rgba(26,23,48,0.18);
+}
+.aula-tab {
+  flex: 1; padding: 12px 20px; border-radius: 10px; border: none;
+  background: transparent; color: rgba(255,255,255,0.45); cursor: pointer;
+  font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+  transition: all .2s; letter-spacing: .02em;
+}
+.aula-tab:hover:not(.active) { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.8); }
+.aula-tab.active { background: var(--grad); color: #fff; box-shadow: 0 2px 14px rgba(141,98,255,.45); }
+.aula-section { display: none; }
+.aula-section.active { display: block; }
+
+/* ── INNER TABS ── */
+.tab-bar {
+  display: flex; gap: 6px; margin-bottom: 1.5rem; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 14px; padding: 6px;
+  flex-wrap: wrap; box-shadow: 0 2px 10px rgba(141,98,255,0.06);
+}
+.tab {
+  flex: 1; min-width: 120px; padding: 9px 16px; border-radius: var(--radius);
+  border: none; background: transparent; color: var(--muted); cursor: pointer;
+  font-size: 13px; font-weight: 500; font-family: 'Space Grotesk', sans-serif; transition: all .2s;
+}
+.tab:hover:not(.active) { background: rgba(141,98,255,.08); color: var(--text); }
+.tab.active { background: var(--grad); color: #fff; font-weight: 700; box-shadow: 0 2px 12px rgba(141,98,255,.3); }
+.section { display: none; }
+.section.active { display: block; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.5rem; margin-bottom: 1.25rem; position: relative; overflow: hidden;
+  box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(141,98,255,.35), transparent);
+}
+.card-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700;
+  margin-bottom: 1rem; display: flex; align-items: center; gap: 10px; color: var(--text); flex-wrap: wrap;
+}
+.card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+/* ── PILLS ── */
+.pill { display: inline-block; padding: 3px 11px; border-radius: 99px; font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+.pill-grad  { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.3);  color: var(--accent); }
+.pill-green { background: rgba(0,200,150,.12);  border: 1px solid rgba(0,200,150,.3);   color: #0a7a5a; }
+.pill-red   { background: rgba(214,48,48,.1);   border: 1px solid rgba(214,48,48,.25);  color: var(--danger); }
+.pill-amber { background: rgba(212,138,0,.1);   border: 1px solid rgba(212,138,0,.25);  color: var(--warn); }
+.pill-blue  { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.25); color: #5a30cc; }
+.pill-java  { background: rgba(248,152,32,.12); border: 1px solid rgba(248,152,32,.35); color: #9a5000; }
+
+/* ── TABLE ── */
+table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 12px 0; }
+th {
+  background: rgba(141,98,255,.1); padding: 10px 14px; text-align: center;
+  font-weight: 700; font-size: 12px; color: var(--accent);
+  font-family: 'JetBrains Mono', monospace; letter-spacing: .05em; border-bottom: 1px solid var(--border);
+}
+td { padding: 10px 14px; text-align: center; border-bottom: 1px solid rgba(141,98,255,.08); font-size: 13px; font-family: 'JetBrains Mono', monospace; }
+td.left { text-align: left; font-family: 'Space Grotesk', sans-serif; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(141,98,255,.04); }
+
+/* ── OP ROW ── */
+.op-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin: 14px 0; }
+.op-card {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
+  padding: 14px 10px; text-align: center; transition: border-color .2s, box-shadow .2s;
+}
+.op-card:hover { border-color: var(--accent); box-shadow: var(--glow); }
+.op-sym {
+  font-size: 22px; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-bottom: 4px;
+  background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.op-name { font-size: 12px; color: var(--muted); font-weight: 600; }
+.op-desc { font-size: 11px; color: #a09ab5; margin-top: 5px; }
+
+/* ── CODE BLOCK ── */
+.code-block {
+  background: #1e1e2e; border: 1px solid #3a3a5c; border-radius: 10px;
+  padding: 16px 18px; margin: 12px 0; font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; line-height: 1.8; color: #cdd6f4; overflow-x: auto; white-space: pre;
+}
+.code-block .kw  { color: #cba6f7; }
+.code-block .typ { color: #89b4fa; }
+.code-block .str { color: #a6e3a1; }
+.code-block .num { color: #fab387; }
+.code-block .cmt { color: #6c7086; font-style: italic; }
+.code-block .cls { color: #f5c2e7; }
+.code-block .mtd { color: #89dceb; }
+
+/* ── TIMELINE ── */
+.timeline { position: relative; padding: 4px 0; margin: 14px 0; }
+.timeline::before {
+  content: ''; position: absolute; left: 17px; top: 0; bottom: 0;
+  width: 2px; background: linear-gradient(180deg, #8d62ff, #00ffbc);
+}
+.tl-item { display: flex; gap: 16px; align-items: flex-start; padding: 8px 0; }
+.tl-dot {
+  width: 36px; height: 36px; border-radius: 50%; background: var(--grad);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: #fff; font-family: 'JetBrains Mono', monospace;
+  flex-shrink: 0; box-shadow: 0 0 12px rgba(141,98,255,.35); position: relative; z-index: 1;
+}
+.tl-year { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 3px; }
+.tl-text { font-size: 13px; color: var(--muted); line-height: 1.55; padding-top: 4px; }
+
+/* ── CHAR GRID ── */
+.char-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 10px; margin: 14px 0; }
+.char-card {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
+  padding: 14px 12px; text-align: center; transition: border-color .2s, box-shadow .2s;
+}
+.char-card:hover { border-color: var(--accent); box-shadow: var(--glow); }
+.char-icon { font-size: 22px; margin-bottom: 8px; }
+.char-name { font-size: 12px; font-weight: 700; color: var(--text); font-family: 'JetBrains Mono', monospace; }
+.char-desc { font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
+
+/* ── SCORE BAR ── */
+.score-bar-area {
+  display: flex; align-items: center; gap: 16px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px 18px; margin-bottom: 1.25rem; box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.score-val {
+  font-size: 28px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+  background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.score-label { font-size: 11px; color: var(--muted); }
+.score-track { flex: 1; background: #e5e2f0; border-radius: 99px; height: 8px; overflow: hidden; }
+.score-fill { height: 100%; border-radius: 99px; background: var(--grad); width: 0%; transition: width .4s cubic-bezier(.4,0,.2,1); }
+
+/* ── EXERCISES ── */
+.ex-block {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem; margin-bottom: 1rem; border-left: 3px solid var(--accent);
+  transition: border-left-color .2s; box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.ex-block.done { border-left-color: var(--accent2); }
+.ex-q { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text); line-height: 1.55; }
+.ex-scenario { font-size: 13px; color: var(--muted); margin-bottom: 14px; line-height: 1.55; }
+.choices { display: flex; gap: 8px; flex-wrap: wrap; }
+.choice {
+  padding: 9px 20px; border-radius: 7px; border: 1.5px solid var(--border);
+  background: transparent; color: var(--text); cursor: pointer;
+  font-size: 13px; font-family: 'JetBrains Mono', monospace; font-weight: 600; transition: all .15s;
+}
+.choice:hover:not(:disabled) { background: rgba(141,98,255,.08); border-color: var(--accent); }
+.choice:disabled { cursor: default; }
+.choice.correct { background: var(--green-bg); color: #0a7a5a; border-color: var(--green-border); }
+.choice.wrong   { background: var(--red-bg);   color: var(--danger); border-color: var(--red-border); }
+.feedback { font-size: 13px; margin-top: 12px; padding: 10px 14px; border-radius: var(--radius); display: none; line-height: 1.6; }
+.feedback.show { display: block; }
+.feedback.ok { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.feedback.ko { background: var(--red-bg);   color: var(--red);   border: 1px solid var(--red-border); }
+
+/* ── CURIOSIDADES ── */
+.curi-item { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid rgba(141,98,255,.1); }
+.curi-item:last-of-type { border-bottom: none; }
+.curi-icon {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+  background: linear-gradient(270deg, rgba(141,98,255,.15), rgba(0,200,150,.1));
+  border: 1px solid rgba(141,98,255,.25);
+}
+.curi-title { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-bottom: 4px; color: var(--text); }
+.curi-body { font-size: 13px; color: var(--muted); line-height: 1.65; }
+.curi-body code { background: rgba(141,98,255,.12); color: #5a30cc; padding: 1px 6px; border-radius: 4px; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+
+/* ── LINKS ── */
+.link-item {
+  color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  text-decoration: none; word-break: break-all;
+  transition: color .15s;
+}
+.link-item:hover { color: var(--mint); text-decoration: underline; }
+
+/* ── GRAD BTN ── */
+.grad-btn {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 14px;
+  padding: 10px 22px; border-radius: 8px; background: var(--grad); color: #fff;
+  border: none; cursor: pointer; font-size: 13px; font-weight: 700;
+  font-family: 'JetBrains Mono', monospace; text-decoration: none;
+  transition: opacity .2s, transform .15s; box-shadow: 0 3px 14px rgba(141,98,255,.3);
+}
+.grad-btn:hover { opacity: .88; transform: translateY(-1px); }
+
+/* ── INLINE CODE ── */
+.ic { background: rgba(141,98,255,.12); color: #5a30cc; padding: 1px 7px; border-radius: 4px; font-size: 12px; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+footer { text-align: center; margin-top: 3rem; font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+footer span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700; }
+
+@media (max-width: 540px) {
+  .tab { min-width: 80px; font-size: 12px; }
+  .char-grid { grid-template-columns: 1fr 1fr; }
+  .op-row { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img class="header-logo" src="https://capacitabrasil.irede.org.br/assets/capacitaLogo-Ct3BEyem.png" alt="Capacita Brasil"/>
+  <div class="logo">&#x2615; <span>//</span> Java</div>
+  <div class="subtitle">Desenvolvimento Java &mdash; Aula Interativa</div>
+  <div class="header-badge">Fundamentos de POO</div>
+</header>
+
+<div class="wrap">
+
+  <div class="aula-bar">
+    <button class="aula-tab active">&#x1F4D0; Aula 01 &mdash; Fundamentos de POO</button>
+  </div>
+
+  <!-- ═══════════════ AULA 01 ═══════════════ -->
+  <div id="aula01" class="aula-section active">
+
+  <div class="tab-bar">
+    <button class="tab active"  onclick="showTab('resumo1',this)">&#x1F4D8; Resumo</button>
+    <button class="tab"         onclick="showTab('simulador1',this)">&#x26A1; Simulador</button>
+    <button class="tab"         onclick="showTab('exercicios1',this)">&#x1F3AF; Exercícios</button>
+    <button class="tab"         onclick="showTab('questionarios1',this)">&#x1F4DD; Questionários</button>
+    <button class="tab"         onclick="showTab('curiosidades1',this)">&#x1F680; Curiosidades</button>
+    <button class="tab"         onclick="showTab('links1',this)">&#x1F517; Links</button>
+  </div>
+
+  <!-- ═══ RESUMO ═══ -->
+  <div id="resumo1" class="section active">
+
+    <div class="card">
+      <div class="card-title">Conteúdo em desenvolvimento <span class="pill pill-amber">Em breve</span></div>
+      <p>O resumo desta aula será adicionado em breve.</p>
+    </div>
+
+  </div><!-- /resumo1 -->
+
+  <!-- ═══ SIMULADOR ═══ -->
+  <div id="simulador1" class="section">
+
+    <div class="card">
+      <div class="card-title">Simulador <span class="pill pill-amber">Em breve</span></div>
+      <p>O simulador interativo desta aula será adicionado em breve.</p>
+    </div>
+
+  </div><!-- /simulador1 -->
+
+  <!-- ═══ EXERCÍCIOS ═══ -->
+  <div id="exercicios1" class="section">
+
+    <div class="score-bar-area">
+      <div>
+        <div class="score-val"><span id="scoreVal1">0</span>/5</div>
+        <div class="score-label">acertos</div>
+      </div>
+      <div style="flex:1">
+        <div class="score-track"><div class="score-fill" id="scoreBar1"></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Exercícios <span class="pill pill-amber">Em breve</span></div>
+      <p>Os exercícios desta aula serão adicionados em breve.</p>
+    </div>
+
+  </div><!-- /exercicios1 -->
+
+  <!-- ═══ QUESTIONÁRIOS ═══ -->
+  <div id="questionarios1" class="section">
+
+    <div class="card">
+      <div class="card-title">&#x1F4DD; Questionários</div>
+      <p style="margin-bottom:1rem">Teste seu conhecimento com os questionários abaixo.</p>
+
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a class="grad-btn" href="questionario-u2c1-01.html">&#x1F4CB; Quiz 01 &mdash; Em breve</a>
+        <a class="grad-btn" href="questoes-aula01-2.html" style="background:linear-gradient(270deg,#00c896 0%,#00a0cc 100%)">&#x1F4CB; Quiz 02 &mdash; Em breve</a>
+        <a class="grad-btn" href="questoes-aula01-implementacao.html" style="background:linear-gradient(270deg,#f5c2e7 0%,#8d62ff 100%);color:#1a1730">&#x1F6E0; Implementação &mdash; Em breve</a>
+      </div>
+    </div>
+
+  </div><!-- /questionarios1 -->
+
+  <!-- ═══ CURIOSIDADES ═══ -->
+  <div id="curiosidades1" class="section">
+
+    <div class="card">
+      <div class="card-title">Curiosidades <span class="pill pill-amber">Em breve</span></div>
+      <p>As curiosidades desta aula serão adicionadas em breve.</p>
+    </div>
+
+  </div><!-- /curiosidades1 -->
+
+  <!-- ═══ LINKS ═══ -->
+  <div id="links1" class="section">
+
+    <div class="card">
+      <div class="card-title">&#x1F517; Links Úteis</div>
+      <p>Links de referência serão adicionados em breve.</p>
+    </div>
+
+  </div><!-- /links1 -->
+
+  </div><!-- /aula01 -->
+
+</div><!-- /wrap -->
+
+<footer>
+  Capacita Brasil &mdash; <span>iRede</span> &mdash; Material Interativo de Java
+</footer>
+
+<script>
+function showTab(t, btn) {
+  document.querySelectorAll('#aula01 .section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('#aula01 .tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(t).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
