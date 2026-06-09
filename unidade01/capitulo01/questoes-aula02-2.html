@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Quiz Java — Estruturas de Repetição</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg:       #f0f0f5;
+    --surface:  #ffffff;
+    --border:   #d8d5e8;
+    --accent:   #8d62ff;
+    --accent2:  #00c896;
+    --text:     #1a1730;
+    --muted:    #7a748f;
+    --green:    #155e35;
+    --green-bg: #d6f5e5;
+    --green-border: #6edaa8;
+    --red:      #7a1f1f;
+    --red-bg:   #fde8e8;
+    --red-border:#f0a0a0;
+    --true-btn: #ede8ff;
+    --false-btn:#e0faf3;
+    --radius:   10px;
+    --grad:     linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    padding: 0 0 60px;
+    background-image:
+      radial-gradient(ellipse 70% 40% at 50% -10%, rgba(141,98,255,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 30% at 80% 110%, rgba(0,200,150,0.06) 0%, transparent 70%);
+  }
+
+  header {
+    text-align: center; padding: 36px 20px 28px;
+    border-bottom: 1px solid var(--border); position: relative;
+    background: var(--surface); box-shadow: 0 2px 16px rgba(141,98,255,0.07);
+  }
+  .header-logo { height: 48px; margin-bottom: 14px; display: block; margin-left: auto; margin-right: auto; }
+  header::after {
+    content: ''; position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%);
+    width: 120px; height: 2px; background: linear-gradient(90deg, transparent, #8d62ff, transparent);
+  }
+  .logo {
+    font-family: 'JetBrains Mono', monospace; font-size: clamp(1.6rem, 4vw, 2.6rem);
+    font-weight: 700; letter-spacing: -0.5px;
+    background: var(--grad); -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .logo span { opacity: 0.6; }
+  .subtitle { color: var(--muted); font-size: .9rem; margin-top: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
+
+  .legend {
+    display: flex; justify-content: center; gap: 28px; margin: 28px auto 0;
+    font-family: 'JetBrains Mono', monospace; font-size: .8rem; color: var(--muted); flex-wrap: wrap;
+  }
+  .legend span { display: flex; align-items: center; gap: 6px; }
+  .legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #8d62ff; }
+  .legend i.v { background: #00a87a; }
+  .legend i.f { background: #d63030; }
+
+  .score-bar {
+    display: flex; justify-content: center; align-items: center; gap: 24px;
+    margin: 0 auto; padding: 22px 20px 0; max-width: 900px;
+  }
+  .score-pill {
+    font-family: 'JetBrains Mono', monospace; font-size: .82rem; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 99px; padding: 6px 18px;
+    color: var(--muted); box-shadow: 0 1px 6px rgba(141,98,255,0.08);
+  }
+  .score-pill strong { color: var(--text); }
+
+  .grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+    gap: 16px; max-width: 1020px; margin: 24px auto 0; padding: 0 20px;
+  }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px 22px; transition: border-color .25s, box-shadow .25s, background .35s;
+    position: relative; overflow: hidden; box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+  }
+  .card.correct   { border-color: var(--green-border); background: var(--green-bg); box-shadow: 0 0 16px rgba(0,180,100,0.12); }
+  .card.incorrect { border-color: var(--red-border);   background: var(--red-bg);   box-shadow: 0 0 16px rgba(220,80,80,0.1); }
+
+  .card-num { font-family: 'JetBrains Mono', monospace; font-size: .7rem; color: var(--muted); margin-bottom: 8px; letter-spacing: .1em; }
+  .situation-emoji { font-size: 2rem; margin-bottom: 10px; line-height: 1; }
+  .situation-box {
+    font-size: .95rem; color: var(--text); line-height: 1.6; margin-bottom: 10px;
+    padding: 10px 14px; background: #f5f3ff; border-left: 3px solid #8d62ff; border-radius: 6px;
+  }
+  .context-box {
+    font-size: .88rem; color: var(--muted); line-height: 1.55; margin-bottom: 12px;
+    padding: 8px 12px; background: #f8f8fa; border-radius: 6px; border: 1px dashed var(--border);
+  }
+  .question-text {
+    font-family: 'JetBrains Mono', monospace; font-size: .88rem; font-weight: 600;
+    color: var(--text); margin-bottom: 12px; padding-top: 2px;
+  }
+  .kw  { color: #8d62ff; font-weight: 700; }
+  .val-true  { color: #0a8a5c; font-weight: 700; }
+  .val-false { color: #d63030; font-weight: 700; }
+
+  .btn-row { display: flex; gap: 10px; margin-top: 4px; }
+  .vf-btn {
+    flex: 1; padding: 10px 0; border-radius: 7px; border: 1.5px solid transparent;
+    font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: .95rem;
+    cursor: pointer; transition: background .18s, border-color .18s, transform .1s, box-shadow .18s;
+    letter-spacing: .06em;
+  }
+  .vf-btn:active { transform: scale(0.96); }
+  .vf-btn.v-btn { background: var(--true-btn); border-color: #c4b4ff; color: #5a30cc; }
+  .vf-btn.v-btn:hover { background: #ddd5ff; border-color: #8d62ff; box-shadow: 0 0 10px rgba(141,98,255,.2); }
+  .vf-btn.v-btn.selected { background: #8d62ff; border-color: #7040ee; color: #fff; box-shadow: 0 0 16px rgba(141,98,255,.35); }
+  .vf-btn.f-btn { background: var(--false-btn); border-color: #80dfc0; color: #0a7a5a; }
+  .vf-btn.f-btn:hover { background: #c0f0e0; border-color: #00c896; box-shadow: 0 0 10px rgba(0,200,150,.2); }
+  .vf-btn.f-btn.selected { background: #00b888; border-color: #009970; color: #fff; box-shadow: 0 0 16px rgba(0,200,150,.35); }
+  .vf-btn:disabled { cursor: default; opacity: .8; }
+
+  .feedback-icon {
+    position: absolute; top: 16px; right: 18px; font-size: 1.3rem;
+    opacity: 0; transform: scale(0.5); transition: opacity .3s, transform .3s;
+  }
+  .card.correct   .feedback-icon { color: #0a8a5c; opacity: 1; transform: scale(1); }
+  .card.incorrect .feedback-icon { color: #d63030; opacity: 1; transform: scale(1); }
+
+  .actions {
+    display: flex; justify-content: center; gap: 14px; margin: 36px auto 0;
+    padding: 0 20px; flex-wrap: wrap;
+  }
+  .btn-primary {
+    background: var(--grad); color: #fff; border: none; border-radius: 9px;
+    padding: 14px 40px; font-family: 'JetBrains Mono', monospace; font-weight: 700;
+    font-size: 1rem; cursor: pointer; transition: opacity .2s, transform .15s, box-shadow .2s;
+    letter-spacing: .04em; box-shadow: 0 4px 22px rgba(141,98,255,0.35);
+  }
+  .btn-primary:hover { opacity: .88; transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+  .btn-secondary {
+    background: transparent; color: var(--muted); border: 1.5px solid var(--border);
+    border-radius: 9px; padding: 14px 32px; font-family: 'JetBrains Mono', monospace;
+    font-size: .92rem; cursor: pointer; transition: border-color .2s, color .2s;
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--text); }
+
+  .result-panel {
+    display: none; text-align: center; max-width: 480px; margin: 32px auto 0;
+    padding: 30px 36px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; animation: fadeUp .4s ease; box-shadow: 0 4px 24px rgba(141,98,255,0.1);
+  }
+  .result-panel.show { display: block; }
+  @keyframes fadeUp { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: translateY(0); } }
+  .result-score {
+    font-family: 'JetBrains Mono', monospace; font-size: 3rem; font-weight: 700;
+    background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .result-msg { color: var(--muted); font-size: .95rem; margin-top: 6px; }
+  .result-bar { margin: 18px 0 8px; height: 8px; background: #e0ddf0; border-radius: 99px; overflow: hidden; }
+  .result-fill { height: 100%; border-radius: 99px; background: var(--grad); transition: width .8s cubic-bezier(.4,0,.2,1); width: 0%; }
+
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'JetBrains Mono', monospace; font-size: .82rem; color: var(--muted);
+    text-decoration: none; margin: 18px 0 0 20px; transition: color .2s;
+  }
+  .back-link:hover { color: var(--accent); }
+  .progress-info { font-family: 'JetBrains Mono', monospace; font-size: .78rem; color: var(--muted); text-align: center; margin-top: 14px; padding: 0 20px; }
+  .explanation {
+    display: none; margin-top: 12px; padding: 8px 12px; border-radius: 6px;
+    font-size: .82rem; font-family: 'JetBrains Mono', monospace;
+  }
+  .card.correct   .explanation { background: #f0fdf4; border: 1px solid #86efac; color: #166534; display: block; }
+  .card.incorrect .explanation { background: #fff1f1; border: 1px solid #fca5a5; color: #991b1b; display: block; }
+
+  @media (max-width: 480px) { .grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <img class="header-logo" src="https://capacitabrasil.irede.org.br/assets/capacitaLogo-Ct3BEyem.png" alt="Capacita Brasil" />
+  <div class="logo">&#x2615; <span>//</span> Java</div>
+  <div class="subtitle">Aula 02 &mdash; Estruturas de Repetição &nbsp;·&nbsp; 10 questões</div>
+  <div class="legend">
+    <span><i class="v"></i> Verdadeiro (V)</span>
+    <span><i class="f"></i> Falso (F)</span>
+    <span><i></i> Analise cada afirmação e decida se é Verdadeira ou Falsa</span>
+  </div>
+</header>
+
+<a class="back-link" href="index.html">&larr; Voltar para a aula</a>
+
+<div class="score-bar">
+  <div class="score-pill">Respondidas: <strong id="count">0</strong> / 10</div>
+</div>
+
+<div class="grid" id="quiz"></div>
+<div class="progress-info" id="progressInfo">Responda todas as questões para verificar o resultado.</div>
+
+<div class="actions">
+  <button class="btn-primary" id="btnCheck" disabled onclick="checkAnswers()">Verificar Respostas</button>
+  <button class="btn-secondary" id="btnReset" onclick="resetQuiz()">Reiniciar</button>
+</div>
+
+<div class="result-panel" id="resultPanel">
+  <div class="result-score" id="resultScore">—</div>
+  <div class="result-msg"   id="resultMsg"></div>
+  <div class="result-bar"><div class="result-fill" id="resultFill"></div></div>
+</div>
+
+<script>
+const questions = [
+  {
+    label: 'for — 5 iterações',
+    emoji: '&#x1F501;',
+    situation: 'O loop <span class="kw">for (int i = 0; i &lt; 5; i++)</span> executa o bloco exatamente <span class="val-true">5 vezes</span>, com i assumindo os valores 0, 1, 2, 3 e 4.',
+    context: 'i começa em 0 e é incrementado após cada iteração. O loop para quando a condição i &lt; 5 se torna falsa (i == 5).',
+    question: 'Essa afirmação sobre o número de iterações do loop for está correta?',
+    answer: 'V',
+    explanation: 'VERDADEIRO. O for roda para i = 0, 1, 2, 3, 4 — exatamente 5 vezes. Quando i chega a 5, a condição i < 5 é false e o loop encerra.'
+  },
+  {
+    label: 'while — pré-teste',
+    emoji: '&#x23F3;',
+    situation: 'O loop <span class="kw">while</span> verifica a condição <span class="val-true">antes</span> de executar o bloco. Se a condição já for <span class="val-true">falsa no início</span>, o bloco <span class="val-true">nunca</span> é executado.',
+    context: 'Exemplo: <span class="val-true">int x = 10; while (x &lt; 5) { x++; }</span> — o bloco nunca executa porque 10 &lt; 5 já é false.',
+    question: 'Essa afirmação sobre o comportamento do while na condição inicial falsa está correta?',
+    answer: 'V',
+    explanation: 'VERDADEIRO. O while é um loop de pré-teste: avalia a condição ANTES de cada execução. Se for falsa desde o início, o bloco é completamente ignorado.'
+  },
+  {
+    label: 'do-while — 1 execução',
+    emoji: '&#x25B6;',
+    situation: 'O loop <span class="kw">do-while</span> garante que o bloco seja executado <span class="val-true">pelo menos uma vez</span>, mesmo que a condição já seja <span class="val-true">falsa desde o início</span>.',
+    context: 'Exemplo: <span class="val-true">int n = 99; do { print(n); } while (n &lt; 5);</span> — imprime 99 uma vez antes de checar a condição.',
+    question: 'Essa afirmação sobre a garantia de execução do do-while está correta?',
+    answer: 'V',
+    explanation: 'VERDADEIRO. O do-while é um loop de pós-teste: executa o bloco PRIMEIRO, depois verifica a condição. Por isso sempre executa ao menos uma vez, independentemente da condição inicial.'
+  },
+  {
+    label: 'Valor de i após for',
+    emoji: '&#x1F522;',
+    situation: 'Após o término de <span class="kw">for (int i = 0; i &lt; 3; i++) {}</span>, o valor de <span class="kw">i</span> será <span class="val-false">2</span>.',
+    context: 'O loop executa para i = 0, 1, 2. Depois i++ faz i = 3. A condição 3 &lt; 3 é false e o loop encerra.',
+    question: 'O valor final de i após esse loop for é 2?',
+    answer: 'F',
+    explanation: 'FALSO. O valor de i ao sair do loop é 3. O loop executa o último incremento (i++ de 2 para 3) e então verifica a condição (3 < 3 = false), encerrando. i é 3, não 2.'
+  },
+  {
+    label: 'Loop infinito',
+    emoji: '&#x267E;',
+    situation: 'Em um loop <span class="kw">while</span>, se o programador <span class="val-true">esquecer de incrementar</span> a variável de controle, pode ocorrer um <span class="val-true">loop infinito</span>.',
+    context: 'Exemplo perigoso: <span class="val-false">int i = 0; while (i &lt; 5) { print(i); }</span> — i nunca muda, a condição é sempre true.',
+    question: 'Essa afirmação sobre loop infinito no while está correta?',
+    answer: 'V',
+    explanation: 'VERDADEIRO. Se a variável de controle não for modificada dentro do while, a condição nunca se tornará falsa e o loop executará para sempre (loop infinito), travando o programa.'
+  },
+  {
+    label: 'for vs while',
+    emoji: '&#x2696;',
+    situation: 'O loop <span class="kw">for</span> é mais adequado que o <span class="kw">while</span> quando <span class="val-false">não se sabe</span> o número de repetições antecipadamente.',
+    context: 'Exemplo de uso ideal do while: ler entradas do usuário até digitar "sair" — não sabemos quantas serão.',
+    question: 'Essa afirmação sobre quando preferir for ao while está correta?',
+    answer: 'F',
+    explanation: 'FALSO. Quando não se sabe o número de repetições, o WHILE é mais adequado. O FOR é ideal quando se sabe quantas vezes repetir (ex: percorrer um array de tamanho fixo).'
+  },
+  {
+    label: 'do-while com condição falsa',
+    emoji: '&#x1F9EA;',
+    situation: 'Com <span class="kw">int n = 10; do { n++; } while (n &lt; 5);</span>, o bloco <span class="kw">do</span> será executado exatamente <span class="val-true">1 vez</span>.',
+    context: 'n começa com 10. 10 &lt; 5 já é falso. Mas o do-while executa o bloco PRIMEIRO, depois verifica.',
+    question: 'O bloco do executa exatamente 1 vez nesse código?',
+    answer: 'V',
+    explanation: 'VERDADEIRO. O do-while executa o bloco (n++ → n = 11), depois verifica: 11 < 5 é false. Loop encerra após 1 execução. Mesmo que a condição já fosse falsa antes, o bloco roda uma vez.'
+  },
+  {
+    label: 'while vs do-while',
+    emoji: '&#x1F504;',
+    situation: 'A diferença entre <span class="kw">while</span> e <span class="kw">do-while</span> é o <span class="val-true">momento em que a condição é testada</span>: while testa antes (pré-teste) e do-while testa depois (pós-teste).',
+    context: 'Isso significa que o do-while sempre executa ao menos uma vez, enquanto o while pode não executar nenhuma vez.',
+    question: 'Essa afirmação sobre a diferença entre while e do-while está correta?',
+    answer: 'V',
+    explanation: 'VERDADEIRO. while = pré-teste (condição antes). do-while = pós-teste (condição depois). Essa é a distinção fundamental entre os dois loops.'
+  },
+  {
+    label: 'Valores do for',
+    emoji: '&#x1F522;',
+    situation: 'O loop <span class="kw">for (int i = 0; i &lt; 5; i++)</span> itera sobre os valores <span class="val-true">i = 0, 1, 2, 3, 4</span> — cinco valores no total.',
+    context: 'O índice começa em 0 (não em 1) e vai até 4 (não inclui 5, pois a condição é estritamente menor que 5).',
+    question: 'Os valores de i durante esse loop são 0, 1, 2, 3 e 4?',
+    answer: 'V',
+    explanation: 'VERDADEIRO. O loop começa em 0 e executa enquanto i < 5, portanto i assume os valores 0, 1, 2, 3 e 4. O valor 5 nunca é usado no corpo do loop pois a condição falha antes.'
+  },
+  {
+    label: 'do-while pode não executar',
+    emoji: '&#x274C;',
+    situation: 'O loop <span class="kw">do-while</span> pode <span class="val-false">não executar nenhuma vez</span> se a condição inicial já for falsa.',
+    context: 'Diferente do while, o do-while tem o bloco antes da verificação: <span class="val-true">do { ... } while (condição);</span>',
+    question: 'Essa afirmação sobre o do-while não executar nenhuma vez está correta?',
+    answer: 'F',
+    explanation: 'FALSO. O do-while SEMPRE executa pelo menos uma vez, independentemente da condição. A condição só é verificada APÓS a primeira execução do bloco. Quem pode não executar nenhuma vez é o while.'
+  }
+];
+
+let answered = 0;
+let userAnswers = new Array(questions.length).fill(null);
+
+function buildQuiz() {
+  const grid = document.getElementById('quiz');
+  grid.innerHTML = '';
+  questions.forEach((q, i) => {
+    grid.innerHTML += `
+      <div class="card" id="card${i}">
+        <div class="feedback-icon" id="icon${i}"></div>
+        <div class="card-num">QUESTÃO ${String(i+1).padStart(2,'0')} &nbsp;·&nbsp; ${q.label}</div>
+        <div class="situation-emoji">${q.emoji}</div>
+        <div class="situation-box">${q.situation}</div>
+        <div class="context-box">${q.context}</div>
+        <div class="question-text">${q.question}</div>
+        <div class="btn-row">
+          <button class="vf-btn v-btn" id="v${i}" onclick="select(${i},'V')">V &nbsp; Verdadeiro</button>
+          <button class="vf-btn f-btn" id="f${i}" onclick="select(${i},'F')">F &nbsp; Falso</button>
+        </div>
+        <div class="explanation" id="exp${i}">${q.explanation}</div>
+      </div>`;
+  });
+}
+
+function select(i, val) {
+  if (userAnswers[i] !== null) return;
+  const wasNull = userAnswers[i] === null;
+  userAnswers[i] = val;
+  document.getElementById('v'+i).classList.toggle('selected', val==='V');
+  document.getElementById('f'+i).classList.toggle('selected', val==='F');
+  if (wasNull) {
+    answered++;
+    document.getElementById('count').textContent = answered;
+    if (answered === questions.length) {
+      document.getElementById('btnCheck').disabled = false;
+      document.getElementById('progressInfo').textContent = 'Todas as questões respondidas! Clique em "Verificar Respostas".';
+    }
+  }
+}
+
+function checkAnswers() {
+  let score = 0;
+  questions.forEach((q, i) => {
+    const card = document.getElementById('card'+i);
+    const icon = document.getElementById('icon'+i);
+    document.getElementById('v'+i).disabled = true;
+    document.getElementById('f'+i).disabled = true;
+    if (userAnswers[i] === q.answer) {
+      card.classList.add('correct'); icon.textContent = '✓'; score++;
+    } else {
+      card.classList.add('incorrect'); icon.textContent = '✗';
+    }
+  });
+  document.getElementById('btnCheck').disabled = true;
+  showResult(score);
+}
+
+function showResult(score) {
+  const panel = document.getElementById('resultPanel');
+  const msgs = [
+    [10,10,'🏆 Perfeito! Você domina estruturas de repetição!'],
+    [8,9, '⭐ Excelente! Quase lá — revise os pontos que errou.'],
+    [6,7, '👍 Bom trabalho! Continue praticando os loops.'],
+    [4,5, '📚 Continue estudando! Revise for, while e do-while.'],
+    [0,3, '💪 Não desanime! Releia o conteúdo com calma.']
+  ];
+  document.getElementById('resultScore').textContent = score + '/10';
+  document.getElementById('resultMsg').textContent   = msgs.find(([a,b])=>score>=a&&score<=b)[2];
+  panel.classList.add('show');
+  setTimeout(()=>{ document.getElementById('resultFill').style.width=(score/10*100)+'%'; }, 100);
+  panel.scrollIntoView({ behavior:'smooth', block:'center' });
+}
+
+function resetQuiz() {
+  answered = 0;
+  userAnswers = new Array(questions.length).fill(null);
+  document.getElementById('count').textContent = '0';
+  document.getElementById('btnCheck').disabled = true;
+  document.getElementById('progressInfo').textContent = 'Responda todas as questões para verificar o resultado.';
+  document.getElementById('resultPanel').classList.remove('show');
+  document.getElementById('resultFill').style.width = '0%';
+  buildQuiz();
+}
+
+buildQuiz();
+</script>
+</body>
+</html>

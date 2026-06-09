@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Implementação Java — Decisão e Repetição</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:          #f0f0f5;
+  --surface:     #ffffff;
+  --border:      #d8d5e8;
+  --accent:      #8d62ff;
+  --accent2:     #00c896;
+  --text:        #1a1730;
+  --muted:       #7a748f;
+  --green:       #155e35;
+  --green-bg:    #d6f5e5;
+  --green-border:#6edaa8;
+  --radius:      10px;
+  --glow:        0 0 18px rgba(141,98,255,0.15);
+  --grad:        linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
+  --surface2:    #f7f5ff;
+  --danger:      #d63030;
+  --warn:        #d48a00;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  padding: 0 0 60px;
+  background-image:
+    radial-gradient(ellipse 70% 40% at 50% -10%, rgba(141,98,255,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 30% at 80% 110%, rgba(0,200,150,0.06) 0%, transparent 70%);
+}
+
+header {
+  text-align: center;
+  padding: 36px 20px 28px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  background: var(--surface);
+  box-shadow: 0 2px 16px rgba(141,98,255,0.07);
+}
+header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 2px;
+  background: linear-gradient(90deg, transparent, #8d62ff, transparent);
+}
+.header-logo { height: 48px; margin-bottom: 14px; display: block; margin-left: auto; margin-right: auto; }
+.logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+  font-weight: 700; letter-spacing: -0.5px;
+  background: var(--grad);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.logo span { opacity: 0.6; }
+.subtitle { color: var(--muted); font-size: .85rem; margin-top: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
+.header-badge {
+  display: inline-block; margin-top: 12px; padding: 4px 16px; border-radius: 99px;
+  font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace;
+  background: linear-gradient(270deg, rgba(141,98,255,.15), rgba(0,255,188,.1));
+  border: 1px solid rgba(141,98,255,.3); color: var(--accent); letter-spacing: .06em;
+}
+
+.wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+.back-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--muted); font-size: 13px; text-decoration: none;
+  font-family: 'JetBrains Mono', monospace; margin-bottom: 1.5rem;
+  transition: color .15s;
+}
+.back-link:hover { color: var(--accent); }
+
+.info-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem 1.5rem; margin-bottom: 1.75rem;
+  box-shadow: 0 2px 8px rgba(141,98,255,0.06); position: relative; overflow: hidden;
+}
+.info-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(141,98,255,.35), transparent);
+}
+.info-card-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700;
+  margin-bottom: .6rem; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.info-card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+.pill { display: inline-block; padding: 3px 11px; border-radius: 99px; font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+.pill-grad  { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.3);  color: var(--accent); }
+.pill-green { background: rgba(0,200,150,.12);  border: 1px solid rgba(0,200,150,.3);   color: #0a7a5a; }
+.pill-amber { background: rgba(212,138,0,.1);   border: 1px solid rgba(212,138,0,.25);  color: var(--warn); }
+.pill-blue  { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.25); color: #5a30cc; }
+
+.ex-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  margin-bottom: 1.5rem; overflow: hidden;
+  box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.ex-header {
+  padding: 1.1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  background: var(--surface2);
+}
+.ex-number {
+  font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700;
+  background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  min-width: 36px;
+}
+.ex-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700; color: var(--text); flex: 1;
+}
+.ex-body { padding: 1.25rem 1.5rem; }
+.ex-enunciado {
+  font-size: 14px; color: var(--text); line-height: 1.75; margin-bottom: 1rem;
+}
+.ex-enunciado strong { color: var(--accent); }
+.ex-requisitos {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 14px 16px; margin-bottom: 1.25rem;
+}
+.ex-requisitos-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  color: var(--muted); letter-spacing: .07em; text-transform: uppercase; margin-bottom: 10px;
+}
+.ex-requisitos ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.ex-requisitos li {
+  font-size: 13px; color: var(--muted); display: flex; align-items: flex-start; gap: 8px; line-height: 1.55;
+}
+.ex-requisitos li::before {
+  content: '›'; color: var(--accent); font-weight: 700; font-size: 16px;
+  line-height: 1; flex-shrink: 0; margin-top: 1px;
+}
+.ic { background: rgba(141,98,255,.12); color: #5a30cc; padding: 1px 6px; border-radius: 4px; font-size: 12px; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+.reveal-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 22px; border-radius: 8px; border: 1.5px solid var(--accent);
+  background: transparent; color: var(--accent);
+  cursor: pointer; font-size: 13px; font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  transition: all .2s; margin-bottom: 0;
+}
+.reveal-btn:hover { background: rgba(141,98,255,.1); transform: translateY(-1px); box-shadow: var(--glow); }
+.reveal-btn.revealed {
+  background: var(--grad); color: #fff; border-color: transparent;
+  box-shadow: 0 3px 14px rgba(141,98,255,.3);
+}
+.reveal-btn svg { transition: transform .3s; }
+.reveal-btn.revealed svg { transform: rotate(180deg); }
+
+.solution-area { margin-top: 1rem; display: none; }
+.solution-area.visible { display: block; }
+.solution-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  color: var(--muted); letter-spacing: .07em; text-transform: uppercase;
+  margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+}
+.solution-label::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); }
+
+.code-block {
+  background: #1e1e2e; border: 1px solid #3a3a5c; border-radius: 10px;
+  padding: 18px 20px; font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; line-height: 1.85; color: #cdd6f4; overflow-x: auto; white-space: pre;
+}
+.code-block .kw  { color: #cba6f7; }
+.code-block .typ { color: #89b4fa; }
+.code-block .str { color: #a6e3a1; }
+.code-block .num { color: #fab387; }
+.code-block .cmt { color: #6c7086; font-style: italic; }
+.code-block .cls { color: #f5c2e7; }
+.code-block .mtd { color: #89dceb; }
+
+.output-block {
+  background: #12121e; border: 1px solid #2a2a40; border-radius: 8px;
+  padding: 14px 18px; margin-top: 10px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.8;
+  color: #a6e3a1; overflow-x: auto; white-space: pre;
+}
+.output-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  color: var(--muted); letter-spacing: .07em; text-transform: uppercase;
+  margin: 12px 0 6px; display: flex; align-items: center; gap: 6px;
+}
+.output-label::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #a6e3a1; }
+
+.diff-bar { display: flex; gap: 4px; align-items: center; }
+.diff-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); }
+.diff-dot.filled-easy   { background: #00c896; }
+.diff-dot.filled-medium { background: #d48a00; }
+
+.progress-area {
+  display: flex; align-items: center; gap: 16px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px 18px; margin-bottom: 1.75rem; box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.progress-val {
+  font-size: 28px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+  background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  min-width: 50px;
+}
+.progress-label { font-size: 11px; color: var(--muted); }
+.progress-track { flex: 1; background: #e5e2f0; border-radius: 99px; height: 8px; overflow: hidden; }
+.progress-fill  { height: 100%; border-radius: 99px; background: var(--grad); width: 0%; transition: width .4s cubic-bezier(.4,0,.2,1); }
+
+.tip-box {
+  margin-top: 12px; padding: 12px 14px;
+  background: rgba(141,98,255,.08); border: 1px solid rgba(141,98,255,.2);
+  border-radius: 8px; font-size: 13px; color: var(--muted); line-height: 1.65;
+}
+
+footer { text-align: center; margin-top: 3rem; font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+footer span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700; }
+
+@media (max-width: 540px) {
+  .ex-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .code-block { font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img class="header-logo" src="https://capacitabrasil.irede.org.br/assets/capacitaLogo-Ct3BEyem.png" alt="Capacita Brasil"/>
+  <div class="logo">&#x2615; <span>//</span> Java</div>
+  <div class="subtitle">Desenvolvimento Java &mdash; Aula 02</div>
+  <div class="header-badge">Questões de Implementação</div>
+</header>
+
+<div class="wrap">
+
+  <a class="back-link" href="index.html">&#x2190; Voltar para a Aula 02</a>
+
+  <div class="info-card">
+    <div class="info-card-title">
+      Implementação em Java
+      <span class="pill pill-grad">5 questões</span>
+      <span class="pill pill-green">Nível Básico</span>
+    </div>
+    <p>Pratique escrevendo código Java real. Cada questão apresenta um problema a ser resolvido com os conceitos da Aula 02: <strong style="color:var(--text)">estruturas de decisão (if/else, switch/case) e estruturas de repetição (for, while)</strong>. Leia o enunciado, tente resolver por conta própria e depois revele a solução para conferir.</p>
+  </div>
+
+  <div class="progress-area">
+    <div>
+      <div class="progress-val" id="progressVal">0/5</div>
+      <div class="progress-label">reveladas</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <!-- ═══════════ QUESTÃO 1 ═══════════ -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-number">1)</div>
+      <div class="ex-title">Verificar Maioridade</div>
+      <span class="pill pill-green">Básico</span>
+      <div class="diff-bar" title="Dificuldade: Básico">
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot"></div>
+        <div class="diff-dot"></div>
+        <div class="diff-dot"></div>
+        <div class="diff-dot"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="ex-enunciado">
+        Crie um programa chamado <strong>VerificarIdade</strong> que declare uma variável de idade e use <strong>if/else</strong> para imprimir se a pessoa é maior ou menor de idade.
+      </div>
+      <div class="ex-requisitos">
+        <div class="ex-requisitos-title">Requisitos</div>
+        <ul>
+          <li>Declare <span class="ic">int idade = 20</span></li>
+          <li>Use <span class="ic">if (idade &gt;= 18)</span> para verificar a maioridade</li>
+          <li>Imprima <span class="ic">"Você é maior de idade."</span> ou <span class="ic">"Você é menor de idade."</span> conforme o caso</li>
+          <li>Imprima também a idade no final: <span class="ic">"Idade informada: 20"</span></li>
+        </ul>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(1, this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Ver solução
+      </button>
+      <div class="solution-area" id="sol1">
+        <div class="solution-label">Solução</div>
+        <div class="code-block"><span class="kw">public class</span> <span class="cls">VerificarIdade</span> {
+
+  <span class="kw">public static void</span> <span class="mtd">main</span>(<span class="typ">String</span>[] args) {
+    <span class="kw">int</span> idade = <span class="num">20</span>;
+
+    <span class="kw">if</span> (idade >= <span class="num">18</span>) {
+      System.out.<span class="mtd">println</span>(<span class="str">"Você é maior de idade."</span>);
+    } <span class="kw">else</span> {
+      System.out.<span class="mtd">println</span>(<span class="str">"Você é menor de idade."</span>);
+    }
+
+    System.out.<span class="mtd">println</span>(<span class="str">"Idade informada: "</span> + idade);
+  }
+
+}</div>
+        <div class="output-label">Saída esperada no console</div>
+        <div class="output-block">Você é maior de idade.
+Idade informada: 20</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ QUESTÃO 2 ═══════════ -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-number">2)</div>
+      <div class="ex-title">Classificar Nota com Conceito</div>
+      <span class="pill pill-green">Básico</span>
+      <div class="diff-bar" title="Dificuldade: Básico">
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot"></div>
+        <div class="diff-dot"></div>
+        <div class="diff-dot"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="ex-enunciado">
+        Crie um programa chamado <strong>ClassificarNota</strong> que use <strong>if / else if / else</strong> para atribuir um conceito a uma nota de 0 a 100.
+      </div>
+      <div class="ex-requisitos">
+        <div class="ex-requisitos-title">Requisitos</div>
+        <ul>
+          <li>Declare <span class="ic">int nota = 85</span></li>
+          <li>Use <span class="ic">if / else if / else</span>: nota &gt;= 90 → "A", nota &gt;= 70 → "B", nota &gt;= 50 → "C", senão → "D"</li>
+          <li>Imprima a nota e o conceito no formato <span class="ic">"Nota: 85 | Conceito: B"</span></li>
+        </ul>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(2, this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Ver solução
+      </button>
+      <div class="solution-area" id="sol2">
+        <div class="solution-label">Solução</div>
+        <div class="code-block"><span class="kw">public class</span> <span class="cls">ClassificarNota</span> {
+
+  <span class="kw">public static void</span> <span class="mtd">main</span>(<span class="typ">String</span>[] args) {
+    <span class="kw">int</span>    nota    = <span class="num">85</span>;
+    <span class="typ">String</span> conceito;
+
+    <span class="kw">if</span> (nota >= <span class="num">90</span>) {
+      conceito = <span class="str">"A"</span>;
+    } <span class="kw">else if</span> (nota >= <span class="num">70</span>) {
+      conceito = <span class="str">"B"</span>;
+    } <span class="kw">else if</span> (nota >= <span class="num">50</span>) {
+      conceito = <span class="str">"C"</span>;
+    } <span class="kw">else</span> {
+      conceito = <span class="str">"D"</span>;
+    }
+
+    System.out.<span class="mtd">println</span>(<span class="str">"Nota: "</span> + nota + <span class="str">" | Conceito: "</span> + conceito);
+  }
+
+}</div>
+        <div class="output-label">Saída esperada no console</div>
+        <div class="output-block">Nota: 85 | Conceito: B</div>
+        <div class="tip-box">
+          <strong style="color:var(--accent);font-family:'JetBrains Mono',monospace">Dica:</strong>
+          As condições são avaliadas em ordem. Como 85 não é &gt;= 90, a primeira condição falha. Como 85 é &gt;= 70, a segunda condição é verdadeira e executa — as demais são ignoradas.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ QUESTÃO 3 ═══════════ -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-number">3)</div>
+      <div class="ex-title">Dias da Semana com switch/case</div>
+      <span class="pill pill-green">Básico</span>
+      <div class="diff-bar" title="Dificuldade: Básico">
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot"></div>
+        <div class="diff-dot"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="ex-enunciado">
+        Crie um programa chamado <strong>DiasDaSemana</strong> que use <strong>switch/case</strong> para converter um número (1–7) no nome do respectivo dia da semana.
+      </div>
+      <div class="ex-requisitos">
+        <div class="ex-requisitos-title">Requisitos</div>
+        <ul>
+          <li>Declare <span class="ic">int dia = 3</span></li>
+          <li>Use <span class="ic">switch(dia)</span> com cases para 1 (Domingo) até 7 (Sábado)</li>
+          <li>Cada case deve ter <span class="ic">break</span> ao final</li>
+          <li>O <span class="ic">default</span> deve imprimir <span class="ic">"Número inválido."</span></li>
+          <li>Imprima no formato <span class="ic">"Dia 3: Terça-feira"</span></li>
+        </ul>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(3, this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Ver solução
+      </button>
+      <div class="solution-area" id="sol3">
+        <div class="solution-label">Solução</div>
+        <div class="code-block"><span class="kw">public class</span> <span class="cls">DiasDaSemana</span> {
+
+  <span class="kw">public static void</span> <span class="mtd">main</span>(<span class="typ">String</span>[] args) {
+    <span class="kw">int</span> dia = <span class="num">3</span>;
+    <span class="typ">String</span> nomeDia;
+
+    <span class="kw">switch</span> (dia) {
+      <span class="kw">case</span> <span class="num">1</span>:  nomeDia = <span class="str">"Domingo"</span>;    <span class="kw">break</span>;
+      <span class="kw">case</span> <span class="num">2</span>:  nomeDia = <span class="str">"Segunda-feira"</span>; <span class="kw">break</span>;
+      <span class="kw">case</span> <span class="num">3</span>:  nomeDia = <span class="str">"Terça-feira"</span>;  <span class="kw">break</span>;
+      <span class="kw">case</span> <span class="num">4</span>:  nomeDia = <span class="str">"Quarta-feira"</span>; <span class="kw">break</span>;
+      <span class="kw">case</span> <span class="num">5</span>:  nomeDia = <span class="str">"Quinta-feira"</span>; <span class="kw">break</span>;
+      <span class="kw">case</span> <span class="num">6</span>:  nomeDia = <span class="str">"Sexta-feira"</span>;  <span class="kw">break</span>;
+      <span class="kw">case</span> <span class="num">7</span>:  nomeDia = <span class="str">"Sábado"</span>;       <span class="kw">break</span>;
+      <span class="kw">default</span>: nomeDia = <span class="str">"Número inválido."</span>;
+    }
+
+    System.out.<span class="mtd">println</span>(<span class="str">"Dia "</span> + dia + <span class="str">": "</span> + nomeDia);
+  }
+
+}</div>
+        <div class="output-label">Saída esperada no console</div>
+        <div class="output-block">Dia 3: Terça-feira</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ QUESTÃO 4 ═══════════ -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-number">4)</div>
+      <div class="ex-title">Contador e Soma com for</div>
+      <span class="pill pill-green">Básico</span>
+      <div class="diff-bar" title="Dificuldade: Básico">
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="ex-enunciado">
+        Crie um programa chamado <strong>ContadorSoma</strong> que use um loop <strong>for</strong> para imprimir os números de 1 a 5 e calcular a soma total.
+      </div>
+      <div class="ex-requisitos">
+        <div class="ex-requisitos-title">Requisitos</div>
+        <ul>
+          <li>Use <span class="ic">for (int i = 1; i &lt;= 5; i++)</span></li>
+          <li>Dentro do loop, imprima cada número e acumule em uma variável <span class="ic">soma</span></li>
+          <li>Após o loop, imprima <span class="ic">"Soma total: 15"</span></li>
+        </ul>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(4, this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Ver solução
+      </button>
+      <div class="solution-area" id="sol4">
+        <div class="solution-label">Solução</div>
+        <div class="code-block"><span class="kw">public class</span> <span class="cls">ContadorSoma</span> {
+
+  <span class="kw">public static void</span> <span class="mtd">main</span>(<span class="typ">String</span>[] args) {
+    <span class="kw">int</span> soma = <span class="num">0</span>;
+
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt;= <span class="num">5</span>; i++) {
+      System.out.<span class="mtd">println</span>(<span class="str">"Número: "</span> + i);
+      soma += i;
+    }
+
+    System.out.<span class="mtd">println</span>(<span class="str">"Soma total: "</span> + soma);
+  }
+
+}</div>
+        <div class="output-label">Saída esperada no console</div>
+        <div class="output-block">Número: 1
+Número: 2
+Número: 3
+Número: 4
+Número: 5
+Soma total: 15</div>
+        <div class="tip-box">
+          <strong style="color:var(--accent);font-family:'JetBrains Mono',monospace">Dica:</strong>
+          Note que o loop começa em <span class="ic">i = 1</span> e usa <span class="ic">i &lt;= 5</span> (menor ou igual). Isso faz o loop rodar para 1, 2, 3, 4, 5 — diferente de <span class="ic">i &lt; 5</span> que pararia em 4.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ QUESTÃO 5 ═══════════ -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-number">5)</div>
+      <div class="ex-title">Tabuada com for</div>
+      <span class="pill pill-amber">Básico–Médio</span>
+      <div class="diff-bar" title="Dificuldade: Básico-Médio">
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot filled-medium"></div>
+        <div class="diff-dot filled-medium"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="ex-enunciado">
+        Crie um programa chamado <strong>Tabuada</strong> que gere a tabuada completa de um número usando um loop <strong>for</strong>, imprimindo cada linha no formato <strong>"N x i = resultado"</strong>.
+      </div>
+      <div class="ex-requisitos">
+        <div class="ex-requisitos-title">Requisitos</div>
+        <ul>
+          <li>Declare <span class="ic">int numero = 7</span></li>
+          <li>Imprima o cabeçalho <span class="ic">"Tabuada do 7:"</span></li>
+          <li>Use <span class="ic">for (int i = 1; i &lt;= 10; i++)</span> para gerar as multiplicações</li>
+          <li>Imprima cada linha no formato <span class="ic">"7 x 1 = 7"</span>, <span class="ic">"7 x 2 = 14"</span>, etc.</li>
+        </ul>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(5, this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Ver solução
+      </button>
+      <div class="solution-area" id="sol5">
+        <div class="solution-label">Solução</div>
+        <div class="code-block"><span class="kw">public class</span> <span class="cls">Tabuada</span> {
+
+  <span class="kw">public static void</span> <span class="mtd">main</span>(<span class="typ">String</span>[] args) {
+    <span class="kw">int</span> numero = <span class="num">7</span>;
+
+    System.out.<span class="mtd">println</span>(<span class="str">"Tabuada do "</span> + numero + <span class="str">":"</span>);
+
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt;= <span class="num">10</span>; i++) {
+      System.out.<span class="mtd">println</span>(numero + <span class="str">" x "</span> + i + <span class="str">" = "</span> + (numero * i));
+    }
+  }
+
+}</div>
+        <div class="output-label">Saída esperada no console</div>
+        <div class="output-block">Tabuada do 7:
+7 x 1 = 7
+7 x 2 = 14
+7 x 3 = 21
+7 x 4 = 28
+7 x 5 = 35
+7 x 6 = 42
+7 x 7 = 49
+7 x 8 = 56
+7 x 9 = 63
+7 x 10 = 70</div>
+        <div class="tip-box">
+          <strong style="color:var(--accent);font-family:'JetBrains Mono',monospace">Conceitos aplicados:</strong>
+          O loop <span class="ic">for</span> com variável <span class="ic">i</span> de 1 a 10 combina com o operador <span class="ic">*</span> para calcular o produto. Os parênteses em <span class="ic">(numero * i)</span> garantem que a multiplicação seja feita antes da concatenação com o <span class="ic">+</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Material didático desenvolvido para <span>Capacita Brasil</span> &nbsp;&mdash;&nbsp; iRede &nbsp;&middot;&nbsp; Desenvolvimento Java
+  </footer>
+
+</div><!-- /wrap -->
+
+<script>
+let revealed = 0;
+
+function toggleSolution(num, btn) {
+  const sol = document.getElementById('sol' + num);
+  const isVisible = sol.classList.contains('visible');
+
+  if (!isVisible) {
+    sol.classList.add('visible');
+    btn.classList.add('revealed');
+    btn.innerHTML =
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transform:rotate(180deg)"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>' +
+      'Ocultar solução';
+    if (!btn.dataset.counted) {
+      btn.dataset.counted = '1';
+      revealed++;
+      updateProgress();
+    }
+  } else {
+    sol.classList.remove('visible');
+    btn.classList.remove('revealed');
+    btn.innerHTML =
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>' +
+      'Ver solução';
+  }
+}
+
+function updateProgress() {
+  document.getElementById('progressVal').textContent  = revealed + '/5';
+  document.getElementById('progressFill').style.width = (revealed / 5 * 100) + '%';
+}
+</script>
+</body>
+</html>
