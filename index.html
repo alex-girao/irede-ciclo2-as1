@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Java — Fundamentos de POO</title>
+<title>Java — Programação Orientada a Objetos</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
 <style>
 :root {
@@ -83,7 +83,7 @@ header::after {
 }
 .aula-tab {
   flex: 1; padding: 12px 20px; border-radius: 10px; border: none;
-  background: transparent; color: rgba(255,255,255,0.45); cursor: default;
+  background: transparent; color: rgba(255,255,255,0.45); cursor: pointer;
   font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
   transition: all .2s; letter-spacing: .02em;
 }
@@ -290,13 +290,14 @@ footer span { background: var(--grad); -webkit-background-clip: text; -webkit-te
   <img class="header-logo" src="https://capacitabrasil.irede.org.br/assets/capacitaLogo-Ct3BEyem.png" alt="Capacita Brasil"/>
   <div class="logo">&#x2615; <span>//</span> Java</div>
   <div class="subtitle">Desenvolvimento Java &mdash; Aula Interativa</div>
-  <div class="header-badge">Fundamentos de POO</div>
+  <div class="header-badge">Unidade 2 &mdash; POO</div>
 </header>
 
 <div class="wrap">
 
   <div class="aula-bar">
-    <button class="aula-tab active">&#x1F4D0; Aula 01 &mdash; Fundamentos de POO</button>
+    <button class="aula-tab active" onclick="switchAula('aula01',this)">&#x1F4D0; Aula 01 &mdash; Fundamentos de POO</button>
+    <button class="aula-tab"        onclick="switchAula('aula02',this)">&#x1F333; Aula 02 &mdash; Herança e Hierarquia</button>
   </div>
 
   <!-- ═══════════════ AULA 01 ═══════════════ -->
@@ -722,6 +723,452 @@ p2.<span class="mtd">apresentar</span>(); <span class="cmt">// Olá, meu nome é
 
   </div><!-- /aula01 -->
 
+  <!-- ═══════════════ AULA 02 ═══════════════ -->
+  <div id="aula02" class="aula-section">
+
+  <div class="tab-bar">
+    <button class="tab active"  onclick="showTab('resumo2',this)">&#x1F4D8; Resumo</button>
+    <button class="tab"         onclick="showTab('simulador2',this)">&#x26A1; Simulador</button>
+    <button class="tab"         onclick="showTab('exercicios2',this)">&#x1F3AF; Exercícios</button>
+    <button class="tab"         onclick="showTab('questionarios2',this)">&#x1F4DD; Questionários</button>
+    <button class="tab"         onclick="showTab('curiosidades2',this)">&#x1F680; Curiosidades</button>
+    <button class="tab"         onclick="showTab('links2',this)">&#x1F517; Links</button>
+  </div>
+
+  <!-- ═══ RESUMO 2 ═══ -->
+  <div id="resumo2" class="section active">
+
+    <!-- Card 1: O que é Herança -->
+    <div class="card">
+      <div class="card-title">O que é Herança? <span class="pill pill-green">Inheritance</span></div>
+      <p>A <strong style="color:var(--text)">herança</strong> é um dos pilares da POO que permite que uma classe <strong style="color:var(--text)">"herde"</strong> atributos e métodos de outra classe, promovendo o <strong style="color:var(--text)">reuso de código</strong>.</p>
+      <p style="margin-top:10px">A classe que herda é chamada de <strong style="color:var(--text)">subclasse</strong> (ou classe filha), e a classe da qual ela herda é chamada de <strong style="color:var(--text)">superclasse</strong> (ou classe pai).</p>
+      <p style="margin-top:10px">Em Java, usamos a palavra-chave <span class="ic">extends</span> para declarar herança. A relação expressa um conceito de <strong style="color:var(--text)">"é-um"</strong> (is-a): um Cachorro <em>é-um</em> Animal.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+        <span class="pill pill-grad">Herança</span>
+        <span class="pill pill-green">extends</span>
+        <span class="pill pill-blue">Subclasse</span>
+        <span class="pill pill-java">Superclasse</span>
+      </div>
+    </div>
+
+    <!-- Card 2: Usando extends -->
+    <div class="card">
+      <div class="card-title">Usando <span class="ic">extends</span> <span class="pill pill-grad">Conceito Central</span></div>
+      <p>Com <span class="ic">extends</span>, a subclasse recebe automaticamente todos os atributos e métodos <span class="ic">public</span> e <span class="ic">protected</span> da superclasse, além de poder definir seus próprios membros.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">
+        <div>
+          <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:6px;letter-spacing:.06em">SUPERCLASSE</div>
+          <div class="code-block" style="font-size:12px"><span class="kw">public</span> <span class="kw">class</span> <span class="cls">Animal</span> {
+    <span class="kw">private</span> <span class="typ">String</span> nome;
+
+    <span class="kw">public</span> <span class="cls">Animal</span>(<span class="typ">String</span> nome) {
+        <span class="kw">this</span>.nome = nome;
+    }
+
+    <span class="kw">public</span> <span class="typ">String</span> <span class="mtd">getNome</span>() {
+        <span class="kw">return</span> nome;
+    }
+
+    <span class="kw">public</span> <span class="typ">void</span> <span class="mtd">emitirSom</span>() {
+        <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"..."</span>);
+    }
+}</div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:6px;letter-spacing:.06em">SUBCLASSE</div>
+          <div class="code-block" style="font-size:12px"><span class="kw">public</span> <span class="kw">class</span> <span class="cls">Cachorro</span>
+    <span class="kw">extends</span> <span class="cls">Animal</span> {
+
+    <span class="kw">private</span> <span class="typ">String</span> raca;
+
+    <span class="kw">public</span> <span class="cls">Cachorro</span>(
+        <span class="typ">String</span> nome,
+        <span class="typ">String</span> raca) {
+        <span class="kw">super</span>(nome);
+        <span class="kw">this</span>.raca = raca;
+    }
+
+    <span class="kw">public</span> <span class="typ">void</span> <span class="mtd">buscarBola</span>() {
+        <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(
+          <span class="mtd">getNome</span>() +
+          <span class="str">" buscou!"</span>);
+    }
+}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3: super -->
+    <div class="card">
+      <div class="card-title">A palavra-chave <span class="ic">super</span> <span class="pill pill-blue">Chamando o Pai</span></div>
+      <p>A palavra-chave <span class="ic">super</span> é usada dentro de uma subclasse para <strong style="color:var(--text)">acessar membros da superclasse</strong>.</p>
+      <div style="margin:14px 0;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted)">
+          <span style="color:var(--accent2);font-weight:700">&#x2713;</span>
+          <span><span class="ic">super()</span> — chama o <strong style="color:var(--text)">construtor</strong> da superclasse (deve ser a 1ª instrução do construtor filho)</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted)">
+          <span style="color:var(--accent2);font-weight:700">&#x2713;</span>
+          <span><span class="ic">super.metodo()</span> — chama um <strong style="color:var(--text)">método</strong> da superclasse (útil para estender o comportamento original)</span>
+        </div>
+      </div>
+      <div class="code-block"><span class="kw">public</span> <span class="kw">class</span> <span class="cls">Cachorro</span> <span class="kw">extends</span> <span class="cls">Animal</span> {
+    <span class="kw">private</span> <span class="typ">String</span> raca;
+
+    <span class="kw">public</span> <span class="cls">Cachorro</span>(<span class="typ">String</span> nome, <span class="typ">String</span> raca) {
+        <span class="kw">super</span>(nome);         <span class="cmt">// 1º: chama Animal(nome)</span>
+        <span class="kw">this</span>.raca = raca;
+    }
+
+    <span class="kw">public</span> <span class="typ">void</span> <span class="mtd">emitirSom</span>() {
+        <span class="kw">super</span>.<span class="mtd">emitirSom</span>(); <span class="cmt">// chama Animal.emitirSom()</span>
+        <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"Au au!"</span>);
+    }
+}</div>
+    </div>
+
+    <!-- Card 4: @Override -->
+    <div class="card">
+      <div class="card-title">Sobrescrita de Métodos <span class="pill pill-java">@Override</span></div>
+      <p>A <strong style="color:var(--text)">sobrescrita</strong> (override) permite que a subclasse <strong style="color:var(--text)">redefina</strong> um método herdado da superclasse, alterando seu comportamento para o contexto específico da classe filha.</p>
+      <p style="margin-top:8px">A anotação <span class="ic">@Override</span> avisa o compilador que estamos sobrescrevendo — ele detecta erros de digitação no nome do método.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">
+        <div>
+          <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:6px;letter-spacing:.06em">NA SUPERCLASSE</div>
+          <div class="code-block" style="font-size:12px"><span class="cmt">// Animal.java</span>
+<span class="kw">public</span> <span class="typ">void</span> <span class="mtd">emitirSom</span>() {
+    <span class="cls">System</span>.<span class="mtd">out</span>
+      .<span class="mtd">println</span>(<span class="str">"..."</span>);
+}
+<span class="cmt">// saída: ...</span></div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:6px;letter-spacing:.06em">NA SUBCLASSE</div>
+          <div class="code-block" style="font-size:12px"><span class="cmt">// Cachorro.java</span>
+<span class="kw">@Override</span>
+<span class="kw">public</span> <span class="typ">void</span> <span class="mtd">emitirSom</span>() {
+    <span class="cls">System</span>.<span class="mtd">out</span>
+      .<span class="mtd">println</span>(<span class="str">"Au au!"</span>);
+}
+<span class="cmt">// saída: Au au!</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 5: Hierarquia -->
+    <div class="card">
+      <div class="card-title">Hierarquia de Classes <span class="pill pill-grad">Class Tree</span></div>
+      <p>Quando classes herdam umas das outras forma-se uma <strong style="color:var(--text)">hierarquia</strong> (árvore de classes). Uma subclasse pode ser superclasse de outra, criando múltiplos níveis.</p>
+      <div style="margin-top:16px;display:flex;flex-direction:column;align-items:center;gap:4px;font-family:'JetBrains Mono',monospace;font-size:13px">
+        <div style="background:rgba(141,98,255,.12);border:1.5px solid rgba(141,98,255,.4);border-radius:8px;padding:8px 32px;color:var(--accent);font-weight:700">Animal</div>
+        <div style="color:var(--muted);font-size:18px;line-height:1.4">↓</div>
+        <div style="background:rgba(0,200,150,.1);border:1.5px solid rgba(0,200,150,.4);border-radius:8px;padding:8px 32px;color:#0a7a5a;font-weight:700">Mamifero</div>
+        <div style="display:flex;gap:40px;align-items:flex-start;margin-top:4px">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="color:var(--muted);font-size:18px;line-height:1.4">↓</div>
+            <div style="background:rgba(141,98,255,.08);border:1.5px solid rgba(141,98,255,.25);border-radius:8px;padding:6px 20px;color:var(--text);font-weight:600;font-size:12px">Cachorro</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="color:var(--muted);font-size:18px;line-height:1.4">↓</div>
+            <div style="background:rgba(141,98,255,.08);border:1.5px solid rgba(141,98,255,.25);border-radius:8px;padding:6px 20px;color:var(--text);font-weight:600;font-size:12px">Gato</div>
+          </div>
+        </div>
+      </div>
+      <p style="margin-top:16px;font-size:13px;color:var(--muted)">O operador <span class="ic">instanceof</span> verifica se um objeto pertence a uma determinada classe na hierarquia:</p>
+      <div class="code-block" style="margin-top:8px"><span class="cls">Cachorro</span> c = <span class="kw">new</span> <span class="cls">Cachorro</span>(<span class="str">"Rex"</span>, <span class="str">"Labrador"</span>);
+<span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(c <span class="kw">instanceof</span> <span class="cls">Cachorro</span>); <span class="cmt">// true</span>
+<span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(c <span class="kw">instanceof</span> <span class="cls">Animal</span>);   <span class="cmt">// true (herança!)</span>
+<span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(c <span class="kw">instanceof</span> <span class="cls">Gato</span>);     <span class="cmt">// false</span></div>
+    </div>
+
+    <!-- Card 6: A Classe Object -->
+    <div class="card">
+      <div class="card-title">A Classe <span class="ic">Object</span> <span class="pill pill-blue">Raiz de Tudo</span></div>
+      <p>Em Java, <strong style="color:var(--text)">toda classe herda implicitamente de <span class="ic">java.lang.Object</span></strong> — a raiz de toda a hierarquia de classes Java. Por isso qualquer objeto já possui estes métodos automaticamente:</p>
+      <table style="margin-top:14px">
+        <tr><th>Método</th><th>O que faz</th></tr>
+        <tr><td><span class="ic">equals(obj)</span></td><td class="left">Compara se dois objetos têm o mesmo conteúdo</td></tr>
+        <tr><td><span class="ic">toString()</span></td><td class="left">Representação textual do objeto (sobrescreva para logs úteis!)</td></tr>
+        <tr><td><span class="ic">hashCode()</span></td><td class="left">Código hash (necessário para coleções como HashMap)</td></tr>
+        <tr><td><span class="ic">getClass()</span></td><td class="left">Retorna a classe real do objeto em tempo de execução</td></tr>
+      </table>
+    </div>
+
+  </div><!-- /resumo2 -->
+
+  <!-- ═══ SIMULADOR 2 ═══ -->
+  <div id="simulador2" class="section">
+
+    <!-- Part 1: UML Inheritance Explorer -->
+    <div class="card">
+      <div class="card-title">&#x1F4E6; Explorador de Herança &mdash; Animal / Cachorro</div>
+      <p style="margin-bottom:16px">Clique em um <strong style="color:var(--text)">membro</strong> para ver detalhes. <span style="color:#0a7a5a;font-weight:700">▲</span> = herdado · <span style="color:var(--accent);font-weight:700">★</span> = próprio · <span style="color:var(--warn);font-weight:700">↩</span> = sobrescrito.</p>
+      <div class="sim-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:0">
+          <div class="cls-box" style="width:100%">
+            <div class="cls-box-header" style="background:linear-gradient(270deg,#8d62ff,#6040cc)">&#x1F43E; Animal</div>
+            <div class="cls-box-section">
+              <div class="cls-box-label">Atributos</div>
+              <div class="cls-member" onclick="selectMember2('nome',this)">
+                <div class="cls-vis vis-priv">&#x2212;</div>
+                <span class="cls-member-name">nome</span>
+                <span class="cls-member-type">String</span>
+              </div>
+              <div class="cls-member" onclick="selectMember2('peso',this)">
+                <div class="cls-vis vis-priv">&#x2212;</div>
+                <span class="cls-member-name">peso</span>
+                <span class="cls-member-type">double</span>
+              </div>
+            </div>
+            <div class="cls-box-section">
+              <div class="cls-box-label">Métodos</div>
+              <div class="cls-member" onclick="selectMember2('getNome',this)">
+                <div class="cls-vis vis-pub">+</div>
+                <span class="cls-member-name">getNome()</span>
+                <span class="cls-member-type">String</span>
+              </div>
+              <div class="cls-member" onclick="selectMember2('emitirSomA',this)">
+                <div class="cls-vis vis-pub">+</div>
+                <span class="cls-member-name">emitirSom()</span>
+                <span class="cls-member-type">void</span>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-top:4px;letter-spacing:.08em">&#x25BD; extends</div>
+          <div class="cls-box" style="width:100%;margin-top:4px">
+            <div class="cls-box-header" style="background:linear-gradient(270deg,#00c896,#00a0cc)">&#x1F415; Cachorro</div>
+            <div class="cls-box-section">
+              <div class="cls-box-label">Herdados &#x25B2;</div>
+              <div class="cls-member" style="opacity:.55" onclick="selectMember2('nome',this)">
+                <div class="cls-vis vis-priv">&#x2212;</div>
+                <span class="cls-member-name">nome</span>
+                <span class="cls-member-type">String</span>
+              </div>
+              <div class="cls-member" style="opacity:.55" onclick="selectMember2('getNome',this)">
+                <div class="cls-vis vis-pub">+</div>
+                <span class="cls-member-name">getNome()</span>
+                <span class="cls-member-type">String</span>
+              </div>
+            </div>
+            <div class="cls-box-section">
+              <div class="cls-box-label">Próprios &#x2605;</div>
+              <div class="cls-member" onclick="selectMember2('raca',this)">
+                <div class="cls-vis vis-priv">&#x2212;</div>
+                <span class="cls-member-name">raca</span>
+                <span class="cls-member-type">String</span>
+              </div>
+              <div class="cls-member" onclick="selectMember2('buscarBola',this)">
+                <div class="cls-vis vis-pub">+</div>
+                <span class="cls-member-name">buscarBola()</span>
+                <span class="cls-member-type">void</span>
+              </div>
+            </div>
+            <div class="cls-box-section">
+              <div class="cls-box-label">Sobrescrito &#x21A9;</div>
+              <div class="cls-member" onclick="selectMember2('emitirSomC',this)">
+                <div class="cls-vis vis-pub">+</div>
+                <span class="cls-member-name">emitirSom()</span>
+                <span class="cls-member-type" style="color:var(--warn)">@Override</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="memberDetail2" class="detail-box">
+          <p style="color:var(--muted);font-size:13px">&#x1F449; Clique em um membro para ver os detalhes.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Part 2: Override Demo -->
+    <div class="card">
+      <div class="card-title">&#x1F500; Demonstração de Sobrescrita e Polimorfismo</div>
+      <p style="margin-bottom:4px">Crie um objeto e veja qual versão de <span class="ic">emitirSom()</span> é executada:</p>
+      <div class="ctor-btns">
+        <button class="ctor-btn" id="ovr-animal" onclick="showOverride('animal')">
+          new Animal("Bicho")<br>
+          <span style="font-size:10px;color:var(--muted)">Superclasse — método original</span>
+        </button>
+        <button class="ctor-btn" id="ovr-cachorro" onclick="showOverride('cachorro')">
+          new Cachorro("Rex","Labrador")<br>
+          <span style="font-size:10px;color:var(--muted)">Subclasse — método sobrescrito</span>
+        </button>
+        <button class="ctor-btn" id="ovr-poly" onclick="showOverride('poly')">
+          Animal a = new Cachorro(...)<br>
+          <span style="font-size:10px;color:var(--muted)">Polimorfismo — tipo Animal, objeto Cachorro</span>
+        </button>
+      </div>
+      <div id="ovrOutput" class="code-block" style="min-height:90px"><span style="color:#6c7086;font-style:italic">// Selecione um exemplo acima...</span></div>
+    </div>
+
+  </div><!-- /simulador2 -->
+
+  <!-- ═══ EXERCÍCIOS 2 ═══ -->
+  <div id="exercicios2" class="section">
+
+    <div class="score-bar-area">
+      <div>
+        <div class="score-val"><span id="scoreVal2">0</span>/5</div>
+        <div class="score-label">acertos</div>
+      </div>
+      <div style="flex:1">
+        <div class="score-track"><div class="score-fill" id="scoreBar2"></div></div>
+      </div>
+    </div>
+
+    <div class="ex-block" id="ex2-0">
+      <div class="ex-q">Questão 1 &mdash; A herança em Java permite que uma subclasse <strong>reutilize</strong> atributos e métodos da superclasse sem precisar reescrevê-los.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer2(0,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer2(0,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb2-0"></div>
+    </div>
+
+    <div class="ex-block" id="ex2-1">
+      <div class="ex-q">Questão 2 &mdash; Java permite que uma classe herde de <strong>múltiplas classes</strong> ao mesmo tempo usando <code class="ic">extends ClasseA, ClasseB</code>.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer2(1,this,false)">Verdadeiro</button>
+        <button class="choice" onclick="answer2(1,this,true)">Falso</button>
+      </div>
+      <div class="feedback" id="fb2-1"></div>
+    </div>
+
+    <div class="ex-block" id="ex2-2">
+      <div class="ex-q">Questão 3 &mdash; A palavra-chave <code class="ic">super()</code> dentro de um construtor é usada para chamar o <strong>construtor da superclasse</strong>.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer2(2,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer2(2,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb2-2"></div>
+    </div>
+
+    <div class="ex-block" id="ex2-3">
+      <div class="ex-q">Questão 4 &mdash; A anotação <code class="ic">@Override</code> é <strong>obrigatória</strong> para sobrescrever um método da superclasse em Java.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer2(3,this,false)">Verdadeiro</button>
+        <button class="choice" onclick="answer2(3,this,true)">Falso</button>
+      </div>
+      <div class="feedback" id="fb2-3"></div>
+    </div>
+
+    <div class="ex-block" id="ex2-4">
+      <div class="ex-q">Questão 5 &mdash; Toda classe Java, mesmo sem declarar <code class="ic">extends</code>, herda implicitamente da classe <code class="ic">Object</code>.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer2(4,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer2(4,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb2-4"></div>
+    </div>
+
+  </div><!-- /exercicios2 -->
+
+  <!-- ═══ QUESTIONÁRIOS 2 ═══ -->
+  <div id="questionarios2" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F4DD; Questionários</div>
+      <p style="margin-bottom:1rem">Teste seu conhecimento sobre Herança e Hierarquia de Classes com os questionários abaixo.</p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a class="grad-btn" href="questionario-u2c2-01.html">&#x1F4CB; Quiz 01 &mdash; Herança e extends</a>
+        <a class="grad-btn" href="questionario-u2c2-02.html" style="background:linear-gradient(270deg,#00c896 0%,#00a0cc 100%)">&#x1F4CB; Quiz 02 &mdash; super e @Override</a>
+        <a class="grad-btn" href="questionario-u2c2-03.html" style="background:linear-gradient(270deg,#cba6f7 0%,#8d62ff 100%)">&#x1F6E0; Implementação &mdash; Herança na Prática</a>
+      </div>
+    </div>
+  </div><!-- /questionarios2 -->
+
+  <!-- ═══ CURIOSIDADES 2 ═══ -->
+  <div id="curiosidades2" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F680; Curiosidades sobre Herança em Java</div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F6AB;</div>
+        <div>
+          <div class="curi-title">Java não tem herança múltipla de classes</div>
+          <div class="curi-body">Diferente de C++, Java só permite herdar de <strong>uma classe por vez</strong>. Isso evita o "Problema do Diamante". Para herança múltipla de comportamento, Java usa <strong>interfaces</strong> com <code>implements</code> — uma classe pode implementar várias interfaces!</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F4DA;</div>
+        <div>
+          <div class="curi-title">A classe Object tem 11 métodos</div>
+          <div class="curi-body">java.lang.Object define: <code>equals()</code>, <code>hashCode()</code>, <code>toString()</code>, <code>getClass()</code>, <code>clone()</code>, <code>notify()</code>, <code>notifyAll()</code>, três sobrecargas de <code>wait()</code> e <code>finalize()</code>. Todas as suas classes já os herdam automaticamente!</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F50D;</div>
+        <div>
+          <div class="curi-title">@Override previne bugs silenciosos</div>
+          <div class="curi-body">Se você escreve <code>@Override</code> e o nome do método não existe na superclasse, o <strong>compilador avisa imediatamente</strong>. Sem a anotação, um erro de digitação como <code>emitirsom()</code> (minúsculo) criaria um novo método em vez de sobrescrever — um bug difícil de encontrar!</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F9F1;</div>
+        <div>
+          <div class="curi-title"><code>final</code> impede herança e sobrescrita</div>
+          <div class="curi-body">Uma classe <code>final</code> não pode ser estendida. Um método <code>final</code> não pode ser sobrescrito. A classe <code>String</code> em Java é <code>final</code> — por isso você não pode criar uma subclasse de String. Isso garante que o comportamento de String nunca seja alterado.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F3AD;</div>
+        <div>
+          <div class="curi-title">Upcasting é automático, downcasting precisa de cast</div>
+          <div class="curi-body">Atribuir um objeto filho a uma variável pai é <strong>automático</strong>: <code>Animal a = new Cachorro("Rex","Lab");</code> — isso é <em>upcasting</em>. O caminho inverso (downcasting) requer cast explícito: <code>Cachorro c = (Cachorro) a;</code> e pode lançar <code>ClassCastException</code> se o objeto não for do tipo correto.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F4AC;</div>
+        <div>
+          <div class="curi-title"><code>toString()</code> é chamado implicitamente</div>
+          <div class="curi-body">Quando você faz <code>System.out.println(objeto)</code>, o Java chama <code>objeto.toString()</code> automaticamente! Sobrescreva <code>toString()</code> nas suas classes para ter logs úteis — caso contrário verá algo como <code>Cachorro@7852e922</code> no console.</div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /curiosidades2 -->
+
+  <!-- ═══ LINKS 2 ═══ -->
+  <div id="links2" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F517; Links Úteis</div>
+      <div style="display:flex;flex-direction:column;gap:14px;margin-top:4px">
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4D6; Oracle — Herança (Tutorial Oficial)</div>
+          <a class="link-item" href="https://docs.oracle.com/javase/tutorial/java/IandI/subclasses.html" target="_blank">https://docs.oracle.com/javase/tutorial/java/IandI/subclasses.html</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F527; Oracle — Sobrescrita de Métodos</div>
+          <a class="link-item" href="https://docs.oracle.com/javase/tutorial/java/IandI/override.html" target="_blank">https://docs.oracle.com/javase/tutorial/java/IandI/override.html</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F3DB; Oracle — A classe Object</div>
+          <a class="link-item" href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" target="_blank">https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F9EA; JDoodle — Compilador Java Online</div>
+          <a class="link-item" href="https://www.jdoodle.com/online-java-compiler/" target="_blank">https://www.jdoodle.com/online-java-compiler/</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4BB; Apache NetBeans IDE</div>
+          <a class="link-item" href="https://netbeans.apache.org/" target="_blank">https://netbeans.apache.org/</a>
+        </div>
+
+      </div>
+    </div>
+  </div><!-- /links2 -->
+
+  </div><!-- /aula02 -->
+
 </div><!-- /wrap -->
 
 <footer>
@@ -731,9 +1178,18 @@ p2.<span class="mtd">apresentar</span>(); <span class="cmt">// Olá, meu nome é
 <script>
 // ── NAVEGAÇÃO ─────────────────────────────────────────────────────────────────
 function showTab(t, btn) {
-  document.querySelectorAll('#aula01 .section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('#aula01 .tab').forEach(b => b.classList.remove('active'));
-  document.getElementById(t).classList.add('active');
+  const section = document.getElementById(t);
+  const aula = section.closest('.aula-section');
+  aula.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  aula.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  section.classList.add('active');
+  btn.classList.add('active');
+}
+
+function switchAula(id, btn) {
+  document.querySelectorAll('.aula-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.aula-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
   btn.classList.add('active');
 }
 
@@ -806,9 +1262,89 @@ const ctorOutputs = {
 };
 
 function useConstructor(type) {
-  document.querySelectorAll('.ctor-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#simulador1 .ctor-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('ctor-' + type).classList.add('active');
   document.getElementById('ctorOutput').textContent = ctorOutputs[type];
+}
+
+// ── AULA 02 — SIMULADOR ───────────────────────────────────────────────────────
+const memberData2 = {
+  nome:        { cls: 'Animal',   acesso: 'private', tipo: 'String', kind: 'atributo', desc: 'Nome do animal. Declarado <code>private</code> na superclasse Animal — acessível via <code>getNome()</code>.' },
+  peso:        { cls: 'Animal',   acesso: 'private', tipo: 'double', kind: 'atributo', desc: 'Peso do animal em quilogramas. Privado na superclasse; use getter/setter para acessar.' },
+  getNome:     { cls: 'Animal',   acesso: 'public',  tipo: 'String', kind: 'método',   desc: 'Retorna o nome do animal. Herdado por todas as subclasses — Cachorro pode chamá-lo com <code>getNome()</code>.' },
+  emitirSomA:  { cls: 'Animal',   acesso: 'public',  tipo: 'void',   kind: 'método',   desc: 'Versão <strong>original</strong> em Animal. Imprime <code>"..."</code>. Será sobrescrita por Cachorro com <code>@Override</code>.' },
+  raca:        { cls: 'Cachorro', acesso: 'private', tipo: 'String', kind: 'atributo', desc: 'Raça do cachorro. Atributo <strong>próprio</strong> da subclasse — não existe em Animal. Ex: <code>"Labrador"</code>, <code>"Poodle"</code>.' },
+  emitirSomC:  { cls: 'Cachorro', acesso: 'public',  tipo: 'void',   kind: '@Override', desc: 'Versão <strong>sobrescrita</strong> com <code>@Override</code>. Imprime <code>"Au au!"</code>. Em tempo de execução, a JVM usa esta versão para objetos Cachorro.' },
+  buscarBola:  { cls: 'Cachorro', acesso: 'public',  tipo: 'void',   kind: 'método',   desc: 'Método <strong>próprio</strong> de Cachorro — não existe em Animal. Chama <code>getNome()</code> (herdado) para exibir o nome.' }
+};
+
+function selectMember2(name, btn) {
+  document.querySelectorAll('#simulador2 .cls-member').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const d = memberData2[name];
+  const kindPill = d.kind === '@Override'
+    ? '<span class="pill pill-amber">@Override</span>'
+    : '<span class="pill pill-' + (d.kind === 'atributo' ? 'green' : 'java') + '">' + d.kind + '</span>';
+  document.getElementById('memberDetail2').innerHTML =
+    '<div style="font-family:\'JetBrains Mono\',monospace;font-size:15px;font-weight:700;color:var(--text);margin-bottom:10px">' + name + (d.tipo === 'void' || d.kind === '@Override' ? '()' : '') + '</div>' +
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">' +
+      '<span class="pill pill-' + (d.acesso === 'public' ? 'green' : 'red') + '">' + d.acesso + '</span>' +
+      '<span class="pill pill-grad">' + d.tipo + '</span>' +
+      kindPill +
+      '<span class="pill pill-blue">' + d.cls + '</span>' +
+    '</div>' +
+    '<p style="font-size:13px;color:var(--muted);line-height:1.65">' + d.desc + '</p>';
+}
+
+// ── AULA 02 — OVERRIDE DEMO ───────────────────────────────────────────────────
+const overrideOutputs = {
+  animal:   'Animal bicho = new Animal("Bicho");\nbicho.emitirSom();\n// → ...\n\n// Animal.emitirSom() — versão original da superclasse.',
+  cachorro: 'Cachorro rex = new Cachorro("Rex", "Labrador");\nrex.emitirSom();\n// → Au au!\n\n// Cachorro.emitirSom() — versão @Override da subclasse.',
+  poly:     'Animal a = new Cachorro("Rex", "Labrador"); // upcasting\na.emitirSom();\n// → Au au!\n\n// Polimorfismo! O tipo declarado é Animal, mas o objeto\n// real é Cachorro — a JVM chama Cachorro.emitirSom().'
+};
+
+function showOverride(type) {
+  document.querySelectorAll('#simulador2 .ctor-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('ovr-' + type).classList.add('active');
+  document.getElementById('ovrOutput').textContent = overrideOutputs[type];
+}
+
+// ── AULA 02 — EXERCÍCIOS ──────────────────────────────────────────────────────
+let score2 = 0;
+
+const feedbacksOk2 = [
+  'Correto! Herança é o mecanismo de reutilização de código da POO — a subclasse herda atributos e métodos sem precisar reescrevê-los.',
+  'Correto! Java só suporta <strong>herança simples</strong> de classes (uma classe extends apenas uma outra). Para comportamento múltiplo, use interfaces.',
+  'Correto! <code>super()</code> chama o construtor da superclasse e deve ser a <strong>primeira instrução</strong> do construtor da subclasse.',
+  'Correto! <code>@Override</code> é <strong>opcional</strong>, mas altamente recomendada — ela faz o compilador verificar se o método realmente existe na superclasse.',
+  'Correto! Em Java, toda classe herda implicitamente de <code>java.lang.Object</code> — é a raiz de toda a hierarquia de classes Java.'
+];
+
+const feedbacksErr2 = [
+  'Incorreto. Herança <strong>permite</strong> o reuso de código — a subclasse recebe automaticamente os atributos e métodos da superclasse.',
+  'Incorreto. Java NÃO suporta herança múltipla de classes — apenas <code>extends UmaClasse</code>. O "Problema do Diamante" é o motivo. Use interfaces para múltiplos contratos.',
+  'Incorreto. <code>super()</code> chama o <strong>construtor da superclasse</strong> e deve ser a primeira instrução do construtor da subclasse.',
+  'Incorreto. <code>@Override</code> é <strong>recomendada mas não obrigatória</strong>. Sem ela, você pode acidentalmente criar um novo método (com typo no nome) pensando que está sobrescrevendo.',
+  'Incorreto. Toda classe Java herda de <code>java.lang.Object</code>, mesmo que você não escreva <code>extends Object</code> — isso é implícito.'
+];
+
+function answer2(i, btn, isCorrect) {
+  const block = document.getElementById('ex2-' + i);
+  block.querySelectorAll('.choice').forEach(c => c.disabled = true);
+  const fb = document.getElementById('fb2-' + i);
+  if (isCorrect) {
+    btn.classList.add('correct');
+    fb.classList.add('show', 'ok');
+    fb.innerHTML = '&#x2705; ' + feedbacksOk2[i];
+    block.classList.add('done');
+    score2++;
+    document.getElementById('scoreVal2').textContent = score2;
+    document.getElementById('scoreBar2').style.width = (score2 / 5 * 100) + '%';
+  } else {
+    btn.classList.add('wrong');
+    fb.classList.add('show', 'ko');
+    fb.innerHTML = '&#x274C; ' + feedbacksErr2[i];
+  }
 }
 </script>
 </body>

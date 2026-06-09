@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Quiz 01 — Herança e extends</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:          #f0f0f5;
+  --surface:     #ffffff;
+  --border:      #d8d5e8;
+  --accent:      #8d62ff;
+  --accent2:     #00c896;
+  --text:        #1a1730;
+  --muted:       #7a748f;
+  --green:       #155e35;
+  --green-bg:    #d6f5e5;
+  --green-border:#6edaa8;
+  --red:         #7a1f1f;
+  --red-bg:      #fde8e8;
+  --red-border:  #f0a0a0;
+  --radius:      10px;
+  --grad:        linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
+  --surface2:    #f7f5ff;
+  --mint:        #00c896;
+  --danger:      #d63030;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: 'Space Grotesk', sans-serif; min-height: 100vh; padding: 0 0 60px;
+  background-image:
+    radial-gradient(ellipse 70% 40% at 50% -10%, rgba(141,98,255,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 30% at 80% 110%, rgba(0,200,150,0.06) 0%, transparent 70%);
+}
+header {
+  text-align: center; padding: 32px 20px 24px;
+  border-bottom: 1px solid var(--border); position: relative;
+  background: var(--surface); box-shadow: 0 2px 16px rgba(141,98,255,0.07);
+}
+header::after {
+  content: ''; position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 2px;
+  background: linear-gradient(90deg, transparent, #8d62ff, transparent);
+}
+.header-logo { height: 42px; margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto; }
+.logo {
+  font-family: 'JetBrains Mono', monospace; font-size: clamp(1.2rem, 3vw, 1.8rem);
+  font-weight: 700; letter-spacing: -0.5px;
+  background: var(--grad); -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; background-clip: text;
+}
+.logo span { opacity: 0.6; }
+.subtitle { color: var(--muted); font-size: .82rem; margin-top: 5px; letter-spacing: 0.06em; text-transform: uppercase; }
+.header-badge {
+  display: inline-block; margin-top: 10px; padding: 4px 14px; border-radius: 99px;
+  font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace;
+  background: linear-gradient(270deg, rgba(141,98,255,.15), rgba(0,255,188,.1));
+  border: 1px solid rgba(141,98,255,.3); color: var(--accent); letter-spacing: .06em;
+}
+.wrap { max-width: 720px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+.info-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(141,98,255,0.06); position: relative; overflow: hidden;
+}
+.info-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--grad);
+}
+.info-title { font-family: 'JetBrains Mono', monospace; font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.info-sub { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+.info-meta { display: flex; gap: 10px; flex-wrap: wrap; }
+.meta-tag {
+  display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px;
+  border-radius: 99px; font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace;
+}
+.meta-green  { background: rgba(0,200,150,.12); border: 1px solid rgba(0,200,150,.3);  color: #0a7a5a; }
+.meta-purple { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.3); color: var(--accent); }
+.meta-blue   { background: rgba(89,130,250,.12); border: 1px solid rgba(89,130,250,.3); color: #3050cc; }
+.progress-bar-area {
+  display: flex; align-items: center; gap: 14px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 12px 16px; margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.progress-text { font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--muted); white-space: nowrap; }
+.progress-track { flex: 1; background: #e5e2f0; border-radius: 99px; height: 7px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 99px; background: var(--grad); width: 0%; transition: width .35s cubic-bezier(.4,0,.2,1); }
+.q-block {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem; margin-bottom: 1rem; border-left: 3px solid var(--border);
+  box-shadow: 0 2px 8px rgba(141,98,255,0.05); transition: border-left-color .2s;
+}
+.q-block.q-correct { border-left-color: var(--accent2); }
+.q-block.q-wrong   { border-left-color: var(--danger); }
+.q-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+.q-num {
+  min-width: 32px; height: 32px; border-radius: 8px; background: var(--surface2);
+  border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700;
+  color: var(--accent); flex-shrink: 0;
+}
+.q-text { font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.6; padding-top: 4px; }
+.q-text code { background: rgba(141,98,255,.12); color: #5a30cc; padding: 1px 6px; border-radius: 4px; font-size: 12px; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+.q-choices { display: flex; gap: 8px; }
+.q-btn {
+  flex: 1; padding: 10px 16px; border-radius: 8px; border: 1.5px solid var(--border);
+  background: transparent; color: var(--text); cursor: pointer;
+  font-size: 14px; font-family: 'JetBrains Mono', monospace; font-weight: 700;
+  transition: all .15s; letter-spacing: .03em;
+}
+.q-btn:hover:not(:disabled) { border-color: var(--accent); background: rgba(141,98,255,.06); }
+.q-btn:disabled { cursor: default; opacity: .75; }
+.q-btn.chosen        { background: rgba(141,98,255,.12); border-color: var(--accent); color: var(--accent); }
+.q-btn.reveal-correct { background: var(--green-bg) !important; color: #0a7a5a !important; border-color: var(--green-border) !important; }
+.q-btn.reveal-wrong   { background: var(--red-bg)   !important; color: var(--danger) !important; border-color: var(--red-border) !important; }
+.q-exp { display: none; margin-top: 12px; padding: 10px 14px; border-radius: var(--radius); font-size: 13px; line-height: 1.65; }
+.q-exp.ok { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.q-exp.ko { background: var(--red-bg);   color: var(--red);   border: 1px solid var(--red-border); }
+.submit-area { text-align: center; margin: 1.5rem 0; }
+.submit-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 40px; border-radius: 10px; background: var(--grad); color: #fff;
+  border: none; cursor: pointer; font-size: 15px; font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  transition: opacity .2s, transform .15s; box-shadow: 0 4px 18px rgba(141,98,255,.35);
+}
+.submit-btn:hover { opacity: .88; transform: translateY(-2px); }
+.submit-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+.result-card {
+  display: none; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 2rem; text-align: center;
+  margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+  position: relative; overflow: hidden;
+}
+.result-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--grad); }
+.result-score {
+  font-family: 'JetBrains Mono', monospace; font-size: 64px; font-weight: 700;
+  background: var(--grad); -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; background-clip: text; line-height: 1;
+}
+.result-total { font-size: 22px; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-bottom: 14px; }
+.result-msg { font-size: 15px; color: var(--text); font-weight: 600; margin-bottom: 20px; }
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 10px 22px; border-radius: 8px; border: 1.5px solid var(--border);
+  background: transparent; color: var(--muted); text-decoration: none;
+  font-size: 13px; font-family: 'JetBrains Mono', monospace; font-weight: 600;
+  transition: all .15s;
+}
+.back-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(141,98,255,.06); }
+footer { text-align: center; margin-top: 3rem; font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+footer span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<header>
+  <img class="header-logo" src="https://capacitabrasil.irede.org.br/assets/capacitaLogo-Ct3BEyem.png" alt="Capacita Brasil"/>
+  <div class="logo">&#x2615; <span>//</span> Java</div>
+  <div class="subtitle">Desenvolvimento Java &mdash; Questionário</div>
+  <div class="header-badge">Unidade 02 &mdash; Cap. 02</div>
+</header>
+
+<div class="wrap">
+
+  <div class="info-card">
+    <div class="info-title">&#x1F4CB; Quiz 01 &mdash; Herança e extends</div>
+    <div class="info-sub">Aula 02 &mdash; Herança e Hierarquia de Classes &nbsp;&#xB7;&nbsp; 10 questões de Verdadeiro ou Falso</div>
+    <div class="info-meta">
+      <span class="meta-tag meta-green">&#x1F333; Herança</span>
+      <span class="meta-tag meta-purple">&#x1F7E3; Fácil</span>
+      <span class="meta-tag meta-blue">&#x23F1; ~5 min</span>
+    </div>
+  </div>
+
+  <div class="progress-bar-area">
+    <span class="progress-text" id="progressText">0 / 10 respondidas</span>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <!-- Q1 -->
+  <div class="q-block" id="q0">
+    <div class="q-header"><div class="q-num">01</div>
+      <div class="q-text">Em Java, a palavra-chave <code>extends</code> é usada para indicar que uma classe <strong>herda</strong> de outra.</div>
+    </div>
+    <div class="q-choices">
+      <button class="q-btn" onclick="selectAnswer(0,true,this)">V &nbsp; Verdadeiro</button>
+      <button class="q-btn" onclick="selectAnswer(0,false,this)">F &nbsp; Falso</button>
+    </div>
+    <div class="q-exp" id="exp0"></div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="q-block" id="q1">
+    <div class="q-header"><div class="q-num">02</div>
+      <div class="q-text">Uma subclasse herda automaticamente todos os atributos e métodos <code>public</code> e <code>protected</code> da superclasse.</div>
+    </div>
+    <div class="q-choices">
+      <button class="q-btn" onclick="selectAnswer(1,true,this)">V &nbsp; Verdadeiro</button>
+      <button class="q-btn" onclick="selectAnswer(1,false,this)">F &nbsp; Falso</button>
+    </div>
+    <div class="q-exp" id="exp1"></div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="q-block" id="q2">
+    <div class="q-header"><div class="q-num">03</div>
+      <div class="q-text">Em Java, uma classe pode herdar de <strong>múltiplas classes</strong> ao mesmo tempo usando a sintaxe <code>extends Animal, Robo</code>.</div>
+    </div>
+    <div class="q-choices">
+      <button class="q-btn" onclick="selectAnswer(2,true,this)">V &nbsp; Verdadeiro</button>
+      <button class="q-btn" onclick="selectAnswer(2,false,this)">F &nbsp; Falso</button>
+    </div>
+    <div class="q-exp" id="exp2"></div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="q-block" id="q3">
+    <div class="q-header"><div class="q-num">04</div>
+      <div class="q-text">A subclasse pode definir seus <strong>próprios</strong> atributos e métodos além dos que já herdou da superclasse.</div>
+    </div>
+    <div class="q-choices">
+      <button class="q-btn" onclick="selectAnswer(3,true,this)">V &nbsp; Verdadeiro</button>
+      <button class="q-btn" onclick="selectAnswer(3,false,this)">F &nbsp; Falso</button>
+    </div>
+    <div class="q-exp" id="exp3"></div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="q-block" id="q4">
+    <div class="q-header"><div class="q-num">05</div>
+      <div class="q-text">A declaração <code>public class Cachorro extends Animal</code> expressa que Cachorro <strong>é-um</strong> Animal.</div>
+    </div>
+    <div class="q-choices">
+      <button class="q-btn" onclick="selectAnswer(4,true,this)">V &nbsp; Verdadeiro</button>
+      <button class="q-btn" onclick="selectAnswer(4,false,this)">F &nbsp; Falso</button>
+    </div>
+    <div class="q-exp" id="exp4"></div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="q-block" id="q5">
+    <div class="q-header"><div class="q-num">06</div>
+      <div class="q-text">Atributos declarados como <code>private</code> na superclasse são acessados <strong>diretamente</strong> pelo nome dentro da subclasse.</div>
+    </div>
+    <div class="q-choices">
+      <button class="q-btn" onclick="selectAnswer(5,true,this)">V &nbsp; Verdadeiro</button>
+      <button class="q-btn" onclick="selectAnswer(5,false,this)">F &nbsp; Falso</button>
+    </div>
+    <div class="q-exp" id="exp5"></div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="q-block" id="q6">
+    <div class="q-header"><div class="q-num">07</div>
+      <div class="q-text">Uma subclasse pode ser usada como superclasse de outra classe, permitindo criar <strong>hierarquias</strong> de múltiplos níveis.</div>
+    </div>
+    <div class="q-choices">
+      <button class="q-btn" onclick="selectAnswer(6,true,this)">V &nbsp; Verdadeiro</button>
+      <button class="q-btn" onclick="selectAnswer(6,false,this)">F &nbsp; Falso</button>
+    </div>
+    <div class="q-exp" id="exp6"></div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="q-block" id="q7">
+    <div class="q-header"><div class="q-num">08</div>
+      <div class="q-text">Na declaração <code>Animal a = new Cachorro("Rex","Lab");</code>, a variável <code>a</code> guarda um objeto do tipo <code>Cachorro</code>.</div>
+    </div>
+    <div class="q-choices">
+      <button class="q-btn" onclick="selectAnswer(7,true,this)">V &nbsp; Verdadeiro</button>
+      <button class="q-btn" onclick="selectAnswer(7,false,this)">F &nbsp; Falso</button>
+    </div>
+    <div class="q-exp" id="exp7"></div>
+  </div>
+
+  <!-- Q9 -->
+  <div class="q-block" id="q8">
+    <div class="q-header"><div class="q-num">09</div>
+      <div class="q-text">O operador <code>instanceof</code> retorna <code>true</code> apenas se o objeto for exatamente da classe verificada, <strong>não</strong> de uma subclasse.</div>
+    </div>
+    <div class="q-choices">
+      <button class="q-btn" onclick="selectAnswer(8,true,this)">V &nbsp; Verdadeiro</button>
+      <button class="q-btn" onclick="selectAnswer(8,false,this)">F &nbsp; Falso</button>
+    </div>
+    <div class="q-exp" id="exp8"></div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="q-block" id="q9">
+    <div class="q-header"><div class="q-num">10</div>
+      <div class="q-text">Herança é um mecanismo que promove o <strong>reuso de código</strong> — evita reescrever atributos e métodos já definidos na superclasse.</div>
+    </div>
+    <div class="q-choices">
+      <button class="q-btn" onclick="selectAnswer(9,true,this)">V &nbsp; Verdadeiro</button>
+      <button class="q-btn" onclick="selectAnswer(9,false,this)">F &nbsp; Falso</button>
+    </div>
+    <div class="q-exp" id="exp9"></div>
+  </div>
+
+  <div class="submit-area">
+    <button class="submit-btn" id="submitBtn" onclick="submitQuiz()">&#x1F4E4; Enviar Respostas</button>
+  </div>
+
+  <div class="result-card" id="result">
+    <div class="result-score" id="scoreNum">—</div>
+    <div class="result-total">de 10 acertos</div>
+    <div class="result-msg" id="resultMsg"></div>
+    <a class="back-btn" href="index.html">&#x2190; Voltar para a Aula</a>
+  </div>
+
+</div><!-- /wrap -->
+
+<footer>
+  Capacita Brasil &mdash; <span>iRede</span> &mdash; Material Interativo de Java
+</footer>
+
+<script>
+const ANSWERS = [true, true, false, true, true, false, true, true, false, true];
+
+const EXPLANATIONS = [
+  ['Correto! <code>extends</code> é a palavra-chave de herança em Java: <code>class Cachorro extends Animal</code>.', 'Incorreto. Em Java, usamos <code>extends</code> para herança: <code>public class Cachorro extends Animal { }</code>.'],
+  ['Correto! Membros <code>public</code> e <code>protected</code> da superclasse são automaticamente acessíveis na subclasse.', 'Incorreto. A subclasse herda todos os membros <code>public</code> e <code>protected</code> da superclasse sem precisar reescrevê-los.'],
+  ['Incorreto. Java só suporta <strong>herança simples</strong> — uma classe pode extender apenas <strong>uma</strong> outra classe. Para múltiplos contratos, use interfaces.', 'Correto! Java não permite <code>extends A, B</code>. Uma classe só pode ter uma superclasse direta. Use interfaces para múltiplos contratos.'],
+  ['Correto! Além dos membros herdados, a subclasse pode adicionar novos atributos e métodos específicos do seu contexto.', 'Incorreto. A subclasse pode e deve adicionar seus próprios atributos e métodos além dos que herdou.'],
+  ['Correto! Herança modela a relação "é-um" (is-a). Cachorro é-um Animal — faz sentido semanticamente!', 'Incorreto. <code>Cachorro extends Animal</code> expressa exatamente a relação "é-um": um cachorro é um tipo de animal.'],
+  ['Incorreto. Atributos <code>private</code> da superclasse <strong>não</strong> são acessíveis diretamente na subclasse. Use os getters e setters públicos fornecidos pela superclasse.', 'Correto! <code>private</code> restringe o acesso à própria classe. A subclasse acessa via métodos <code>public</code>/<code>protected</code> (getters/setters).'],
+  ['Correto! Isso cria hierarquias de múltiplos níveis: Animal → Mamifero → Cachorro. Cada nível herda de todos os anteriores.', 'Incorreto. Em Java é perfeitamente válido que uma subclasse seja estendida por outra classe, criando hierarquias em árvore.'],
+  ['Correto! Isso é <strong>upcasting</strong>. A variável é do tipo Animal, mas o objeto real é Cachorro. Em tempo de execução a JVM sabe o tipo real.', 'Incorreto. A variável <code>a</code> guarda uma <strong>referência</strong> para um objeto Cachorro. Isso é upcasting — completamente válido em Java.'],
+  ['Incorreto. <code>instanceof</code> retorna <code>true</code> tanto para a classe exata quanto para superclasses. <code>cachorro instanceof Animal</code> é <code>true</code>!', 'Correto! <code>instanceof</code> considera toda a hierarquia. <code>new Cachorro(...) instanceof Animal</code> retorna <code>true</code>.'],
+  ['Correto! Herança é o principal mecanismo de reuso em POO — código na superclasse é automaticamente disponível para todas as subclasses.', 'Incorreto. Herança promove exatamente o reuso de código — subclasses não precisam redefinir o que a superclasse já implementa.']
+];
+
+const RESULT_MSGS = [
+  [10, 10, '&#x1F3C6; Perfeito! Você domina os conceitos de Herança e extends!'],
+  [8,  9,  '&#x1F31F; Excelente! Você entende muito bem os fundamentos da herança.'],
+  [6,  7,  '&#x1F44D; Muito bom! Revise os pontos que errou para consolidar o aprendizado.'],
+  [4,  5,  '&#x1F4DA; Continue estudando! Releia o resumo sobre Herança e tente novamente.'],
+  [0,  3,  '&#x1F4AA; Não desanime! Revise o conteúdo com calma — você vai conseguir!']
+];
+
+const selected = new Array(10).fill(null);
+let submitted = false;
+
+function selectAnswer(i, val, btn) {
+  if (submitted) return;
+  selected[i] = val;
+  const block = document.getElementById('q' + i);
+  block.querySelectorAll('.q-btn').forEach(b => b.classList.remove('chosen'));
+  btn.classList.add('chosen');
+  const answered = selected.filter(s => s !== null).length;
+  document.getElementById('progressText').textContent = answered + ' / 10 respondidas';
+  document.getElementById('progressFill').style.width = (answered / 10 * 100) + '%';
+}
+
+function submitQuiz() {
+  const unanswered = selected.filter(s => s === null).length;
+  if (unanswered > 0) { alert('Responda todas as questões antes de enviar. Faltam ' + unanswered + '.'); return; }
+  submitted = true;
+  let score = 0;
+  for (let i = 0; i < 10; i++) {
+    const isCorrect = selected[i] === ANSWERS[i];
+    const block = document.getElementById('q' + i);
+    const exp = document.getElementById('exp' + i);
+    block.querySelectorAll('.q-btn').forEach(b => {
+      b.disabled = true;
+      if (b.textContent.trim().startsWith('V') === ANSWERS[i]) b.classList.add('reveal-correct');
+    });
+    block.querySelectorAll('.q-btn').forEach(b => {
+      if (b.textContent.trim().startsWith('V') === selected[i] && !isCorrect) b.classList.add('reveal-wrong');
+    });
+    if (isCorrect) {
+      score++; block.classList.add('q-correct');
+      exp.className = 'q-exp ok'; exp.innerHTML = '&#x2705; ' + EXPLANATIONS[i][0];
+    } else {
+      block.classList.add('q-wrong');
+      exp.className = 'q-exp ko'; exp.innerHTML = '&#x274C; ' + EXPLANATIONS[i][1];
+    }
+    exp.style.display = 'block';
+  }
+  document.getElementById('submitBtn').disabled = true;
+  const result = document.getElementById('result');
+  result.style.display = 'block';
+  document.getElementById('scoreNum').textContent = score;
+  for (const [min, max, msg] of RESULT_MSGS) {
+    if (score >= min && score <= max) { document.getElementById('resultMsg').innerHTML = msg; break; }
+  }
+  document.getElementById('progressText').textContent = '10 / 10 respondidas';
+  document.getElementById('progressFill').style.width = '100%';
+  setTimeout(() => result.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200);
+}
+</script>
+</body>
+</html>
