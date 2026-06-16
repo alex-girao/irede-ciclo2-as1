@@ -298,6 +298,7 @@ footer span { background: var(--grad); -webkit-background-clip: text; -webkit-te
   <div class="aula-bar">
     <button class="aula-tab active" onclick="switchAula('aula01',this)">&#x1F4D0; Aula 01 &mdash; Fundamentos de POO</button>
     <button class="aula-tab"        onclick="switchAula('aula02',this)">&#x1F333; Aula 02 &mdash; Herança e Hierarquia</button>
+    <button class="aula-tab"        onclick="switchAula('aula03',this)">&#x1F3AD; Aula 03 &mdash; Polimorfismo</button>
   </div>
 
   <!-- ═══════════════ AULA 01 ═══════════════ -->
@@ -1169,6 +1170,338 @@ p2.<span class="mtd">apresentar</span>(); <span class="cmt">// Olá, meu nome é
 
   </div><!-- /aula02 -->
 
+  <!-- ═══════════════ AULA 03 ═══════════════ -->
+  <div id="aula03" class="aula-section">
+
+  <div class="tab-bar">
+    <button class="tab active"  onclick="showTab('resumo3',this)">&#x1F4D8; Resumo</button>
+    <button class="tab"         onclick="showTab('simulador3',this)">&#x26A1; Simulador</button>
+    <button class="tab"         onclick="showTab('exercicios3',this)">&#x1F3AF; Exercícios</button>
+    <button class="tab"         onclick="showTab('questionarios3',this)">&#x1F4DD; Questionários</button>
+    <button class="tab"         onclick="showTab('curiosidades3',this)">&#x1F680; Curiosidades</button>
+    <button class="tab"         onclick="showTab('links3',this)">&#x1F517; Links</button>
+  </div>
+
+  <!-- ═══ RESUMO 3 ═══ -->
+  <div id="resumo3" class="section active">
+
+    <!-- Card 1: O que é Polimorfismo -->
+    <div class="card">
+      <div class="card-title">O que é Polimorfismo? <span class="pill pill-java">3º Pilar da POO</span></div>
+      <p><strong style="color:var(--text)">Poli</strong> = muitos · <strong style="color:var(--text)">Morphos</strong> = formas. Polimorfismo é a capacidade de um objeto se <strong style="color:var(--text)">comportar de diferentes maneiras</strong> dependendo do seu tipo real.</p>
+      <p style="margin-top:10px">Na prática: o mesmo método chamado em referências diferentes produz resultados diferentes — sem precisar saber qual é o tipo exato do objeto.</p>
+      <p style="margin-top:10px">Em Java existem dois tipos: <strong style="color:var(--text)">Sobrescrita</strong> (runtime — via herança) e <strong style="color:var(--text)">Sobrecarga</strong> (compile-time — na mesma classe).</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+        <span class="pill pill-grad">Polimorfismo</span>
+        <span class="pill pill-green">@Override</span>
+        <span class="pill pill-blue">Overload</span>
+        <span class="pill pill-java">Dynamic Dispatch</span>
+      </div>
+    </div>
+
+    <!-- Card 2: Despacho Dinâmico -->
+    <div class="card">
+      <div class="card-title">Despacho Dinâmico <span class="pill pill-grad">Runtime</span></div>
+      <p>A JVM determina <strong style="color:var(--text)">em tempo de execução</strong> qual versão do método deve ser chamada — baseada no tipo <em>real</em> do objeto, não no tipo da variável.</p>
+      <p style="margin-top:8px">Isso é o coração do polimorfismo de herança em Java: o <strong style="color:var(--text)">despacho dinâmico</strong>.</p>
+      <div class="code-block" style="margin-top:14px"><span class="cmt">// Tipo da variável: Animal | Tipo real do objeto: Cachorro</span>
+<span class="cls">Animal</span> a1 = <span class="kw">new</span> <span class="cls">Cachorro</span>(<span class="str">"Rex"</span>);
+<span class="cls">Animal</span> a2 = <span class="kw">new</span> <span class="cls">Gato</span>(<span class="str">"Mia"</span>);
+<span class="cls">Animal</span> a3 = <span class="kw">new</span> <span class="cls">Passaro</span>(<span class="str">"Piu"</span>);
+
+a1.<span class="mtd">emitirSom</span>(); <span class="cmt">// → Au au!   (Cachorro.emitirSom)</span>
+a2.<span class="mtd">emitirSom</span>(); <span class="cmt">// → Miau!    (Gato.emitirSom)</span>
+a3.<span class="mtd">emitirSom</span>(); <span class="cmt">// → Piu piu! (Passaro.emitirSom)</span></div>
+    </div>
+
+    <!-- Card 3: Sobrescrita vs Sobrecarga -->
+    <div class="card">
+      <div class="card-title">Sobrescrita vs Sobrecarga <span class="pill pill-blue">Comparativo</span></div>
+      <p>São dois conceitos frequentemente confundidos — mas são completamente diferentes:</p>
+      <table style="margin-top:14px">
+        <tr><th></th><th>Sobrescrita (@Override)</th><th>Sobrecarga (Overload)</th></tr>
+        <tr><td class="left" style="font-weight:700;color:var(--text)">Nome</td><td>Mesmo</td><td>Mesmo</td></tr>
+        <tr><td class="left" style="font-weight:700;color:var(--text)">Parâmetros</td><td><span class="pill pill-green">Iguais</span></td><td><span class="pill pill-amber">Diferentes</span></td></tr>
+        <tr><td class="left" style="font-weight:700;color:var(--text)">Onde ocorre</td><td>Subclasse → Superclasse</td><td>Mesma classe</td></tr>
+        <tr><td class="left" style="font-weight:700;color:var(--text)">Quando</td><td><span class="pill pill-java">Runtime</span></td><td><span class="pill pill-grad">Compile-time</span></td></tr>
+        <tr><td class="left" style="font-weight:700;color:var(--text)">Anotação</td><td><span class="ic">@Override</span></td><td>—</td></tr>
+      </table>
+    </div>
+
+    <!-- Card 4: Polimorfismo em Coleções -->
+    <div class="card">
+      <div class="card-title">Polimorfismo em Arrays <span class="pill pill-green">Potência Real</span></div>
+      <p>Arrays e listas declarados com o tipo da <strong style="color:var(--text)">superclasse</strong> podem armazenar objetos de qualquer subclasse. Ao iterar, cada objeto chama <strong style="color:var(--text)">sua própria versão</strong> do método.</p>
+      <p style="margin-top:8px">Isso torna o código <strong style="color:var(--text)">extensível</strong>: adicionar um novo tipo de animal não exige mudar o loop!</p>
+      <div class="code-block" style="margin-top:14px"><span class="cls">Animal</span>[] animais = {
+    <span class="kw">new</span> <span class="cls">Cachorro</span>(<span class="str">"Rex"</span>),
+    <span class="kw">new</span> <span class="cls">Gato</span>(<span class="str">"Mia"</span>),
+    <span class="kw">new</span> <span class="cls">Passaro</span>(<span class="str">"Piu"</span>)
+};
+
+<span class="kw">for</span> (<span class="cls">Animal</span> a : animais) {
+    a.<span class="mtd">emitirSom</span>(); <span class="cmt">// cada um chama SUA versão!</span>
+}
+<span class="cmt">// Rex diz: Au au!</span>
+<span class="cmt">// Mia diz: Miau!</span>
+<span class="cmt">// Piu diz: Piu piu!</span></div>
+    </div>
+
+    <!-- Card 5: Classes Abstratas -->
+    <div class="card">
+      <div class="card-title">Classes Abstratas <span class="pill pill-red">abstract</span></div>
+      <p>Uma classe <span class="ic">abstract</span> <strong style="color:var(--text)">não pode ser instanciada</strong> diretamente — existe apenas para ser estendida. Ela pode definir métodos <span class="ic">abstract</span> sem implementação, forçando as subclasses a implementá-los.</p>
+      <p style="margin-top:8px">Perfeita para polimorfismo: garante que todos os tipos na hierarquia implementem os métodos necessários.</p>
+      <div class="code-block" style="margin-top:14px"><span class="kw">public abstract class</span> <span class="cls">Animal</span> {
+    <span class="kw">private</span> <span class="typ">String</span> nome;
+    <span class="kw">public</span> <span class="cls">Animal</span>(<span class="typ">String</span> nome) { <span class="kw">this</span>.nome = nome; }
+    <span class="kw">public</span> <span class="typ">String</span> <span class="mtd">getNome</span>()  { <span class="kw">return</span> nome; }
+
+    <span class="cmt">// método abstrato: sem corpo, subclasse DEVE implementar</span>
+    <span class="kw">public abstract void</span> <span class="mtd">emitirSom</span>();
+}
+
+<span class="cmt">// Animal a = new Animal("X"); // ERRO! Classe abstrata</span>
+<span class="cls">Animal</span> a = <span class="kw">new</span> <span class="cls">Cachorro</span>(<span class="str">"Rex"</span>); <span class="cmt">// OK — Cachorro implementa emitirSom()</span></div>
+    </div>
+
+    <!-- Card 6: Casting -->
+    <div class="card">
+      <div class="card-title">Casting em Hierarquias <span class="pill pill-amber">Upcasting / Downcasting</span></div>
+      <p><strong style="color:var(--text)">Upcasting</strong> — subclasse → superclasse. Automático e seguro. <strong style="color:var(--text)">Downcasting</strong> — superclasse → subclasse. Explícito e pode lançar <span class="ic">ClassCastException</span>.</p>
+      <p style="margin-top:8px">Sempre use <span class="ic">instanceof</span> antes de fazer downcasting para garantir segurança.</p>
+      <div class="code-block" style="margin-top:14px"><span class="cmt">// Upcasting — automático (sempre seguro)</span>
+<span class="cls">Animal</span> a = <span class="kw">new</span> <span class="cls">Cachorro</span>(<span class="str">"Rex"</span>); <span class="cmt">// OK!</span>
+
+<span class="cmt">// Downcasting — com verificação prévia (seguro)</span>
+<span class="kw">if</span> (a <span class="kw">instanceof</span> <span class="cls">Cachorro</span>) {
+    <span class="cls">Cachorro</span> c = (<span class="cls">Cachorro</span>) a;   <span class="cmt">// OK! tipo real é Cachorro</span>
+    c.<span class="mtd">buscarBola</span>();              <span class="cmt">// método específico de Cachorro</span>
+}
+
+<span class="cmt">// Downcasting sem verificação — perigoso!</span>
+<span class="cls">Gato</span> g = (<span class="cls">Gato</span>) a; <span class="cmt">// ClassCastException! a é Cachorro, não Gato</span></div>
+    </div>
+
+  </div><!-- /resumo3 -->
+
+  <!-- ═══ SIMULADOR 3 ═══ -->
+  <div id="simulador3" class="section">
+
+    <!-- Part 1: Polymorphism Demo -->
+    <div class="card">
+      <div class="card-title">&#x1F3AD; Despacho Dinâmico em Ação</div>
+      <p style="margin-bottom:16px">Selecione um animal para ver qual versão de <span class="ic">emitirSom()</span> é chamada. Em seguida clique em <strong style="color:var(--text)">Loop</strong> para ver todos sendo chamados via array de Animal.</p>
+      <div class="ctor-btns">
+        <button class="ctor-btn" id="poly-cachorro" onclick="showPoly('cachorro')">
+          &#x1F415; new Cachorro("Rex")<br>
+          <span style="font-size:10px;color:var(--muted)">Animal a = new Cachorro("Rex")</span>
+        </button>
+        <button class="ctor-btn" id="poly-gato" onclick="showPoly('gato')">
+          &#x1F431; new Gato("Mia")<br>
+          <span style="font-size:10px;color:var(--muted)">Animal a = new Gato("Mia")</span>
+        </button>
+        <button class="ctor-btn" id="poly-passaro" onclick="showPoly('passaro')">
+          &#x1F426; new Passaro("Piu")<br>
+          <span style="font-size:10px;color:var(--muted)">Animal a = new Passaro("Piu")</span>
+        </button>
+        <button class="ctor-btn" id="poly-loop" onclick="showPoly('loop')" style="border-color:var(--accent2)">
+          &#x1F504; Loop completo<br>
+          <span style="font-size:10px;color:var(--muted)">Animal[] + for-each</span>
+        </button>
+      </div>
+      <div id="polyOutput" class="code-block" style="min-height:120px"><span style="color:#6c7086;font-style:italic">// Selecione um exemplo acima...</span></div>
+    </div>
+
+    <!-- Part 2: Abstract Class Demo -->
+    <div class="card">
+      <div class="card-title">&#x1F9F1; Classe Abstrata — Contrato de Hierarquia</div>
+      <p style="margin-bottom:14px">Clique nos botões para comparar uma <strong style="color:var(--text)">classe concreta</strong> com uma <strong style="color:var(--text)">classe abstrata</strong>.</p>
+      <div class="ctor-btns">
+        <button class="ctor-btn" id="abs-concreto" onclick="showAbstract('concreto')">
+          Classe Concreta<br>
+          <span style="font-size:10px;color:var(--muted)">Pode ser instanciada com new</span>
+        </button>
+        <button class="ctor-btn" id="abs-abstrato" onclick="showAbstract('abstrato')">
+          Classe Abstrata<br>
+          <span style="font-size:10px;color:var(--muted)">abstract — só pode ser estendida</span>
+        </button>
+        <button class="ctor-btn" id="abs-overload" onclick="showAbstract('overload')">
+          Sobrecarga (Overload)<br>
+          <span style="font-size:10px;color:var(--muted)">Mesmo nome, parâmetros diferentes</span>
+        </button>
+      </div>
+      <div id="absOutput" class="code-block" style="min-height:120px"><span style="color:#6c7086;font-style:italic">// Selecione um exemplo acima...</span></div>
+    </div>
+
+  </div><!-- /simulador3 -->
+
+  <!-- ═══ EXERCÍCIOS 3 ═══ -->
+  <div id="exercicios3" class="section">
+
+    <div class="score-bar-area">
+      <div>
+        <div class="score-val"><span id="scoreVal3">0</span>/5</div>
+        <div class="score-label">acertos</div>
+      </div>
+      <div style="flex:1">
+        <div class="score-track"><div class="score-fill" id="scoreBar3"></div></div>
+      </div>
+    </div>
+
+    <div class="ex-block" id="ex3-0">
+      <div class="ex-q">Questão 1 &mdash; Polimorfismo permite que referências da superclasse chamem métodos de subclasses em <strong>tempo de execução</strong>, com cada objeto executando sua própria versão.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer3(0,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer3(0,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb3-0"></div>
+    </div>
+
+    <div class="ex-block" id="ex3-1">
+      <div class="ex-q">Questão 2 &mdash; Em Java, uma classe declarada como <code class="ic">abstract</code> pode ser instanciada diretamente usando <code class="ic">new</code>.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer3(1,this,false)">Verdadeiro</button>
+        <button class="choice" onclick="answer3(1,this,true)">Falso</button>
+      </div>
+      <div class="feedback" id="fb3-1"></div>
+    </div>
+
+    <div class="ex-block" id="ex3-2">
+      <div class="ex-q">Questão 3 &mdash; Na <strong>sobrescrita</strong> (<code class="ic">@Override</code>), o método da subclasse tem o mesmo nome <strong>e</strong> os mesmos parâmetros que o método da superclasse.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer3(2,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer3(2,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb3-2"></div>
+    </div>
+
+    <div class="ex-block" id="ex3-3">
+      <div class="ex-q">Questão 4 &mdash; A <strong>sobrecarga</strong> (overload) ocorre quando uma classe tem dois métodos com o mesmo nome e a <strong>mesma lista de parâmetros</strong>.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer3(3,this,false)">Verdadeiro</button>
+        <button class="choice" onclick="answer3(3,this,true)">Falso</button>
+      </div>
+      <div class="feedback" id="fb3-3"></div>
+    </div>
+
+    <div class="ex-block" id="ex3-4">
+      <div class="ex-q">Questão 5 &mdash; Ao fazer <strong>downcasting</strong>, é recomendado verificar com <code class="ic">instanceof</code> antes para evitar uma <code class="ic">ClassCastException</code> em tempo de execução.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer3(4,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer3(4,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb3-4"></div>
+    </div>
+
+  </div><!-- /exercicios3 -->
+
+  <!-- ═══ QUESTIONÁRIOS 3 ═══ -->
+  <div id="questionarios3" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F4DD; Questionários</div>
+      <p style="margin-bottom:1rem">Teste seu conhecimento sobre Polimorfismo e Sobrescrita de Métodos com os questionários abaixo.</p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a class="grad-btn" href="questionario-u2c3-01.html">&#x1F4CB; Quiz 01 &mdash; Polimorfismo e Dynamic Dispatch</a>
+        <a class="grad-btn" href="questionario-u2c3-02.html" style="background:linear-gradient(270deg,#f5c2e7 0%,#cba6f7 100%);color:#1a1730">&#x1F4CB; Quiz 02 &mdash; Classes Abstratas e Casting</a>
+        <a class="grad-btn" href="questionario-u2c3-03.html" style="background:linear-gradient(270deg,#cba6f7 0%,#8d62ff 100%)">&#x1F6E0; Implementação &mdash; Polimorfismo na Prática</a>
+      </div>
+    </div>
+  </div><!-- /questionarios3 -->
+
+  <!-- ═══ CURIOSIDADES 3 ═══ -->
+  <div id="curiosidades3" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F680; Curiosidades sobre Polimorfismo</div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x23F1;</div>
+        <div>
+          <div class="curi-title">Polimorfismo de tempo de execução vs compile-time</div>
+          <div class="curi-body">A sobrescrita (<code>@Override</code>) é resolvida em <strong>runtime</strong> — a JVM escolhe o método na hora da execução. A sobrecarga (overload) é resolvida em <strong>compile-time</strong> — o compilador escolhe qual versão chamar com base nos tipos dos argumentos.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F4DC;</div>
+        <div>
+          <div class="curi-title">Princípio de Liskov (LSP)</div>
+          <div class="curi-body">O <strong>Princípio de Substituição de Liskov</strong> diz: qualquer subclasse deve poder ser usada no lugar da superclasse sem quebrar o programa. É a base do bom uso de polimorfismo — se <code>Cachorro extends Animal</code>, qualquer código que usa <code>Animal</code> deve funcionar com <code>Cachorro</code>.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F3AD;</div>
+        <div>
+          <div class="curi-title">toString() é polimorfismo!</div>
+          <div class="curi-body"><code>System.out.println(objeto)</code> chama <code>objeto.toString()</code> via polimorfismo! A JVM verifica o tipo real do objeto e chama a versão correta de <code>toString()</code> — seja de Object, de Veiculo, de Carro, ou outra. Todo <code>println(obj)</code> é despacho dinâmico em ação.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F9A6;</div>
+        <div>
+          <div class="curi-title">Abstract vs Interface</div>
+          <div class="curi-body">Classes abstratas e interfaces cumprem papéis parecidos mas diferentes. Uma <strong>classe abstrata</strong> pode ter atributos e métodos com implementação — modela uma hierarquia real ("é-um"). Uma <strong>interface</strong> define apenas um contrato de comportamento ("pode-fazer") e permite que classes não relacionadas a implementem.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F52E;</div>
+        <div>
+          <div class="curi-title">Method Table (vtable)</div>
+          <div class="curi-body">Internamente, a JVM mantém uma <strong>tabela de métodos virtuais</strong> (vtable) para cada classe. Quando você chama um método por uma referência polimórfica, a JVM consulta essa tabela para encontrar a implementação correta — tudo acontece em nanossegundos!</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F9E9;</div>
+        <div>
+          <div class="curi-title">Polimorfismo via Interfaces</div>
+          <div class="curi-body">Além de herança, Java permite polimorfismo via <strong>interfaces</strong>. Uma variável do tipo <code>Runnable</code> pode referenciar qualquer objeto que implemente <code>Runnable</code>. Isso permite polimorfismo entre classes sem hierarquia de herança comum — muito mais flexível!</div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /curiosidades3 -->
+
+  <!-- ═══ LINKS 3 ═══ -->
+  <div id="links3" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F517; Links Úteis</div>
+      <div style="display:flex;flex-direction:column;gap:14px;margin-top:4px">
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4D6; Oracle — Polimorfismo (Tutorial Oficial)</div>
+          <a class="link-item" href="https://docs.oracle.com/javase/tutorial/java/IandI/polymorphism.html" target="_blank">https://docs.oracle.com/javase/tutorial/java/IandI/polymorphism.html</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F9F1; Oracle — Classes Abstratas e Métodos</div>
+          <a class="link-item" href="https://docs.oracle.com/javase/tutorial/java/IandI/abstract.html" target="_blank">https://docs.oracle.com/javase/tutorial/java/IandI/abstract.html</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F527; Oracle — Sobrescrita de Métodos</div>
+          <a class="link-item" href="https://docs.oracle.com/javase/tutorial/java/IandI/override.html" target="_blank">https://docs.oracle.com/javase/tutorial/java/IandI/override.html</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F9EA; JDoodle — Compilador Java Online</div>
+          <a class="link-item" href="https://www.jdoodle.com/online-java-compiler/" target="_blank">https://www.jdoodle.com/online-java-compiler/</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4BB; Apache NetBeans IDE</div>
+          <a class="link-item" href="https://netbeans.apache.org/" target="_blank">https://netbeans.apache.org/</a>
+        </div>
+
+      </div>
+    </div>
+  </div><!-- /links3 -->
+
+  </div><!-- /aula03 -->
+
 </div><!-- /wrap -->
 
 <footer>
@@ -1327,6 +1660,70 @@ const feedbacksErr2 = [
   'Incorreto. <code>@Override</code> é <strong>recomendada mas não obrigatória</strong>. Sem ela, você pode acidentalmente criar um novo método (com typo no nome) pensando que está sobrescrevendo.',
   'Incorreto. Toda classe Java herda de <code>java.lang.Object</code>, mesmo que você não escreva <code>extends Object</code> — isso é implícito.'
 ];
+
+// ── AULA 03 — SIMULADOR ───────────────────────────────────────────────────────
+const polyOutputs = {
+  cachorro: 'Animal a = new Cachorro("Rex"); // upcasting\na.emitirSom();\n\n// A JVM verifica: tipo real = Cachorro\n// Chama: Cachorro.emitirSom()\n// → Rex diz: Au au!',
+  gato:     'Animal a = new Gato("Mia"); // upcasting\na.emitirSom();\n\n// A JVM verifica: tipo real = Gato\n// Chama: Gato.emitirSom()\n// → Mia diz: Miau!',
+  passaro:  'Animal a = new Passaro("Piu"); // upcasting\na.emitirSom();\n\n// A JVM verifica: tipo real = Passaro\n// Chama: Passaro.emitirSom()\n// → Piu diz: Piu piu!',
+  loop:     'Animal[] animais = {\n    new Cachorro("Rex"),\n    new Gato("Mia"),\n    new Passaro("Piu")\n};\n\nfor (Animal a : animais) {\n    a.emitirSom(); // despacho dinâmico!\n}\n\n// Rex diz: Au au!\n// Mia diz: Miau!\n// Piu diz: Piu piu!'
+};
+
+function showPoly(type) {
+  document.querySelectorAll('#simulador3 .ctor-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('poly-' + type).classList.add('active');
+  document.getElementById('polyOutput').textContent = polyOutputs[type];
+}
+
+const absOutputs = {
+  concreto: '// Classe CONCRETA — pode ser instanciada\npublic class Animal {\n    public void emitirSom() {\n        System.out.println("..."); // implementação padrão\n    }\n}\n\nAnimal a = new Animal(); // OK!',
+  abstrato: '// Classe ABSTRATA — NÃO pode ser instanciada\npublic abstract class Animal {\n    public abstract void emitirSom(); // sem corpo!\n}\n\n// Animal a = new Animal(); // ERRO de compilação!\nAnimal a = new Cachorro("Rex"); // OK — Cachorro implementa emitirSom()',
+  overload: '// SOBRECARGA — mesmo nome, parâmetros diferentes\npublic class Calculadora {\n    public int somar(int a, int b) {\n        return a + b;\n    }\n    public double somar(double a, double b) {\n        return a + b;\n    }\n    public int somar(int a, int b, int c) {\n        return a + b + c;\n    }\n}\n// Resolvido em compile-time — não é polimorfismo de runtime!'
+};
+
+function showAbstract(type) {
+  document.querySelectorAll('#simulador3 .ctor-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('abs-' + type).classList.add('active');
+  document.getElementById('absOutput').textContent = absOutputs[type];
+}
+
+// ── AULA 03 — EXERCÍCIOS ──────────────────────────────────────────────────────
+let score3 = 0;
+
+const feedbacksOk3 = [
+  'Correto! Esse é o coração do polimorfismo: despacho dinâmico. A JVM chama a versão correta em tempo de execução.',
+  'Correto! <code>abstract</code> impede que a classe seja instanciada diretamente. Ela só pode ser usada via subclasses.',
+  'Correto! Na sobrescrita (@Override), o método da subclasse tem exatamente o <strong>mesmo nome e mesmos parâmetros</strong> da superclasse — apenas a implementação muda.',
+  'Correto! Sobrecarga exige <strong>parâmetros diferentes</strong>. Com a mesma lista de parâmetros, seria uma sobrescrita (ou redeclaração idêntica, que não compila na mesma classe).',
+  'Correto! Sem <code>instanceof</code>, um downcasting errado lança <code>ClassCastException</code> em runtime — um erro difícil de rastrear sem a verificação prévia.'
+];
+
+const feedbacksErr3 = [
+  'Incorreto. Polimorfismo funciona exatamente assim: o método é chamado na referência da superclasse, mas a JVM executa a versão da subclasse em tempo de execução.',
+  'Incorreto. <code>abstract</code> <strong>impede</strong> a instanciação direta. <code>new Animal()</code> gera erro de compilação se Animal for abstrata.',
+  'Incorreto. Na sobrescrita, nome e parâmetros são <strong>iguais</strong> ao da superclasse. O que muda é apenas o corpo do método.',
+  'Incorreto. Sobrecarga requer <strong>parâmetros diferentes</strong> (tipo, número ou ordem). Com os mesmos parâmetros, não é sobrecarga.',
+  'Incorreto. Sem <code>instanceof</code>, você pode tentar converter um Cachorro em Gato, por exemplo, gerando <code>ClassCastException</code> em runtime.'
+];
+
+function answer3(i, btn, isCorrect) {
+  const block = document.getElementById('ex3-' + i);
+  block.querySelectorAll('.choice').forEach(c => c.disabled = true);
+  const fb = document.getElementById('fb3-' + i);
+  if (isCorrect) {
+    btn.classList.add('correct');
+    fb.classList.add('show', 'ok');
+    fb.innerHTML = '&#x2705; ' + feedbacksOk3[i];
+    block.classList.add('done');
+    score3++;
+    document.getElementById('scoreVal3').textContent = score3;
+    document.getElementById('scoreBar3').style.width = (score3 / 5 * 100) + '%';
+  } else {
+    btn.classList.add('wrong');
+    fb.classList.add('show', 'ko');
+    fb.innerHTML = '&#x274C; ' + feedbacksErr3[i];
+  }
+}
 
 function answer2(i, btn, isCorrect) {
   const block = document.getElementById('ex2-' + i);
