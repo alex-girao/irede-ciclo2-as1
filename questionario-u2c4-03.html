@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Implementa&ccedil;&atilde;o &mdash; Rela&ccedil;&otilde;es entre Classes na Pr&aacute;tica</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#f0f0f5;--surface:#ffffff;--border:#d8d5e8;--accent:#8d62ff;--accent2:#00c896;--text:#1a1730;--muted:#7a748f;--green:#155e35;--green-bg:#d6f5e5;--green-border:#6edaa8;--radius:10px;--glow:0 0 18px rgba(141,98,255,0.15);--grad:linear-gradient(270deg,#8d62ff 53.6%,#00ffbc 98.32%);--surface2:#f7f5ff;--danger:#d63030;--warn:#d48a00;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;padding:0 0 60px;background-image:radial-gradient(ellipse 70% 40% at 50% -10%,rgba(141,98,255,0.08) 0%,transparent 70%),radial-gradient(ellipse 50% 30% at 80% 110%,rgba(0,200,150,0.06) 0%,transparent 70%);}
+header{text-align:center;padding:36px 20px 28px;border-bottom:1px solid var(--border);position:relative;background:var(--surface);box-shadow:0 2px 16px rgba(141,98,255,0.07);}
+header::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:120px;height:2px;background:linear-gradient(90deg,transparent,#8d62ff,transparent);}
+.header-logo{height:48px;margin-bottom:14px;display:block;margin-left:auto;margin-right:auto;}
+.logo{font-family:'JetBrains Mono',monospace;font-size:clamp(1.4rem,3.5vw,2.2rem);font-weight:700;letter-spacing:-0.5px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.logo span{opacity:0.6;}
+.subtitle{color:var(--muted);font-size:.85rem;margin-top:6px;letter-spacing:0.06em;text-transform:uppercase;}
+.header-badge{display:inline-block;margin-top:12px;padding:4px 16px;border-radius:99px;font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;background:linear-gradient(270deg,rgba(141,98,255,.15),rgba(0,255,188,.1));border:1px solid rgba(141,98,255,.3);color:var(--accent);letter-spacing:.06em;}
+.wrap{max-width:860px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;text-decoration:none;font-family:'JetBrains Mono',monospace;margin-bottom:1.5rem;transition:color .15s;}
+.back-link:hover{color:var(--accent);}
+.info-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:1.75rem;box-shadow:0 2px 8px rgba(141,98,255,0.06);position:relative;overflow:hidden;}
+.info-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(141,98,255,.35),transparent);}
+.info-card-title{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;margin-bottom:.6rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.info-card p{font-size:14px;color:var(--muted);line-height:1.7;}
+.pill{display:inline-block;padding:3px 11px;border-radius:99px;font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;}
+.pill-grad{background:rgba(141,98,255,.12);border:1px solid rgba(141,98,255,.3);color:var(--accent);}
+.pill-green{background:rgba(0,200,150,.12);border:1px solid rgba(0,200,150,.3);color:#0a7a5a;}
+.pill-amber{background:rgba(212,138,0,.1);border:1px solid rgba(212,138,0,.25);color:var(--warn);}
+.pill-red{background:rgba(214,48,48,.1);border:1px solid rgba(214,48,48,.25);color:var(--danger);}
+.ex-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1.5rem;overflow:hidden;box-shadow:0 2px 8px rgba(141,98,255,0.06);}
+.ex-header{padding:1.1rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--surface2);}
+.ex-number{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;min-width:36px;}
+.ex-title{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:var(--text);flex:1;}
+.ex-body{padding:1.25rem 1.5rem;}
+.ex-enunciado{font-size:14px;color:var(--text);line-height:1.75;margin-bottom:1rem;}
+.ex-enunciado strong{color:var(--accent);}
+.ex-requisitos{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:1.25rem;}
+.ex-requisitos-title{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;}
+.ex-requisitos ul{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.ex-requisitos li{font-size:13px;color:var(--muted);display:flex;align-items:flex-start;gap:8px;line-height:1.55;}
+.ex-requisitos li::before{content:'›';color:var(--accent);font-weight:700;font-size:16px;line-height:1;flex-shrink:0;margin-top:1px;}
+.ic{background:rgba(141,98,255,.12);color:#5a30cc;padding:1px 6px;border-radius:4px;font-size:12px;font-family:'JetBrains Mono',monospace;font-weight:600;}
+.reveal-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border-radius:8px;border:1.5px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace;transition:all .2s;margin-bottom:0;}
+.reveal-btn:hover{background:rgba(141,98,255,.1);transform:translateY(-1px);box-shadow:var(--glow);}
+.reveal-btn.revealed{background:var(--grad);color:#fff;border-color:transparent;box-shadow:0 3px 14px rgba(141,98,255,.3);}
+.reveal-btn svg{transition:transform .3s;}
+.reveal-btn.revealed svg{transform:rotate(180deg);}
+.solution-area{margin-top:1rem;display:none;}
+.solution-area.visible{display:block;}
+.solution-label{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.solution-label::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent2);}
+.code-block{background:#1e1e2e;border:1px solid #3a3a5c;border-radius:10px;padding:18px 20px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.85;color:#cdd6f4;overflow-x:auto;white-space:pre;}
+.code-block .kw{color:#cba6f7;}.code-block .typ{color:#89b4fa;}.code-block .str{color:#a6e3a1;}.code-block .num{color:#fab387;}.code-block .cmt{color:#6c7086;font-style:italic;}.code-block .cls{color:#f5c2e7;}.code-block .mtd{color:#89dceb;}
+.output-block{background:#12121e;border:1px solid #2a2a40;border-radius:8px;padding:14px 18px;margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;color:#a6e3a1;overflow-x:auto;white-space:pre;}
+.output-label{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin:12px 0 6px;display:flex;align-items:center;gap:6px;}
+.output-label::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:#a6e3a1;}
+.diff-bar{display:flex;gap:4px;align-items:center;}
+.diff-dot{width:8px;height:8px;border-radius:50%;background:var(--border);}
+.diff-dot.filled-easy{background:#00c896;}
+.diff-dot.filled-medium{background:#d48a00;}
+.progress-area{display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:1.75rem;box-shadow:0 2px 8px rgba(141,98,255,0.06);}
+.progress-val{font-size:28px;font-weight:700;font-family:'JetBrains Mono',monospace;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;min-width:60px;}
+.progress-label{font-size:11px;color:var(--muted);}
+.progress-track{flex:1;background:#e5e2f0;border-radius:99px;height:8px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:99px;background:var(--grad);width:0%;transition:width .4s cubic-bezier(.4,0,.2,1);}
+footer{text-align:center;margin-top:3rem;font-size:11px;color:var(--muted);letter-spacing:.04em;}
+footer span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:700;}
+@media(max-width:540px){.ex-header{flex-direction:column;align-items:flex-start;gap:8px;}.code-block{font-size:12px;}}
+</style>
+</head>
+<body>
+<header>
+  <img class="header-logo" src="https://capacitabrasil.irede.org.br/assets/capacitaLogo-Ct3BEyem.png" alt="Capacita Brasil"/>
+  <div class="logo">&#x2615; <span>//</span> Java</div>
+  <div class="subtitle">Desenvolvimento Java &mdash; Unidade 02 | Cap. 04</div>
+  <div class="header-badge">Quest&otilde;es de Implementa&ccedil;&atilde;o</div>
+</header>
+<div class="wrap">
+  <a class="back-link" href="index.html">&#x2190; Voltar para a Aula 04</a>
+  <div class="info-card">
+    <div class="info-card-title">
+      Implementa&ccedil;&atilde;o em Java
+      <span class="pill pill-grad">10 quest&otilde;es</span>
+      <span class="pill pill-green">N&iacute;vel B&aacute;sico ao Intermedi&aacute;rio</span>
+    </div>
+    <p>Pratique escrevendo c&oacute;digo Java real. Cada quest&atilde;o apresenta um problema a ser resolvido com os conceitos da Aula 04: <strong style="color:var(--text)">classes abstratas, associa&ccedil;&atilde;o, agrega&ccedil;&atilde;o, composi&ccedil;&atilde;o e polimorfismo com hierarquias abstratas</strong>. Tente resolver por conta pr&oacute;pria antes de revelar a solu&ccedil;&atilde;o.</p>
+  </div>
+  <div class="progress-area">
+    <div><div class="progress-val" id="progressVal">0/10</div><div class="progress-label">reveladas</div></div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <!-- Q1 -->
+  <div class="ex-card">
+    <div class="ex-header"><div class="ex-number">1)</div><div class="ex-title">CriarClasseAbstrata</div><span class="pill pill-green">B&aacute;sico</span>
+      <div class="diff-bar"><div class="diff-dot filled-easy"></div><div class="diff-dot"></div><div class="diff-dot"></div><div class="diff-dot"></div><div class="diff-dot"></div></div></div>
+    <div class="ex-body">
+      <div class="ex-enunciado">Crie a classe abstrata <strong>Funcionario</strong> com atributo <strong>nome</strong>, m&eacute;todo abstrato <strong>calcularSalario()</strong> e m&eacute;todo concreto <strong>exibirSalario()</strong>.</div>
+      <div class="ex-requisitos"><div class="ex-requisitos-title">Requisitos</div><ul>
+        <li>Declare <span class="ic">public abstract class Funcionario</span></li>
+        <li>Atributo <span class="ic">private String nome</span>, construtor e <span class="ic">getNome()</span></li>
+        <li>M&eacute;todo abstrato: <span class="ic">public abstract double calcularSalario()</span></li>
+        <li>M&eacute;todo concreto: <span class="ic">exibirSalario()</span> que imprime <span class="ic">nome + ": R$ " + calcularSalario()</span></li>
+      </ul></div>
+      <button class="reveal-btn" onclick="toggleSolution(1,this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol1"><div class="solution-label">Solu&ccedil;&atilde;o</div>
+        <div class="code-block"><span class="kw">public abstract class</span> <span class="cls">Funcionario</span> {
+    <span class="kw">private</span> <span class="typ">String</span> nome;
+
+    <span class="kw">public</span> <span class="cls">Funcionario</span>(<span class="typ">String</span> nome) { <span class="kw">this</span>.nome = nome; }
+    <span class="kw">public</span> <span class="typ">String</span> <span class="mtd">getNome</span>() { <span class="kw">return</span> nome; }
+
+    <span class="cmt">// método abstrato — subclasses DEVEM implementar</span>
+    <span class="kw">public abstract double</span> <span class="mtd">calcularSalario</span>();
+
+    <span class="cmt">// método concreto — herdado por todas as subclasses</span>
+    <span class="kw">public void</span> <span class="mtd">exibirSalario</span>() {
+        <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(nome + <span class="str">": R$ "</span> + <span class="mtd">calcularSalario</span>());
+    }
+}</div></div></div></div>
+
+  <!-- Q2 -->
+  <div class="ex-card">
+    <div class="ex-header"><div class="ex-number">2)</div><div class="ex-title">ImplementarGerente</div><span class="pill pill-green">B&aacute;sico</span>
+      <div class="diff-bar"><div class="diff-dot filled-easy"></div><div class="diff-dot filled-easy"></div><div class="diff-dot"></div><div class="diff-dot"></div><div class="diff-dot"></div></div></div>
+    <div class="ex-body">
+      <div class="ex-enunciado">Crie a classe <strong>Gerente</strong> que estende <strong>Funcionario</strong> e calcula o sal&aacute;rio como <strong>salarioBase &times; 1.5</strong> (b&ocirc;nus de 50%).</div>
+      <div class="ex-requisitos"><div class="ex-requisitos-title">Requisitos</div><ul>
+        <li>Atributo <span class="ic">private double salarioBase</span></li>
+        <li>Construtor recebe <span class="ic">nome</span> e <span class="ic">salarioBase</span>, chama <span class="ic">super(nome)</span></li>
+        <li>Implemente <span class="ic">calcularSalario()</span> com <span class="ic">@Override</span> retornando <span class="ic">salarioBase * 1.5</span></li>
+      </ul></div>
+      <button class="reveal-btn" onclick="toggleSolution(2,this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol2"><div class="solution-label">Solu&ccedil;&atilde;o</div>
+        <div class="code-block"><span class="kw">public class</span> <span class="cls">Gerente</span> <span class="kw">extends</span> <span class="cls">Funcionario</span> {
+    <span class="kw">private double</span> salarioBase;
+
+    <span class="kw">public</span> <span class="cls">Gerente</span>(<span class="typ">String</span> nome, <span class="kw">double</span> salarioBase) {
+        <span class="kw">super</span>(nome);
+        <span class="kw">this</span>.salarioBase = salarioBase;
+    }
+
+    <span class="kw">@Override</span>
+    <span class="kw">public double</span> <span class="mtd">calcularSalario</span>() {
+        <span class="kw">return</span> salarioBase * <span class="num">1.5</span>; <span class="cmt">// 50% de bônus</span>
+    }
+}</div>
+        <div class="output-label">Testando</div>
+        <div class="output-block">Gerente g = new Gerente("Carlos", 5000.0);
+g.exibirSalario(); // herda Funcionario.exibirSalario() — polimorfismo!
+// Carlos: R$ 7500.0</div></div></div></div>
+
+  <!-- Q3 -->
+  <div class="ex-card">
+    <div class="ex-header"><div class="ex-number">3)</div><div class="ex-title">ImplementarVendedor</div><span class="pill pill-green">B&aacute;sico</span>
+      <div class="diff-bar"><div class="diff-dot filled-easy"></div><div class="diff-dot filled-easy"></div><div class="diff-dot"></div><div class="diff-dot"></div><div class="diff-dot"></div></div></div>
+    <div class="ex-body">
+      <div class="ex-enunciado">Crie a classe <strong>Vendedor</strong> que estende <strong>Funcionario</strong> e calcula o sal&aacute;rio como <strong>salarioBase + comissao</strong>.</div>
+      <div class="ex-requisitos"><div class="ex-requisitos-title">Requisitos</div><ul>
+        <li>Atributos <span class="ic">private double salarioBase</span> e <span class="ic">private double comissao</span></li>
+        <li>Construtor recebe <span class="ic">nome</span>, <span class="ic">salarioBase</span> e <span class="ic">comissao</span>, chama <span class="ic">super(nome)</span></li>
+        <li>Implemente <span class="ic">calcularSalario()</span> retornando <span class="ic">salarioBase + comissao</span></li>
+      </ul></div>
+      <button class="reveal-btn" onclick="toggleSolution(3,this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol3"><div class="solution-label">Solu&ccedil;&atilde;o</div>
+        <div class="code-block"><span class="kw">public class</span> <span class="cls">Vendedor</span> <span class="kw">extends</span> <span class="cls">Funcionario</span> {
+    <span class="kw">private double</span> salarioBase;
+    <span class="kw">private double</span> comissao;
+
+    <span class="kw">public</span> <span class="cls">Vendedor</span>(<span class="typ">String</span> nome, <span class="kw">double</span> salarioBase, <span class="kw">double</span> comissao) {
+        <span class="kw">super</span>(nome);
+        <span class="kw">this</span>.salarioBase = salarioBase;
+        <span class="kw">this</span>.comissao    = comissao;
+    }
+
+    <span class="kw">@Override</span>
+    <span class="kw">public double</span> <span class="mtd">calcularSalario</span>() {
+        <span class="kw">return</span> salarioBase + comissao;
+    }
+}</div>
+        <div class="output-label">Testando</div>
+        <div class="output-block">Vendedor v = new Vendedor("Maria", 2000.0, 1500.0);
+v.exibirSalario();
+// Maria: R$ 3500.0</div></div></div></div>
+
+  <!-- Q4 -->
+  <div class="ex-card">
+    <div class="ex-header"><div class="ex-number">4)</div><div class="ex-title">AssociacaoSimples</div><span class="pill pill-green">B&aacute;sico</span>
+      <div class="diff-bar"><div class="diff-dot filled-easy"></div><div class="diff-dot filled-easy"></div><div class="diff-dot filled-easy"></div><div class="diff-dot"></div><div class="diff-dot"></div></div></div>
+    <div class="ex-body">
+      <div class="ex-enunciado">Implemente uma <strong>Associa&ccedil;&atilde;o</strong>: a classe <strong>Medico</strong> usa a classe <strong>Paciente</strong> para realizar consultas, sem possu&iacute;-la.</div>
+      <div class="ex-requisitos"><div class="ex-requisitos-title">Requisitos</div><ul>
+        <li>Crie <span class="ic">Paciente</span> com atributo <span class="ic">nome</span> e <span class="ic">getNome()</span></li>
+        <li>Em <span class="ic">Medico</span>, adicione <span class="ic">consultar(Paciente p)</span> que recebe Paciente como par&acirc;metro</li>
+        <li>Crie M&eacute;dico e Paciente de forma independente e demonstre que ambos existem sem depend&ecirc;ncia</li>
+      </ul></div>
+      <button class="reveal-btn" onclick="toggleSolution(4,this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol4"><div class="solution-label">Paciente.java</div>
+        <div class="code-block"><span class="kw">public class</span> <span class="cls">Paciente</span> {
+    <span class="kw">private</span> <span class="typ">String</span> nome;
+    <span class="kw">public</span> <span class="cls">Paciente</span>(<span class="typ">String</span> nome) { <span class="kw">this</span>.nome = nome; }
+    <span class="kw">public</span> <span class="typ">String</span> <span class="mtd">getNome</span>() { <span class="kw">return</span> nome; }
+}</div>
+        <div class="solution-label">Medico.java</div>
+        <div class="code-block"><span class="kw">public class</span> <span class="cls">Medico</span> {
+    <span class="kw">private</span> <span class="typ">String</span> nome;
+    <span class="kw">public</span> <span class="cls">Medico</span>(<span class="typ">String</span> nome) { <span class="kw">this</span>.nome = nome; }
+
+    <span class="cmt">// Associação: usa Paciente via parâmetro — não cria, não possui</span>
+    <span class="kw">public void</span> <span class="mtd">consultar</span>(<span class="cls">Paciente</span> p) {
+        <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"Dr. "</span> + nome + <span class="str">" atendeu "</span> + p.<span class="mtd">getNome</span>());
+    }
+}</div>
+        <div class="output-label">Testando — ciclos de vida independentes</div>
+        <div class="output-block">Medico   m = new Medico("Dra. Ana");   // criado independentemente
+Paciente p = new Paciente("João");    // criado independentemente
+m.consultar(p);
+// Dra. Ana atendeu João
+// Ambos continuam existindo após a consulta!</div></div></div></div>
+
+  <!-- Q5 -->
+  <div class="ex-card">
+    <div class="ex-header"><div class="ex-number">5)</div><div class="ex-title">AgregacaoTurmaAluno</div><span class="pill pill-green">B&aacute;sico</span>
+      <div class="diff-bar"><div class="diff-dot filled-easy"></div><div class="diff-dot filled-easy"></div><div class="diff-dot filled-easy"></div><div class="diff-dot"></div><div class="diff-dot"></div></div></div>
+    <div class="ex-body">
+      <div class="ex-enunciado">Implemente uma <strong>Agrega&ccedil;&atilde;o</strong>: a classe <strong>Turma</strong> agrega <strong>Aluno</strong>s que existem independentemente dela.</div>
+      <div class="ex-requisitos"><div class="ex-requisitos-title">Requisitos</div><ul>
+        <li>Crie <span class="ic">Aluno</span> com <span class="ic">nome</span> e <span class="ic">getNome()</span></li>
+        <li>Em <span class="ic">Turma</span>, use <span class="ic">List&lt;Aluno&gt;</span> e m&eacute;todo <span class="ic">addAluno(Aluno a)</span> — Aluno criado <strong>fora</strong></li>
+        <li>Crie os Alunos <strong>antes</strong> da Turma e adicione via <span class="ic">addAluno()</span>, demonstrando ciclo de vida independente</li>
+      </ul></div>
+      <button class="reveal-btn" onclick="toggleSolution(5,this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol5"><div class="solution-label">Aluno.java</div>
+        <div class="code-block"><span class="kw">public class</span> <span class="cls">Aluno</span> {
+    <span class="kw">private</span> <span class="typ">String</span> nome;
+    <span class="kw">public</span> <span class="cls">Aluno</span>(<span class="typ">String</span> nome) { <span class="kw">this</span>.nome = nome; }
+    <span class="kw">public</span> <span class="typ">String</span> <span class="mtd">getNome</span>() { <span class="kw">return</span> nome; }
+}</div>
+        <div class="solution-label">Turma.java</div>
+        <div class="code-block"><span class="kw">public class</span> <span class="cls">Turma</span> {
+    <span class="kw">private</span> <span class="typ">String</span> nome;
+    <span class="kw">private</span> <span class="cls">List</span>&lt;<span class="cls">Aluno</span>&gt; alunos = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();
+
+    <span class="kw">public</span> <span class="cls">Turma</span>(<span class="typ">String</span> nome) { <span class="kw">this</span>.nome = nome; }
+
+    <span class="cmt">// Agregação: Aluno criado FORA e passado como parâmetro</span>
+    <span class="kw">public void</span> <span class="mtd">addAluno</span>(<span class="cls">Aluno</span> a) { alunos.<span class="mtd">add</span>(a); }
+
+    <span class="kw">public void</span> <span class="mtd">listar</span>() {
+        <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"Turma: "</span> + nome);
+        <span class="kw">for</span> (<span class="cls">Aluno</span> a : alunos)
+            <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"  - "</span> + a.<span class="mtd">getNome</span>());
+    }
+}</div>
+        <div class="output-label">Testando — Aluno existe antes da Turma!</div>
+        <div class="output-block">Aluno a1 = new Aluno("Carlos"); // criado independentemente
+Aluno a2 = new Aluno("Maria");
+Turma t  = new Turma("Java 101");
+t.addAluno(a1);
+t.addAluno(a2);
+t.listar();
+// Turma: Java 101
+//   - Carlos
+//   - Maria
+// Se t = null → a1 e a2 continuam existindo!</div></div></div></div>
+
+  <!-- Q6 -->
+  <div class="ex-card">
+    <div class="ex-header"><div class="ex-number">6)</div><div class="ex-title">ComposicaoPedidoItem</div><span class="pill pill-amber">Intermedi&aacute;rio</span>
+      <div class="diff-bar"><div class="diff-dot filled-easy"></div><div class="diff-dot filled-easy"></div><div class="diff-dot filled-medium"></div><div class="diff-dot"></div><div class="diff-dot"></div></div></div>
+    <div class="ex-body">
+      <div class="ex-enunciado">Implemente uma <strong>Composi&ccedil;&atilde;o</strong>: a classe <strong>Pedido</strong> cria e controla seus <strong>ItemPedido</strong>s internamente &mdash; eles n&atilde;o existem fora do pedido.</div>
+      <div class="ex-requisitos"><div class="ex-requisitos-title">Requisitos</div><ul>
+        <li>Crie <span class="ic">ItemPedido</span> com <span class="ic">produto</span> (String) e <span class="ic">preco</span> (double)</li>
+        <li>Em <span class="ic">Pedido</span>, m&eacute;todo <span class="ic">addItem(String produto, double preco)</span> cria <span class="ic">ItemPedido</span> <strong>internamente</strong></li>
+        <li>Adicione <span class="ic">calcularTotal()</span> que soma todos os pre&ccedil;os dos itens</li>
+      </ul></div>
+      <button class="reveal-btn" onclick="toggleSolution(6,this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol6"><div class="solution-label">ItemPedido.java</div>
+        <div class="code-block"><span class="kw">public class</span> <span class="cls">ItemPedido</span> {
+    <span class="kw">private</span> <span class="typ">String</span> produto;
+    <span class="kw">private double</span> preco;
+
+    <span class="kw">public</span> <span class="cls">ItemPedido</span>(<span class="typ">String</span> produto, <span class="kw">double</span> preco) {
+        <span class="kw">this</span>.produto = produto;
+        <span class="kw">this</span>.preco   = preco;
+    }
+    <span class="kw">public double</span> <span class="mtd">getPreco</span>() { <span class="kw">return</span> preco; }
+}</div>
+        <div class="solution-label">Pedido.java</div>
+        <div class="code-block"><span class="kw">public class</span> <span class="cls">Pedido</span> {
+    <span class="kw">private int</span> numero;
+    <span class="kw">private</span> <span class="cls">List</span>&lt;<span class="cls">ItemPedido</span>&gt; itens = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();
+
+    <span class="kw">public</span> <span class="cls">Pedido</span>(<span class="kw">int</span> numero) { <span class="kw">this</span>.numero = numero; }
+
+    <span class="cmt">// Composição: ItemPedido criado DENTRO do Pedido!</span>
+    <span class="kw">public void</span> <span class="mtd">addItem</span>(<span class="typ">String</span> produto, <span class="kw">double</span> preco) {
+        itens.<span class="mtd">add</span>(<span class="kw">new</span> <span class="cls">ItemPedido</span>(produto, preco));
+    }
+
+    <span class="kw">public double</span> <span class="mtd">calcularTotal</span>() {
+        <span class="kw">double</span> total = <span class="num">0</span>;
+        <span class="kw">for</span> (<span class="cls">ItemPedido</span> i : itens) total += i.<span class="mtd">getPreco</span>();
+        <span class="kw">return</span> total;
+    }
+}</div>
+        <div class="output-label">Testando — ItemPedido existe apenas dentro do Pedido</div>
+        <div class="output-block">Pedido p = new Pedido(1);
+p.addItem("Teclado", 150.0);
+p.addItem("Mouse",    80.0);
+System.out.println("Total: R$ " + p.calcularTotal());
+// Total: R$ 230.0
+// Se p = null → os ItemPedidos somem junto!</div></div></div></div>
+
+  <!-- Q7 -->
+  <div class="ex-card">
+    <div class="ex-header"><div class="ex-number">7)</div><div class="ex-title">PolimorfismoFuncionarios</div><span class="pill pill-amber">Intermedi&aacute;rio</span>
+      <div class="diff-bar"><div class="diff-dot filled-easy"></div><div class="diff-dot filled-easy"></div><div class="diff-dot filled-medium"></div><div class="diff-dot"></div><div class="diff-dot"></div></div></div>
+    <div class="ex-body">
+      <div class="ex-enunciado">Use polimorfismo com <strong>Funcionario[]</strong> para calcular a <strong>folha de pagamento total</strong> de uma equipe com Gerentes e Vendedores.</div>
+      <div class="ex-requisitos"><div class="ex-requisitos-title">Requisitos</div><ul>
+        <li>Crie um array <span class="ic">Funcionario[]</span> com pelo menos 4 funcion&aacute;rios (misture Gerentes e Vendedores)</li>
+        <li>Use <span class="ic">for (Funcionario f : equipe)</span> e chame <span class="ic">f.exibirSalario()</span> em cada um</li>
+        <li>Acumule o total somando <span class="ic">f.calcularSalario()</span> e imprima a folha</li>
+      </ul></div>
+      <button class="reveal-btn" onclick="toggleSolution(7,this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol7"><div class="solution-label">Solu&ccedil;&atilde;o</div>
+        <div class="code-block"><span class="cls">Funcionario</span>[] equipe = {
+    <span class="kw">new</span> <span class="cls">Gerente</span>(<span class="str">"Alice"</span>, <span class="num">6000.0</span>),
+    <span class="kw">new</span> <span class="cls">Vendedor</span>(<span class="str">"Bob"</span>,   <span class="num">2000.0</span>, <span class="num">1500.0</span>),
+    <span class="kw">new</span> <span class="cls">Gerente</span>(<span class="str">"Carol"</span>, <span class="num">5000.0</span>),
+    <span class="kw">new</span> <span class="cls">Vendedor</span>(<span class="str">"Dan"</span>,   <span class="num">2000.0</span>, <span class="num">800.0</span>)
+};
+
+<span class="kw">double</span> folha = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="cls">Funcionario</span> f : equipe) {
+    f.<span class="mtd">exibirSalario</span>();           <span class="cmt">// polimorfismo: cada um usa SUA versão!</span>
+    folha += f.<span class="mtd">calcularSalario</span>();
+}
+<span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">printf</span>(<span class="str">"Folha total: R$ %.2f%n"</span>, folha);</div>
+        <div class="output-label">Sa&iacute;da esperada</div>
+        <div class="output-block">Alice: R$ 9000.0
+Bob: R$ 3500.0
+Carol: R$ 7500.0
+Dan: R$ 2800.0
+Folha total: R$ 22800,00</div></div></div></div>
+
+  <!-- Q8 -->
+  <div class="ex-card">
+    <div class="ex-header"><div class="ex-number">8)</div><div class="ex-title">ComposicaoEmpresaDepartamento</div><span class="pill pill-amber">Intermedi&aacute;rio</span>
+      <div class="diff-bar"><div class="diff-dot filled-easy"></div><div class="diff-dot filled-easy"></div><div class="diff-dot filled-medium"></div><div class="diff-dot filled-medium"></div><div class="diff-dot"></div></div></div>
+    <div class="ex-body">
+      <div class="ex-enunciado">Modele uma <strong>Empresa</strong> composta por <strong>Departamento</strong>s. Os departamentos n&atilde;o existem fora da empresa &mdash; composi&ccedil;&atilde;o forte.</div>
+      <div class="ex-requisitos"><div class="ex-requisitos-title">Requisitos</div><ul>
+        <li>Crie <span class="ic">Departamento</span> com <span class="ic">nome</span> e <span class="ic">responsavel</span> (String)</li>
+        <li>Em <span class="ic">Empresa</span>, crie cada <span class="ic">Departamento</span> <strong>internamente</strong> via <span class="ic">addDepartamento(String nome, String resp)</span></li>
+        <li>Adicione <span class="ic">listar()</span> que exibe o nome da empresa e todos os departamentos</li>
+      </ul></div>
+      <button class="reveal-btn" onclick="toggleSolution(8,this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol8"><div class="solution-label">Departamento.java</div>
+        <div class="code-block"><span class="kw">public class</span> <span class="cls">Departamento</span> {
+    <span class="kw">private</span> <span class="typ">String</span> nome;
+    <span class="kw">private</span> <span class="typ">String</span> responsavel;
+
+    <span class="kw">public</span> <span class="cls">Departamento</span>(<span class="typ">String</span> nome, <span class="typ">String</span> responsavel) {
+        <span class="kw">this</span>.nome        = nome;
+        <span class="kw">this</span>.responsavel = responsavel;
+    }
+    <span class="kw">public</span> <span class="typ">String</span> <span class="mtd">getNome</span>()        { <span class="kw">return</span> nome; }
+    <span class="kw">public</span> <span class="typ">String</span> <span class="mtd">getResponsavel</span>() { <span class="kw">return</span> responsavel; }
+}</div>
+        <div class="solution-label">Empresa.java</div>
+        <div class="code-block"><span class="kw">public class</span> <span class="cls">Empresa</span> {
+    <span class="kw">private</span> <span class="typ">String</span> nome;
+    <span class="kw">private</span> <span class="cls">List</span>&lt;<span class="cls">Departamento</span>&gt; departamentos = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();
+
+    <span class="kw">public</span> <span class="cls">Empresa</span>(<span class="typ">String</span> nome) { <span class="kw">this</span>.nome = nome; }
+
+    <span class="cmt">// Composição: Departamento criado DENTRO da Empresa!</span>
+    <span class="kw">public void</span> <span class="mtd">addDepartamento</span>(<span class="typ">String</span> nome, <span class="typ">String</span> resp) {
+        departamentos.<span class="mtd">add</span>(<span class="kw">new</span> <span class="cls">Departamento</span>(nome, resp));
+    }
+
+    <span class="kw">public void</span> <span class="mtd">listar</span>() {
+        <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"Empresa: "</span> + nome);
+        <span class="kw">for</span> (<span class="cls">Departamento</span> d : departamentos)
+            <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"  ["</span> + d.<span class="mtd">getNome</span>() + <span class="str">"] → "</span> + d.<span class="mtd">getResponsavel</span>());
+    }
+}</div>
+        <div class="output-label">Sa&iacute;da</div>
+        <div class="output-block">Empresa e = new Empresa("TechCo");
+e.addDepartamento("TI", "Alice");
+e.addDepartamento("RH", "Bob");
+e.listar();
+// Empresa: TechCo
+//   [TI] → Alice
+//   [RH] → Bob</div></div></div></div>
+
+  <!-- Q9 -->
+  <div class="ex-card">
+    <div class="ex-header"><div class="ex-number">9)</div><div class="ex-title">DiferencaAgregacaoComposicao</div><span class="pill pill-amber">Intermedi&aacute;rio</span>
+      <div class="diff-bar"><div class="diff-dot filled-easy"></div><div class="diff-dot filled-easy"></div><div class="diff-dot filled-medium"></div><div class="diff-dot filled-medium"></div><div class="diff-dot"></div></div></div>
+    <div class="ex-body">
+      <div class="ex-enunciado">Demonstre na pr&aacute;tica a diferen&ccedil;a entre <strong>Agrega&ccedil;&atilde;o</strong> e <strong>Composi&ccedil;&atilde;o</strong>: um <strong>Aluno</strong> (agrega&ccedil;&atilde;o) sobrevive &agrave; destrui&ccedil;&atilde;o de uma <strong>Turma</strong>, mas um <strong>ItemPedido</strong> (composi&ccedil;&atilde;o) n&atilde;o existiria sem o <strong>Pedido</strong>.</div>
+      <div class="ex-requisitos"><div class="ex-requisitos-title">Requisitos</div><ul>
+        <li>Crie um <span class="ic">Aluno</span> e adicione-o a uma <span class="ic">Turma</span></li>
+        <li>Simule a destrui&ccedil;&atilde;o da turma com <span class="ic">t = null</span></li>
+        <li>Mostre que o <span class="ic">Aluno</span> ainda existe e pode ser acessado (agrega&ccedil;&atilde;o)</li>
+        <li>Comente como seria a composi&ccedil;&atilde;o (ItemPedido some com o Pedido)</li>
+      </ul></div>
+      <button class="reveal-btn" onclick="toggleSolution(9,this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol9"><div class="solution-label">Demonstrando Agrega&ccedil;&atilde;o vs Composi&ccedil;&atilde;o</div>
+        <div class="code-block"><span class="cmt">// ─── AGREGAÇÃO: Aluno tem vida independente ────────────────</span>
+<span class="cls">Aluno</span> a1 = <span class="kw">new</span> <span class="cls">Aluno</span>(<span class="str">"Carlos"</span>); <span class="cmt">// criado FORA da turma</span>
+<span class="cls">Turma</span>  t  = <span class="kw">new</span> <span class="cls">Turma</span>(<span class="str">"Java 101"</span>);
+t.<span class="mtd">addAluno</span>(a1);
+
+<span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"Aluno na turma: "</span>   + a1.<span class="mtd">getNome</span>()); <span class="cmt">// Carlos</span>
+
+t = <span class="kw">null</span>; <span class="cmt">// "destruindo" a turma...</span>
+
+<span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"Aluno após t=null: "</span> + a1.<span class="mtd">getNome</span>()); <span class="cmt">// Carlos ✓</span>
+
+<span class="cmt">// ─── COMPOSIÇÃO: ItemPedido não sobreviveria ───────────────</span>
+<span class="cmt">// Pedido p = new Pedido(1);</span>
+<span class="cmt">// p.addItem("Teclado", 150.0); // criado DENTRO do pedido</span>
+<span class="cmt">// p = null; → ItemPedido some junto! (sem referência externa)</span></div>
+        <div class="output-label">Sa&iacute;da</div>
+        <div class="output-block">Aluno na turma: Carlos
+Aluno após t=null: Carlos ✓
+→ Agregação: partes sobrevivem ao todo.
+→ Composição: partes são destruídas com o todo.</div></div></div></div>
+
+  <!-- Q10 -->
+  <div class="ex-card">
+    <div class="ex-header"><div class="ex-number">10)</div><div class="ex-title">SistemaCompletoAbstrataAssociacaoComposicao</div><span class="pill pill-amber">Intermedi&aacute;rio</span>
+      <div class="diff-bar"><div class="diff-dot filled-easy"></div><div class="diff-dot filled-easy"></div><div class="diff-dot filled-medium"></div><div class="diff-dot filled-medium"></div><div class="diff-dot filled-medium"></div></div></div>
+    <div class="ex-body">
+      <div class="ex-enunciado">Combine os tr&ecirc;s conceitos: <strong>Funcionario</strong> (abstrata + polimorfismo), <strong>Projeto</strong> (Associa&ccedil;&atilde;o com Funcionario) e <strong>Empresa</strong> (Composi&ccedil;&atilde;o de Departamentos).</div>
+      <div class="ex-requisitos"><div class="ex-requisitos-title">Requisitos</div><ul>
+        <li>Crie <span class="ic">Projeto</span> com <span class="ic">nome</span> e m&eacute;todo <span class="ic">atribuir(Funcionario f)</span> que exibe a atribui&ccedil;&atilde;o (Associa&ccedil;&atilde;o)</li>
+        <li>Crie pelo menos um <span class="ic">Gerente</span> e um <span class="ic">Vendedor</span> e os atribua ao projeto</li>
+        <li>Use um array <span class="ic">Funcionario[]</span> para exibir a folha via polimorfismo</li>
+      </ul></div>
+      <button class="reveal-btn" onclick="toggleSolution(10,this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol10"><div class="solution-label">Projeto.java</div>
+        <div class="code-block"><span class="kw">public class</span> <span class="cls">Projeto</span> {
+    <span class="kw">private</span> <span class="typ">String</span> nome;
+    <span class="kw">public</span> <span class="cls">Projeto</span>(<span class="typ">String</span> nome) { <span class="kw">this</span>.nome = nome; }
+
+    <span class="cmt">// Associação: usa Funcionario via parâmetro — não o possui</span>
+    <span class="kw">public void</span> <span class="mtd">atribuir</span>(<span class="cls">Funcionario</span> f) {
+        <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(f.<span class="mtd">getNome</span>() + <span class="str">" → projeto: "</span> + nome);
+    }
+}</div>
+        <div class="solution-label">Combinando tudo no main</div>
+        <div class="code-block"><span class="cmt">// Hierarquia abstrata</span>
+<span class="cls">Gerente</span>  g = <span class="kw">new</span> <span class="cls">Gerente</span>(<span class="str">"Alice"</span>, <span class="num">6000.0</span>);
+<span class="cls">Vendedor</span> v = <span class="kw">new</span> <span class="cls">Vendedor</span>(<span class="str">"Bob"</span>,   <span class="num">2000.0</span>, <span class="num">1500.0</span>);
+
+<span class="cmt">// Associação: Projeto usa Funcionários sem possuí-los</span>
+<span class="cls">Projeto</span> p1 = <span class="kw">new</span> <span class="cls">Projeto</span>(<span class="str">"Sistema de Vendas"</span>);
+p1.<span class="mtd">atribuir</span>(g);
+p1.<span class="mtd">atribuir</span>(v);
+
+<span class="cmt">// Polimorfismo com a hierarquia abstrata</span>
+<span class="cls">Funcionario</span>[] equipe = { g, v };
+<span class="kw">for</span> (<span class="cls">Funcionario</span> f : equipe) {
+    f.<span class="mtd">exibirSalario</span>(); <span class="cmt">// despacho dinâmico!</span>
+}</div>
+        <div class="output-label">Sa&iacute;da &mdash; tr&ecirc;s conceitos funcionando juntos</div>
+        <div class="output-block">Alice → projeto: Sistema de Vendas
+Bob   → projeto: Sistema de Vendas
+Alice: R$ 9000.0
+Bob: R$ 3500.0</div></div></div></div>
+
+</div>
+<footer>Capacita Brasil &mdash; <span>iRede</span> &mdash; Material Interativo de Java</footer>
+<script>
+let revealed = 0;
+const TOTAL = 10;
+function toggleSolution(num,btn){const area=document.getElementById('sol'+num);const isVisible=area.classList.contains('visible');if(!isVisible){area.classList.add('visible');btn.classList.add('revealed');btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Ocultar solução';if(!btn.dataset.counted){btn.dataset.counted='1';revealed++;document.getElementById('progressVal').textContent=revealed+'/'+TOTAL;document.getElementById('progressFill').style.width=(revealed/TOTAL*100)+'%';}}else{area.classList.remove('visible');btn.classList.remove('revealed');btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Ver solução';}}
+</script>
+</body>
+</html>

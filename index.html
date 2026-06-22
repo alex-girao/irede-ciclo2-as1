@@ -299,6 +299,7 @@ footer span { background: var(--grad); -webkit-background-clip: text; -webkit-te
     <button class="aula-tab active" onclick="switchAula('aula01',this)">&#x1F4D0; Aula 01 &mdash; Fundamentos de POO</button>
     <button class="aula-tab"        onclick="switchAula('aula02',this)">&#x1F333; Aula 02 &mdash; Herança e Hierarquia</button>
     <button class="aula-tab"        onclick="switchAula('aula03',this)">&#x1F3AD; Aula 03 &mdash; Polimorfismo</button>
+    <button class="aula-tab"        onclick="switchAula('aula04',this)">&#x1F9E9; Aula 04 &mdash; Abstratas, Composi&ccedil;&atilde;o e Associa&ccedil;&otilde;es</button>
   </div>
 
   <!-- ═══════════════ AULA 01 ═══════════════ -->
@@ -1502,6 +1503,478 @@ a3.<span class="mtd">emitirSom</span>(); <span class="cmt">// → Piu piu! (Pass
 
   </div><!-- /aula03 -->
 
+  <!-- ═══════════════ AULA 04 ═══════════════ -->
+  <div id="aula04" class="aula-section">
+
+  <div class="tab-bar">
+    <button class="tab active"  onclick="showTab('resumo4',this)">&#x1F4D8; Resumo</button>
+    <button class="tab"         onclick="showTab('simulador4',this)">&#x26A1; Simulador</button>
+    <button class="tab"         onclick="showTab('exercicios4',this)">&#x1F3AF; Exerc&iacute;cios</button>
+    <button class="tab"         onclick="showTab('questionarios4',this)">&#x1F4DD; Question&aacute;rios</button>
+    <button class="tab"         onclick="showTab('curiosidades4',this)">&#x1F680; Curiosidades</button>
+    <button class="tab"         onclick="showTab('links4',this)">&#x1F517; Links</button>
+  </div>
+
+  <!-- ═══ RESUMO 4 ═══ -->
+  <div id="resumo4" class="section active">
+
+    <!-- Card 1: Classes Abstratas -->
+    <div class="card">
+      <div class="card-title">Classes Abstratas <span class="pill pill-red">abstract</span></div>
+      <p>Uma <strong style="color:var(--text)">classe abstrata</strong> &eacute; um modelo incompleto que define estrutura e contrato para suas subclasses. N&atilde;o pode ser instanciada diretamente com <span class="ic">new</span> &mdash; existe apenas para ser estendida.</p>
+      <p style="margin-top:8px">Pode conter: <strong style="color:var(--text)">atributos</strong>, <strong style="color:var(--text)">construtores</strong>, <strong style="color:var(--text)">m&eacute;todos concretos</strong> (com implementa&ccedil;&atilde;o) e <strong style="color:var(--text)">m&eacute;todos abstratos</strong> (sem corpo, que subclasses devem implementar).</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">
+        <div>
+          <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:6px;letter-spacing:.06em">CLASSE ABSTRATA</div>
+          <div class="code-block" style="font-size:12px"><span class="kw">public abstract class</span> <span class="cls">Forma</span> {
+  <span class="kw">private</span> <span class="typ">String</span> cor;
+
+  <span class="kw">public</span> <span class="cls">Forma</span>(<span class="typ">String</span> cor) {
+    <span class="kw">this</span>.cor = cor;
+  }
+
+  <span class="cmt">// m&eacute;todo CONCRETO</span>
+  <span class="kw">public</span> <span class="typ">String</span> <span class="mtd">getCor</span>() {
+    <span class="kw">return</span> cor;
+  }
+
+  <span class="cmt">// m&eacute;todo ABSTRATO</span>
+  <span class="kw">public abstract</span> <span class="typ">double</span>
+    <span class="mtd">calcularArea</span>();
+}</div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:6px;letter-spacing:.06em">SUBCLASSE CONCRETA</div>
+          <div class="code-block" style="font-size:12px"><span class="kw">public class</span> <span class="cls">Circulo</span>
+  <span class="kw">extends</span> <span class="cls">Forma</span> {
+
+  <span class="kw">private</span> <span class="typ">double</span> raio;
+
+  <span class="kw">public</span> <span class="cls">Circulo</span>(
+      <span class="typ">String</span> cor,
+      <span class="typ">double</span> raio) {
+    <span class="kw">super</span>(cor);
+    <span class="kw">this</span>.raio = raio;
+  }
+
+  <span class="kw">@Override</span>
+  <span class="kw">public</span> <span class="typ">double</span>
+      <span class="mtd">calcularArea</span>() {
+    <span class="kw">return</span> <span class="cls">Math</span>.PI *
+      raio * raio;
+  }
+}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+        <span class="pill pill-red">abstract</span>
+        <span class="pill pill-green">m&eacute;todo concreto</span>
+        <span class="pill pill-blue">m&eacute;todo abstrato</span>
+        <span class="pill pill-java">@Override</span>
+      </div>
+    </div>
+
+    <!-- Card 2: Associação -->
+    <div class="card">
+      <div class="card-title">Associa&ccedil;&atilde;o <span class="pill pill-grad">usa-um</span></div>
+      <p>A <strong style="color:var(--text)">Associa&ccedil;&atilde;o</strong> &eacute; a rela&ccedil;&atilde;o mais gen&eacute;rica entre classes. Indica que uma classe <strong style="color:var(--text)">&ldquo;usa&rdquo;</strong> outra, sem possu&iacute;-la ou controlar seu ciclo de vida. A rela&ccedil;&atilde;o pode ser unidirecional ou bidirecional.</p>
+      <p style="margin-top:8px">Exemplo: um <strong style="color:var(--text)">M&eacute;dico</strong> atende um <strong style="color:var(--text)">Paciente</strong>. Ambos existem independentemente &mdash; o M&eacute;dico n&atilde;o cria nem destr&oacute;i o Paciente.</p>
+      <div class="code-block" style="margin-top:14px"><span class="kw">public class</span> <span class="cls">Medico</span> {
+  <span class="kw">private</span> <span class="typ">String</span> nome;
+
+  <span class="cmt">// Associa&ccedil;&atilde;o: M&eacute;dico usa Paciente via par&acirc;metro</span>
+  <span class="kw">public void</span> <span class="mtd">consultar</span>(<span class="cls">Paciente</span> p) {
+    <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(
+      <span class="str">"Dr. "</span> + nome + <span class="str">" atendendo "</span> + p.<span class="mtd">getNome</span>()
+    );
+  }
+}
+
+<span class="cmt">// M&eacute;dico e Paciente existem de forma completamente independente</span>
+<span class="cls">Medico</span>   m = <span class="kw">new</span> <span class="cls">Medico</span>(<span class="str">"Dra. Ana"</span>);
+<span class="cls">Paciente</span> p = <span class="kw">new</span> <span class="cls">Paciente</span>(<span class="str">"Jo&atilde;o"</span>);
+m.<span class="mtd">consultar</span>(p); <span class="cmt">// associa&ccedil;&atilde;o via par&acirc;metro</span></div>
+    </div>
+
+    <!-- Card 3: Agregação -->
+    <div class="card">
+      <div class="card-title">Agrega&ccedil;&atilde;o <span class="pill pill-amber">tem-um (fraca)</span></div>
+      <p>A <strong style="color:var(--text)">Agrega&ccedil;&atilde;o</strong> &eacute; uma rela&ccedil;&atilde;o &ldquo;tem-um&rdquo; <strong style="color:var(--text)">fraca</strong>. O objeto todo cont&eacute;m refer&ecirc;ncias a objetos parte, mas esses objetos parte podem <strong style="color:var(--text)">existir independentemente</strong> do todo. S&atilde;o criados fora do container e passados a ele.</p>
+      <p style="margin-top:8px">Exemplo: uma <strong style="color:var(--text)">Turma</strong> tem <strong style="color:var(--text)">Alunos</strong>. Se a turma for encerrada, os alunos continuam existindo.</p>
+      <div class="code-block" style="margin-top:14px"><span class="kw">public class</span> <span class="cls">Turma</span> {
+  <span class="kw">private</span> <span class="typ">String</span> nome;
+  <span class="kw">private</span> <span class="cls">List</span>&lt;<span class="cls">Aluno</span>&gt; alunos = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();
+
+  <span class="cmt">// Aluno criado FORA da Turma &mdash; agrega&ccedil;&atilde;o</span>
+  <span class="kw">public void</span> <span class="mtd">addAluno</span>(<span class="cls">Aluno</span> a) {
+    alunos.<span class="mtd">add</span>(a);
+  }
+}
+
+<span class="cls">Aluno</span>  a1 = <span class="kw">new</span> <span class="cls">Aluno</span>(<span class="str">"Carlos"</span>);
+<span class="cls">Aluno</span>  a2 = <span class="kw">new</span> <span class="cls">Aluno</span>(<span class="str">"Maria"</span>);
+<span class="cls">Turma</span>  t  = <span class="kw">new</span> <span class="cls">Turma</span>(<span class="str">"Java 101"</span>);
+t.<span class="mtd">addAluno</span>(a1); t.<span class="mtd">addAluno</span>(a2);
+<span class="cmt">// Se Turma for destru&iacute;da, Alunos continuam existindo!</span></div>
+    </div>
+
+    <!-- Card 4: Composição -->
+    <div class="card">
+      <div class="card-title">Composi&ccedil;&atilde;o <span class="pill pill-green">tem-um (forte)</span></div>
+      <p>A <strong style="color:var(--text)">Composi&ccedil;&atilde;o</strong> &eacute; uma rela&ccedil;&atilde;o &ldquo;tem-um&rdquo; <strong style="color:var(--text)">forte</strong>. Os objetos parte <strong style="color:var(--text)">n&atilde;o podem existir sem</strong> o todo &mdash; s&atilde;o criados pelo container e compartilham o mesmo ciclo de vida. Se o todo for destru&iacute;do, as partes tamb&eacute;m s&atilde;o.</p>
+      <p style="margin-top:8px">Exemplo: um <strong style="color:var(--text)">Pedido</strong> tem <strong style="color:var(--text)">ItemPedido</strong>. Se o pedido for cancelado, seus itens n&atilde;o fazem sentido isoladamente.</p>
+      <div class="code-block" style="margin-top:14px"><span class="kw">public class</span> <span class="cls">Pedido</span> {
+  <span class="kw">private</span> <span class="cls">List</span>&lt;<span class="cls">ItemPedido</span>&gt; itens = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();
+
+  <span class="kw">public void</span> <span class="mtd">addItem</span>(<span class="typ">String</span> produto, <span class="typ">double</span> preco) {
+    <span class="cmt">// ItemPedido criado DENTRO do Pedido &mdash; composi&ccedil;&atilde;o</span>
+    itens.<span class="mtd">add</span>(<span class="kw">new</span> <span class="cls">ItemPedido</span>(produto, preco));
+  }
+}
+
+<span class="cls">Pedido</span> p = <span class="kw">new</span> <span class="cls">Pedido</span>();
+p.<span class="mtd">addItem</span>(<span class="str">"Teclado"</span>, <span class="num">150.0</span>);
+p.<span class="mtd">addItem</span>(<span class="str">"Mouse"</span>,   <span class="num">80.0</span>);
+<span class="cmt">// Se Pedido for destru&iacute;do, ItemPedidos tamb&eacute;m s&atilde;o!</span></div>
+    </div>
+
+    <!-- Card 5: Comparativo -->
+    <div class="card">
+      <div class="card-title">Comparativo: Associa&ccedil;&atilde;o, Agrega&ccedil;&atilde;o e Composi&ccedil;&atilde;o <span class="pill pill-blue">Resumo</span></div>
+      <p>Os tr&ecirc;s tipos de relacionamento diferem principalmente na <strong style="color:var(--text)">posse</strong> e no <strong style="color:var(--text)">ciclo de vida</strong> dos objetos envolvidos:</p>
+      <table style="margin-top:14px">
+        <tr><th>Caracter&iacute;stica</th><th>Associa&ccedil;&atilde;o</th><th>Agrega&ccedil;&atilde;o</th><th>Composi&ccedil;&atilde;o</th></tr>
+        <tr><td class="left" style="font-weight:700;color:var(--text)">Rela&ccedil;&atilde;o</td><td>usa-um</td><td>tem-um (fraca)</td><td>tem-um (forte)</td></tr>
+        <tr><td class="left" style="font-weight:700;color:var(--text)">Ciclo de vida</td><td><span class="pill pill-grad">Independente</span></td><td><span class="pill pill-amber">Independente</span></td><td><span class="pill pill-green">Dependente</span></td></tr>
+        <tr><td class="left" style="font-weight:700;color:var(--text)">Posse</td><td>Nenhuma</td><td>Refer&ecirc;ncia</td><td>Total</td></tr>
+        <tr><td class="left" style="font-weight:700;color:var(--text)">Cria&ccedil;&atilde;o</td><td>Fora &mdash; par&acirc;metro</td><td>Fora &mdash; passado</td><td>Dentro &mdash; pr&oacute;prio</td></tr>
+        <tr><td class="left" style="font-weight:700;color:var(--text)">Exemplo</td><td>M&eacute;dico &rarr; Paciente</td><td>Turma &rarr; Aluno</td><td>Pedido &rarr; Item</td></tr>
+        <tr><td class="left" style="font-weight:700;color:var(--text)">UML</td><td>&rarr; (seta simples)</td><td>&#x25C7;&rarr; (losango vazio)</td><td>&#x25C6;&rarr; (losango cheio)</td></tr>
+      </table>
+    </div>
+
+    <!-- Card 6: Quando usar -->
+    <div class="card">
+      <div class="card-title">Quando Usar Cada Rela&ccedil;&atilde;o? <span class="pill pill-java">Boas Pr&aacute;ticas</span></div>
+      <p>A escolha impacta diretamente na manutenibilidade e no design do sistema:</p>
+      <div style="margin:14px 0;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted)">
+          <span style="color:var(--accent2);font-weight:700;min-width:20px">&#x25C6;</span>
+          <span><strong style="color:var(--text)">Composi&ccedil;&atilde;o</strong> &mdash; use quando a parte N&Atilde;O faz sentido fora do todo. Ex: <span class="ic">Cora&ccedil;&atilde;o</span> em <span class="ic">Pessoa</span>, <span class="ic">ItemPedido</span> em <span class="ic">Pedido</span>.</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted)">
+          <span style="color:var(--warn);font-weight:700;min-width:20px">&#x25C7;</span>
+          <span><strong style="color:var(--text)">Agrega&ccedil;&atilde;o</strong> &mdash; use quando a parte PODE existir sem o todo. Ex: <span class="ic">Aluno</span> em <span class="ic">Turma</span>, <span class="ic">Professor</span> em <span class="ic">Escola</span>.</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted)">
+          <span style="color:var(--accent);font-weight:700;min-width:20px">&rarr;</span>
+          <span><strong style="color:var(--text)">Associa&ccedil;&atilde;o</strong> &mdash; use quando classes colaboram pontualmente, sem posse. Ex: <span class="ic">M&eacute;dico</span> atende <span class="ic">Paciente</span>.</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted)">
+          <span style="color:var(--danger);font-weight:700;min-width:20px">A</span>
+          <span><strong style="color:var(--text)">Classe Abstrata</strong> &mdash; use quando subclasses compartilham c&oacute;digo comum mas cada uma tem sua pr&oacute;pria implementa&ccedil;&atilde;o de certos comportamentos.</span>
+        </div>
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin-top:4px">Princ&iacute;pio GoF: <strong style="color:var(--text)">&ldquo;Prefira composi&ccedil;&atilde;o &agrave; heran&ccedil;a&rdquo;</strong> &mdash; composi&ccedil;&atilde;o promove menor acoplamento e maior flexibilidade.</p>
+    </div>
+
+  </div><!-- /resumo4 -->
+
+  <!-- ═══ SIMULADOR 4 ═══ -->
+  <div id="simulador4" class="section">
+
+    <!-- Part 1: Tipos de Relação -->
+    <div class="card">
+      <div class="card-title">&#x1F517; Tipos de Rela&ccedil;&atilde;o em C&oacute;digo</div>
+      <p style="margin-bottom:14px">Selecione um tipo de rela&ccedil;&atilde;o para ver como ela &eacute; implementada em Java e qual &eacute; a diferen&ccedil;a pr&aacute;tica entre elas.</p>
+      <div class="ctor-btns">
+        <button class="ctor-btn" id="rel-associacao" onclick="showRel('associacao')">
+          &rarr; Associa&ccedil;&atilde;o<br>
+          <span style="font-size:10px;color:var(--muted)">usa-um &mdash; M&eacute;dico / Paciente</span>
+        </button>
+        <button class="ctor-btn" id="rel-agregacao" onclick="showRel('agregacao')">
+          &#x25C7;&rarr; Agrega&ccedil;&atilde;o<br>
+          <span style="font-size:10px;color:var(--muted)">tem-um fraca &mdash; Turma / Aluno</span>
+        </button>
+        <button class="ctor-btn" id="rel-composicao" onclick="showRel('composicao')">
+          &#x25C6;&rarr; Composi&ccedil;&atilde;o<br>
+          <span style="font-size:10px;color:var(--muted)">tem-um forte &mdash; Pedido / Item</span>
+        </button>
+      </div>
+      <div id="relOutput" class="code-block" style="min-height:140px"><span style="color:#6c7086;font-style:italic">// Selecione um tipo de rela&ccedil;&atilde;o acima...</span></div>
+    </div>
+
+    <!-- Part 2: Abstract Class Explorer -->
+    <div class="card">
+      <div class="card-title">&#x1F9F1; Explorador &mdash; Classe Abstrata <span class="ic">Forma</span></div>
+      <p style="margin-bottom:16px">Clique em um <strong style="color:var(--text)">membro</strong> para ver detalhes. <span style="color:var(--danger);font-weight:700">!</span> = abstrato (sem corpo) &middot; <span style="color:var(--accent2);font-weight:700">+</span> = concreto &middot; <span style="color:var(--warn);font-weight:700">&#x21A9;</span> = @Override implementado.</p>
+      <div class="sim-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <!-- Forma (abstract) -->
+          <div class="cls-box" style="max-width:none">
+            <div class="cls-box-header" style="background:linear-gradient(270deg,#d63030,#8d62ff)">&#x2B55; Forma &mdash; <em style="font-size:12px;font-weight:400">abstract</em></div>
+            <div class="cls-box-section">
+              <div class="cls-box-label">Atributo</div>
+              <div class="cls-member" onclick="selectMember4('cor4',this)">
+                <div class="cls-vis vis-priv">&#x2212;</div>
+                <span class="cls-member-name">cor</span>
+                <span class="cls-member-type">String</span>
+              </div>
+            </div>
+            <div class="cls-box-section">
+              <div class="cls-box-label">Concreto</div>
+              <div class="cls-member" onclick="selectMember4('getCor4',this)">
+                <div class="cls-vis vis-pub">+</div>
+                <span class="cls-member-name">getCor()</span>
+                <span class="cls-member-type">String</span>
+              </div>
+            </div>
+            <div class="cls-box-section">
+              <div class="cls-box-label" style="color:var(--danger)">Abstratos !</div>
+              <div class="cls-member" onclick="selectMember4('calcArea4',this)">
+                <div class="cls-vis" style="background:rgba(214,48,48,.15);color:var(--danger);font-weight:900">!</div>
+                <span class="cls-member-name" style="font-style:italic;color:var(--muted)">calcularArea()</span>
+                <span class="cls-member-type">double</span>
+              </div>
+              <div class="cls-member" onclick="selectMember4('calcPerim4',this)">
+                <div class="cls-vis" style="background:rgba(214,48,48,.15);color:var(--danger);font-weight:900">!</div>
+                <span class="cls-member-name" style="font-style:italic;color:var(--muted)">calcularPerimetro()</span>
+                <span class="cls-member-type">double</span>
+              </div>
+            </div>
+          </div>
+          <div style="text-align:center;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.08em">&#x25BD; extends</div>
+          <!-- Circulo e Retangulo -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="cls-box" style="max-width:none">
+              <div class="cls-box-header" style="background:linear-gradient(270deg,#00c896,#0088cc);font-size:13px">&#x25EF; Circulo</div>
+              <div class="cls-box-section">
+                <div class="cls-box-label">Pr&oacute;prio</div>
+                <div class="cls-member" onclick="selectMember4('raio4',this)">
+                  <div class="cls-vis vis-priv">&#x2212;</div>
+                  <span class="cls-member-name" style="font-size:11px">raio</span>
+                  <span class="cls-member-type">double</span>
+                </div>
+              </div>
+              <div class="cls-box-section">
+                <div class="cls-box-label" style="color:var(--warn)">@Override &#x21A9;</div>
+                <div class="cls-member" onclick="selectMember4('calcAreaC4',this)">
+                  <div class="cls-vis vis-pub">+</div>
+                  <span class="cls-member-name" style="font-size:11px;color:var(--warn)">calcularArea()</span>
+                  <span class="cls-member-type">double</span>
+                </div>
+                <div class="cls-member" onclick="selectMember4('calcPerimC4',this)">
+                  <div class="cls-vis vis-pub">+</div>
+                  <span class="cls-member-name" style="font-size:11px;color:var(--warn)">calcPerimetro()</span>
+                  <span class="cls-member-type">double</span>
+                </div>
+              </div>
+            </div>
+            <div class="cls-box" style="max-width:none">
+              <div class="cls-box-header" style="background:linear-gradient(270deg,#cba6f7,#8d62ff);font-size:13px">&#x25AD; Retangulo</div>
+              <div class="cls-box-section">
+                <div class="cls-box-label">Pr&oacute;prios</div>
+                <div class="cls-member" onclick="selectMember4('largura4',this)">
+                  <div class="cls-vis vis-priv">&#x2212;</div>
+                  <span class="cls-member-name" style="font-size:11px">largura</span>
+                  <span class="cls-member-type">double</span>
+                </div>
+                <div class="cls-member" onclick="selectMember4('altura4',this)">
+                  <div class="cls-vis vis-priv">&#x2212;</div>
+                  <span class="cls-member-name" style="font-size:11px">altura</span>
+                  <span class="cls-member-type">double</span>
+                </div>
+              </div>
+              <div class="cls-box-section">
+                <div class="cls-box-label" style="color:var(--warn)">@Override &#x21A9;</div>
+                <div class="cls-member" onclick="selectMember4('calcAreaR4',this)">
+                  <div class="cls-vis vis-pub">+</div>
+                  <span class="cls-member-name" style="font-size:11px;color:var(--warn)">calcularArea()</span>
+                  <span class="cls-member-type">double</span>
+                </div>
+                <div class="cls-member" onclick="selectMember4('calcPerimR4',this)">
+                  <div class="cls-vis vis-pub">+</div>
+                  <span class="cls-member-name" style="font-size:11px;color:var(--warn)">calcPerimetro()</span>
+                  <span class="cls-member-type">double</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="memberDetail4" class="detail-box">
+          <p style="color:var(--muted);font-size:13px">&#x1F449; Clique em um membro para ver os detalhes.</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /simulador4 -->
+
+  <!-- ═══ EXERCÍCIOS 4 ═══ -->
+  <div id="exercicios4" class="section">
+
+    <div class="score-bar-area">
+      <div>
+        <div class="score-val"><span id="scoreVal4">0</span>/5</div>
+        <div class="score-label">acertos</div>
+      </div>
+      <div style="flex:1">
+        <div class="score-track"><div class="score-fill" id="scoreBar4"></div></div>
+      </div>
+    </div>
+
+    <div class="ex-block" id="ex4-0">
+      <div class="ex-q">Quest&atilde;o 1 &mdash; Uma classe abstrata pode ter tanto m&eacute;todos <strong>abstratos</strong> (sem corpo) quanto m&eacute;todos <strong>concretos</strong> (com implementa&ccedil;&atilde;o).</div>
+      <div class="choices">
+        <button class="choice" onclick="answer4(0,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer4(0,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb4-0"></div>
+    </div>
+
+    <div class="ex-block" id="ex4-1">
+      <div class="ex-q">Quest&atilde;o 2 &mdash; Na <strong>Composi&ccedil;&atilde;o</strong>, os objetos parte podem existir de forma independente do objeto que os cont&eacute;m.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer4(1,this,false)">Verdadeiro</button>
+        <button class="choice" onclick="answer4(1,this,true)">Falso</button>
+      </div>
+      <div class="feedback" id="fb4-1"></div>
+    </div>
+
+    <div class="ex-block" id="ex4-2">
+      <div class="ex-q">Quest&atilde;o 3 &mdash; Na <strong>Agrega&ccedil;&atilde;o</strong>, as partes t&ecirc;m ciclo de vida independente do objeto container &mdash; a parte pode existir sem o todo.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer4(2,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer4(2,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb4-2"></div>
+    </div>
+
+    <div class="ex-block" id="ex4-3">
+      <div class="ex-q">Quest&atilde;o 4 &mdash; A <strong>Associa&ccedil;&atilde;o</strong> &eacute; a rela&ccedil;&atilde;o mais gen&eacute;rica entre classes &mdash; uma classe &ldquo;usa&rdquo; outra sem posse ou depend&ecirc;ncia de ciclo de vida.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer4(3,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer4(3,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb4-3"></div>
+    </div>
+
+    <div class="ex-block" id="ex4-4">
+      <div class="ex-q">Quest&atilde;o 5 &mdash; Em Java, uma classe declarada como <code class="ic">abstract</code> pode ser instanciada diretamente com a palavra-chave <code class="ic">new</code>.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer4(4,this,false)">Verdadeiro</button>
+        <button class="choice" onclick="answer4(4,this,true)">Falso</button>
+      </div>
+      <div class="feedback" id="fb4-4"></div>
+    </div>
+
+  </div><!-- /exercicios4 -->
+
+  <!-- ═══ QUESTIONÁRIOS 4 ═══ -->
+  <div id="questionarios4" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F4DD; Question&aacute;rios</div>
+      <p style="margin-bottom:1rem">Teste seu conhecimento sobre Classes Abstratas, Composi&ccedil;&atilde;o, Agrega&ccedil;&atilde;o e Associa&ccedil;&otilde;es com os question&aacute;rios abaixo.</p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a class="grad-btn" href="questionario-u2c4-01.html">&#x1F4CB; Quiz 01 &mdash; Classes Abstratas e M&eacute;todos Abstratos</a>
+        <a class="grad-btn" href="questionario-u2c4-02.html" style="background:linear-gradient(270deg,#00c896 0%,#00a0cc 100%)">&#x1F4CB; Quiz 02 &mdash; Composi&ccedil;&atilde;o, Agrega&ccedil;&atilde;o e Associa&ccedil;&atilde;o</a>
+        <a class="grad-btn" href="questionario-u2c4-03.html" style="background:linear-gradient(270deg,#cba6f7 0%,#8d62ff 100%)">&#x1F6E0; Implementa&ccedil;&atilde;o &mdash; Rela&ccedil;&otilde;es entre Classes na Pr&aacute;tica</a>
+      </div>
+    </div>
+  </div><!-- /questionarios4 -->
+
+  <!-- ═══ CURIOSIDADES 4 ═══ -->
+  <div id="curiosidades4" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F680; Curiosidades sobre Composi&ccedil;&atilde;o e Classes Abstratas</div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F3D7;</div>
+        <div>
+          <div class="curi-title">&ldquo;Prefira composi&ccedil;&atilde;o &agrave; heran&ccedil;a&rdquo; &mdash; GoF</div>
+          <div class="curi-body">O livro <em>Design Patterns</em> (Gang of Four) recomenda preferir composi&ccedil;&atilde;o sobre heran&ccedil;a. Heran&ccedil;a cria acoplamento forte entre classes &mdash; mudar a superclasse pode quebrar as subclasses. Composi&ccedil;&atilde;o &eacute; mais flex&iacute;vel: voc&ecirc; pode trocar a implementa&ccedil;&atilde;o das partes sem afetar o todo.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F4D0;</div>
+        <div>
+          <div class="curi-title">Nota&ccedil;&atilde;o UML para cada rela&ccedil;&atilde;o</div>
+          <div class="curi-body">Em diagramas UML: <strong>Associa&ccedil;&atilde;o</strong> = seta simples (&#x2192;). <strong>Agrega&ccedil;&atilde;o</strong> = losango vazio (&#x25C7;&#x2014;) na ponta do todo. <strong>Composi&ccedil;&atilde;o</strong> = losango cheio (&#x25C6;&#x2014;) na ponta do todo. Saber ler UML &eacute; fundamental para comunicar design em equipe.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F5C3;</div>
+        <div>
+          <div class="curi-title">JPA e as rela&ccedil;&otilde;es em bancos de dados</div>
+          <div class="curi-body">No JPA (Java Persistence API), composi&ccedil;&atilde;o &eacute; mapeada com <code>@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)</code> &mdash; os itens s&atilde;o deletados junto com o pai. Agrega&ccedil;&atilde;o usa <code>@ManyToMany</code> ou <code>@OneToMany</code> sem cascade, pois as partes persistem de forma independente.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x26A1;</div>
+        <div>
+          <div class="curi-title">Classe Abstrata vs Interface &mdash; quando escolher?</div>
+          <div class="curi-body">Use <strong>classe abstrata</strong> quando as subclasses compartilham c&oacute;digo comum (atributos e m&eacute;todos concretos) e representam uma hierarquia real &ldquo;&eacute;-um&rdquo; (<code>Cachorro &eacute; Animal</code>). Use <strong>interface</strong> quando quiser definir apenas um contrato de comportamento &ldquo;pode-fazer&rdquo; (<code>Voavel</code>, <code>Serializable</code>) para classes sem rela&ccedil;&atilde;o hier&aacute;rquica.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F3A8;</div>
+        <div>
+          <div class="curi-title">Padr&atilde;o Decorator usa composi&ccedil;&atilde;o</div>
+          <div class="curi-body">O padr&atilde;o de projeto <strong>Decorator</strong> (GoF) &eacute; um exemplo cl&aacute;ssico de composi&ccedil;&atilde;o. Um <code>CafeLatte</code> cont&eacute;m um <code>Cafe</code> e adiciona comportamento sem alterar a classe original. Streams do Java IO (<code>BufferedReader</code> envolve <code>FileReader</code>) s&atilde;o implementados com Decorator.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F517;</div>
+        <div>
+          <div class="curi-title">Coes&atilde;o alta + acoplamento baixo</div>
+          <div class="curi-body">Composi&ccedil;&atilde;o favorece <strong>baixo acoplamento</strong>: classes dependem de interfaces/contratos, n&atilde;o de implementa&ccedil;&otilde;es concretas. Combine com o <strong>Princ&iacute;pio da Responsabilidade &Uacute;nica (SRP)</strong> &mdash; cada classe faz uma coisa bem &mdash; para c&oacute;digo manteni&iacute;vel e test&aacute;vel.</div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /curiosidades4 -->
+
+  <!-- ═══ LINKS 4 ═══ -->
+  <div id="links4" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F517; Links &Uacute;teis</div>
+      <div style="display:flex;flex-direction:column;gap:14px;margin-top:4px">
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4D6; Oracle &mdash; Classes Abstratas (Tutorial Oficial)</div>
+          <a class="link-item" href="https://docs.oracle.com/javase/tutorial/java/IandI/abstract.html" target="_blank">https://docs.oracle.com/javase/tutorial/java/IandI/abstract.html</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F517; Oracle &mdash; Interfaces e Heran&ccedil;a</div>
+          <a class="link-item" href="https://docs.oracle.com/javase/tutorial/java/IandI/index.html" target="_blank">https://docs.oracle.com/javase/tutorial/java/IandI/index.html</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4E6; Oracle &mdash; Classes e Objetos (composi&ccedil;&atilde;o)</div>
+          <a class="link-item" href="https://docs.oracle.com/javase/tutorial/java/javaOO/index.html" target="_blank">https://docs.oracle.com/javase/tutorial/java/javaOO/index.html</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F9EA; JDoodle &mdash; Compilador Java Online</div>
+          <a class="link-item" href="https://www.jdoodle.com/online-java-compiler/" target="_blank">https://www.jdoodle.com/online-java-compiler/</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4BB; Apache NetBeans IDE</div>
+          <a class="link-item" href="https://netbeans.apache.org/" target="_blank">https://netbeans.apache.org/</a>
+        </div>
+
+      </div>
+    </div>
+  </div><!-- /links4 -->
+
+  </div><!-- /aula04 -->
+
 </div><!-- /wrap -->
 
 <footer>
@@ -1722,6 +2195,93 @@ function answer3(i, btn, isCorrect) {
     btn.classList.add('wrong');
     fb.classList.add('show', 'ko');
     fb.innerHTML = '&#x274C; ' + feedbacksErr3[i];
+  }
+}
+
+// ── AULA 04 — SIMULADOR RELAÇÕES ─────────────────────────────────────────────
+const relOutputs = {
+  associacao: '// ASSOCIAÇÃO — relação "usa-um"\n// Classes se conhecem mas são completamente independentes\npublic class Medico {\n    private String nome;\n\n    // Recebe Paciente como parâmetro — não cria nem possui\n    public void consultar(Paciente p) {\n        System.out.println("Dr. " + nome +\n            " atendendo " + p.getNome());\n    }\n}\n\n// Médico e Paciente criados de forma independente\nMedico   m = new Medico("Dra. Ana");\nPaciente p = new Paciente("João");\nm.consultar(p); // associação via parâmetro\n// Ambos existem de forma autônoma — nenhum "possui" o outro',
+  agregacao:  '// AGREGAÇÃO — relação "tem-um" FRACA\n// O todo guarda referências às partes (criadas fora)\npublic class Turma {\n    private String nome;\n    private List<Aluno> alunos = new ArrayList<>();\n\n    // Aluno passado como parâmetro — criado FORA da Turma\n    public void addAluno(Aluno a) {\n        alunos.add(a);\n    }\n}\n\n// Aluno existe independentemente da Turma!\nAluno a1 = new Aluno("Carlos");\nAluno a2 = new Aluno("Maria");\nTurma t  = new Turma("Java 101");\nt.addAluno(a1);\nt.addAluno(a2);\n// Se Turma for destruída → Alunos continuam existindo!',
+  composicao: '// COMPOSIÇÃO — relação "tem-um" FORTE\n// As partes são criadas e destruídas pelo todo\npublic class Pedido {\n    private List<ItemPedido> itens = new ArrayList<>();\n\n    public void addItem(String produto, double preco) {\n        // ItemPedido criado DENTRO do Pedido (composição!)\n        itens.add(new ItemPedido(produto, preco));\n    }\n}\n\n// ItemPedido NÃO existe fora de um Pedido\nPedido p = new Pedido();\np.addItem("Teclado", 150.0);\np.addItem("Mouse",    80.0);\n// Se Pedido for destruído → seus ItemPedidos também são!'
+};
+
+function showRel(type) {
+  document.querySelectorAll('#simulador4 .ctor-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('rel-' + type).classList.add('active');
+  document.getElementById('relOutput').textContent = relOutputs[type];
+}
+
+// ── AULA 04 — EXPLORADOR CLASSE ABSTRATA ─────────────────────────────────────
+const memberData4 = {
+  cor4:       { displayName: 'cor',                  cls: 'Forma',     acesso: 'private', tipo: 'String', kind: 'atributo',  desc: 'Atributo <strong>privado</strong> da classe abstrata Forma. Acessível nas subclasses via <code>getCor()</code> — herdado sem precisar reescrever.' },
+  getCor4:    { displayName: 'getCor()',             cls: 'Forma',     acesso: 'public',  tipo: 'String', kind: 'concreto',  desc: 'Método <strong>concreto</strong> com implementação em Forma. Todas as subclasses herdam este método pronto — não precisam sobrescrever.' },
+  calcArea4:  { displayName: 'calcularArea()',       cls: 'Forma',     acesso: 'public',  tipo: 'double', kind: 'abstrato',  desc: 'Método <strong>abstrato</strong> — sem corpo em Forma! Cada subclasse DEVE implementar com sua própria fórmula usando <code>@Override</code>.' },
+  calcPerim4: { displayName: 'calcularPerimetro()',  cls: 'Forma',     acesso: 'public',  tipo: 'double', kind: 'abstrato',  desc: 'Método <strong>abstrato</strong> — sem corpo em Forma! Cada subclasse DEVE implementar a fórmula de perímetro específica à sua geometria.' },
+  raio4:      { displayName: 'raio',                 cls: 'Circulo',   acesso: 'private', tipo: 'double', kind: 'atributo',  desc: 'Atributo <strong>próprio</strong> do Círculo — não existe em Forma. Define o raio usado nas fórmulas: <code>π × raio²</code> e <code>2π × raio</code>.' },
+  calcAreaC4: { displayName: 'calcularArea()',       cls: 'Circulo',   acesso: 'public',  tipo: 'double', kind: '@Override', desc: 'Implementação obrigatória do método abstrato de Forma. Fórmula do círculo: <code>Math.PI * raio * raio</code>.' },
+  calcPerimC4:{ displayName: 'calcularPerimetro()',  cls: 'Circulo',   acesso: 'public',  tipo: 'double', kind: '@Override', desc: 'Implementação obrigatória do método abstrato de Forma. Fórmula do círculo: <code>2 * Math.PI * raio</code>.' },
+  largura4:   { displayName: 'largura',              cls: 'Retangulo', acesso: 'private', tipo: 'double', kind: 'atributo',  desc: 'Atributo <strong>próprio</strong> do Retângulo. Junto com <code>altura</code>, usado nas fórmulas: <code>largura × altura</code> (área).' },
+  altura4:    { displayName: 'altura',               cls: 'Retangulo', acesso: 'private', tipo: 'double', kind: 'atributo',  desc: 'Atributo <strong>próprio</strong> do Retângulo. Junto com <code>largura</code>, usado nas fórmulas: <code>2×(largura+altura)</code> (perímetro).' },
+  calcAreaR4: { displayName: 'calcularArea()',       cls: 'Retangulo', acesso: 'public',  tipo: 'double', kind: '@Override', desc: 'Implementação obrigatória do método abstrato de Forma. Fórmula do retângulo: <code>largura * altura</code>.' },
+  calcPerimR4:{ displayName: 'calcularPerimetro()',  cls: 'Retangulo', acesso: 'public',  tipo: 'double', kind: '@Override', desc: 'Implementação obrigatória do método abstrato de Forma. Fórmula do retângulo: <code>2 * (largura + altura)</code>.' }
+};
+
+function selectMember4(name, btn) {
+  document.querySelectorAll('#simulador4 .cls-member').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const d = memberData4[name];
+  if (!d) return;
+  let kindClass = 'pill-java';
+  if (d.kind === 'abstrato')  kindClass = 'pill-red';
+  if (d.kind === 'concreto')  kindClass = 'pill-green';
+  if (d.kind === '@Override') kindClass = 'pill-amber';
+  if (d.kind === 'atributo')  kindClass = 'pill-blue';
+  document.getElementById('memberDetail4').innerHTML =
+    '<div style="font-family:\'JetBrains Mono\',monospace;font-size:15px;font-weight:700;color:var(--text);margin-bottom:10px">' + d.displayName + '</div>' +
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">' +
+      '<span class="pill pill-' + (d.acesso === 'public' ? 'green' : 'red') + '">' + d.acesso + '</span>' +
+      '<span class="pill pill-grad">' + d.tipo + '</span>' +
+      '<span class="pill ' + kindClass + '">' + d.kind + '</span>' +
+      '<span class="pill pill-blue">' + d.cls + '</span>' +
+    '</div>' +
+    '<p style="font-size:13px;color:var(--muted);line-height:1.65">' + d.desc + '</p>';
+}
+
+// ── AULA 04 — EXERCÍCIOS ──────────────────────────────────────────────────────
+let score4 = 0;
+
+const feedbacksOk4 = [
+  'Correto! Classes abstratas s&atilde;o flex&iacute;veis: podem ter m&eacute;todos concretos (herdados pelas subclasses) e abstratos (que subclasses devem implementar).',
+  'Correto! Na composi&ccedil;&atilde;o as partes <strong>n&atilde;o existem</strong> de forma independente. Um <code>ItemPedido</code> s&oacute; faz sentido dentro de um <code>Pedido</code>.',
+  'Correto! Na agrega&ccedil;&atilde;o as partes t&ecirc;m vida pr&oacute;pria. Um <code>Aluno</code> pode existir sem uma <code>Turma</code> &mdash; por isso &eacute; uma rela&ccedil;&atilde;o &ldquo;tem-um&rdquo; fraca.',
+  'Correto! Associa&ccedil;&atilde;o &eacute; a rela&ccedil;&atilde;o mais gen&eacute;rica &mdash; classes colaboram sem posse. Um <code>M&eacute;dico</code> usa um <code>Paciente</code> mas n&atilde;o o controla.',
+  'Correto! Classes <code>abstract</code> N&Atilde;O podem ser instanciadas. <code>new Forma()</code> gera erro de compila&ccedil;&atilde;o se Forma for abstrata. Voc&ecirc; deve criar subclasses concretas.'
+];
+
+const feedbacksErr4 = [
+  'Incorreto. Classes abstratas PODEM ter m&eacute;todos concretos. Apenas os m&eacute;todos marcados com <code>abstract</code> obrigam as subclasses a implementar.',
+  'Incorreto. Na composi&ccedil;&atilde;o as partes N&Atilde;O existem de forma independente &mdash; &eacute; o oposto da Agrega&ccedil;&atilde;o. Se o <code>Pedido</code> for destru&iacute;do, seus itens tamb&eacute;m s&atilde;o.',
+  'Incorreto. Na agrega&ccedil;&atilde;o as partes TEM vida independente. Um <code>Aluno</code> pode existir sem uma <code>Turma</code> &mdash; essa &eacute; a diferen&ccedil;a fundamental para a Composi&ccedil;&atilde;o.',
+  'Incorreto. Associa&ccedil;&atilde;o &eacute; exatamente a rela&ccedil;&atilde;o mais gen&eacute;rica, onde classes se &ldquo;usam&rdquo; sem posse ou depend&ecirc;ncia de ciclo de vida.',
+  'Incorreto. Classes <code>abstract</code> N&Atilde;O podem ser instanciadas com <code>new</code>. Tente <code>new Forma()</code> e o compilador acusar&aacute; erro. Crie subclasses concretas.'
+];
+
+function answer4(i, btn, isCorrect) {
+  const block = document.getElementById('ex4-' + i);
+  block.querySelectorAll('.choice').forEach(c => c.disabled = true);
+  const fb = document.getElementById('fb4-' + i);
+  if (isCorrect) {
+    btn.classList.add('correct');
+    fb.classList.add('show', 'ok');
+    fb.innerHTML = '&#x2705; ' + feedbacksOk4[i];
+    block.classList.add('done');
+    score4++;
+    document.getElementById('scoreVal4').textContent = score4;
+    document.getElementById('scoreBar4').style.width = (score4 / 5 * 100) + '%';
+  } else {
+    btn.classList.add('wrong');
+    fb.classList.add('show', 'ko');
+    fb.innerHTML = '&#x274C; ' + feedbacksErr4[i];
   }
 }
 
