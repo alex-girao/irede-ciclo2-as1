@@ -249,6 +249,7 @@ tr:hover td { background: rgba(141,98,255,.04); }
 }
 .cls-member:hover { background: rgba(141,98,255,.06); }
 .cls-member.selected { background: rgba(141,98,255,.12); }
+.cls-box-header.selected { box-shadow: inset 0 0 0 3px rgba(255,255,255,.6); }
 .cls-vis {
   width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center;
   justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0;
@@ -300,6 +301,7 @@ footer span { background: var(--grad); -webkit-background-clip: text; -webkit-te
     <button class="aula-tab"        onclick="switchAula('aula02',this)">&#x1F333; Aula 02 &mdash; Herança e Hierarquia</button>
     <button class="aula-tab"        onclick="switchAula('aula03',this)">&#x1F3AD; Aula 03 &mdash; Polimorfismo</button>
     <button class="aula-tab"        onclick="switchAula('aula04',this)">&#x1F9E9; Aula 04 &mdash; Abstratas, Composi&ccedil;&atilde;o e Associa&ccedil;&otilde;es</button>
+    <button class="aula-tab"        onclick="switchAula('aula05',this)">&#x26A0;&#xFE0F; Aula 05 &mdash; Tratamento de Exce&ccedil;&otilde;es</button>
   </div>
 
   <!-- ═══════════════ AULA 01 ═══════════════ -->
@@ -1975,6 +1977,387 @@ p.<span class="mtd">addItem</span>(<span class="str">"Mouse"</span>,   <span cla
 
   </div><!-- /aula04 -->
 
+  <!-- ═══════════════════════════ AULA 05 ═══════════════════════════ -->
+  <div id="aula05" class="aula-section">
+
+  <div class="tab-bar">
+    <button class="tab active"  onclick="showTab('resumo5',this)">&#x1F4D8; Resumo</button>
+    <button class="tab"         onclick="showTab('simulador5',this)">&#x26A1; Simulador</button>
+    <button class="tab"         onclick="showTab('exercicios5',this)">&#x1F3AF; Exerc&iacute;cios</button>
+    <button class="tab"         onclick="showTab('questionarios5',this)">&#x1F4DD; Question&aacute;rios</button>
+    <button class="tab"         onclick="showTab('curiosidades5',this)">&#x1F680; Curiosidades</button>
+    <button class="tab"         onclick="showTab('links5',this)">&#x1F517; Links</button>
+  </div>
+
+  <!-- ═══ RESUMO 5 ═══ -->
+  <div id="resumo5" class="section active">
+
+    <!-- Card 1: O que é uma Exceção -->
+    <div class="card">
+      <div class="card-title">O que &eacute; uma Exce&ccedil;&atilde;o? <span class="pill pill-red">Throwable</span></div>
+      <p>Uma <strong style="color:var(--text)">exce&ccedil;&atilde;o</strong> &eacute; um evento inesperado que ocorre durante a execu&ccedil;&atilde;o do programa e que pode comprometer seu funcionamento normal. Em vez de o programa travar abruptamente, Java permite <strong style="color:var(--text)">capturar e tratar</strong> esses eventos de forma controlada.</p>
+      <div style="margin:14px 0;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted)">
+          <span style="color:var(--danger);font-weight:700;min-width:20px">&#x2717;</span>
+          <span><code class="ic">ArithmeticException</code> &mdash; divis&atilde;o por zero.</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted)">
+          <span style="color:var(--danger);font-weight:700;min-width:20px">&#x2717;</span>
+          <span><code class="ic">ArrayIndexOutOfBoundsException</code> &mdash; acesso a um &iacute;ndice inv&aacute;lido em um array.</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted)">
+          <span style="color:var(--danger);font-weight:700;min-width:20px">&#x2717;</span>
+          <span><code class="ic">NullPointerException</code> &mdash; uso de uma vari&aacute;vel n&atilde;o inicializada (<code class="ic">null</code>).</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted)">
+          <span style="color:var(--danger);font-weight:700;min-width:20px">&#x2717;</span>
+          <span><code class="ic">IOException</code> &mdash; erro na leitura de arquivos.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: Hierarquia -->
+    <div class="card">
+      <div class="card-title">Hierarquia de Exce&ccedil;&otilde;es em Java <span class="pill pill-blue">Throwable</span></div>
+      <p>Em Java, todas as exce&ccedil;&otilde;es s&atilde;o objetos da classe <strong style="color:var(--text)">Throwable</strong>, que possui duas subclasses principais.</p>
+      <div class="code-block" style="margin-top:14px;font-size:13px"><span class="cls">Throwable</span>
+ &#x251C;&#x2500; <span class="cls">Error</span>            <span class="cmt">// grave, geralmente irrecuper&aacute;vel (ex: OutOfMemoryError)</span>
+ &#x2514;&#x2500; <span class="cls">Exception</span>        <span class="cmt">// condi&ccedil;&otilde;es que o programa PODE tratar</span>
+     &#x251C;&#x2500; <span class="cls">RuntimeException</span>  <span class="cmt">// unchecked &mdash; ex: NullPointerException</span>
+     &#x2514;&#x2500; <span class="cls">Other Exception</span>  <span class="cmt">// checked &mdash; ex: IOException, SQLException</span></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+        <span class="pill pill-red">Error &mdash; n&atilde;o trat&aacute;vel</span>
+        <span class="pill pill-green">Exception &mdash; trat&aacute;vel</span>
+      </div>
+      <p style="margin-top:10px;font-size:13px"><a class="link-item" href="https://www.linkedin.com/pulse/tratamento-de-exceptions-java-douglas-dias?originalSubdomain=pt" target="_blank">Refer&ecirc;ncia: linkedin.com/pulse/tratamento-de-exceptions-java-douglas-dias</a></p>
+    </div>
+
+    <!-- Card 3: Checked vs Unchecked -->
+    <div class="card">
+      <div class="card-title">Checked vs Unchecked Exceptions <span class="pill pill-amber">Compara&ccedil;&atilde;o</span></div>
+      <p>As exce&ccedil;&otilde;es se dividem em dois grandes grupos quanto ao momento de verifica&ccedil;&atilde;o.</p>
+      <table style="margin-top:14px">
+        <tr><th>Caracter&iacute;stica</th><th>Checked (Verificada)</th><th>Unchecked (N&atilde;o Verificada)</th></tr>
+        <tr><td class="left" style="font-weight:700;color:var(--text)">Verifica&ccedil;&atilde;o</td><td>Tempo de compila&ccedil;&atilde;o</td><td>Tempo de execu&ccedil;&atilde;o</td></tr>
+        <tr><td class="left" style="font-weight:700;color:var(--text)">Tratamento</td><td><span class="pill pill-red">Obrigat&oacute;rio</span> (try-catch ou throws)</td><td><span class="pill pill-green">Opcional</span> (recomend&aacute;vel)</td></tr>
+        <tr><td class="left" style="font-weight:700;color:var(--text)">Superclasse</td><td>Exception (exceto RuntimeException)</td><td>RuntimeException</td></tr>
+        <tr><td class="left" style="font-weight:700;color:var(--text)">Exemplos</td><td><code class="ic">IOException</code>, <code class="ic">SQLException</code></td><td><code class="ic">NullPointerException</code>, <code class="ic">ArithmeticException</code>, <code class="ic">ArrayIndexOutOfBoundsException</code></td></tr>
+      </table>
+    </div>
+
+    <!-- Card 4: try-catch -->
+    <div class="card">
+      <div class="card-title">Bloco try-catch <span class="pill pill-java">tentar / pegar</span></div>
+      <p>O bloco <strong style="color:var(--text)">try-catch</strong> captura a exce&ccedil;&atilde;o e executa um c&oacute;digo alternativo, evitando que o programa trave.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">
+        <div>
+          <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:6px;letter-spacing:.06em">TRATANDO UMA IOException</div>
+          <div class="code-block" style="font-size:12px"><span class="kw">try</span> {
+  <span class="typ">FileReader</span> arquivo =
+    <span class="kw">new</span> <span class="cls">FileReader</span>(<span class="str">"dados.txt"</span>);
+} <span class="kw">catch</span> (<span class="typ">IOException</span> e) {
+  <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(
+    <span class="str">"Erro ao ler o arquivo: "</span> +
+    e.<span class="mtd">getMessage</span>());
+}</div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:6px;letter-spacing:.06em">TRATANDO UMA ArithmeticException</div>
+          <div class="code-block" style="font-size:12px"><span class="kw">try</span> {
+  <span class="kw">int</span> resultado = <span class="num">10</span> / <span class="num">0</span>;
+} <span class="kw">catch</span> (<span class="typ">ArithmeticException</span> e) {
+  <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(
+    <span class="str">"Erro: divis&atilde;o por zero."</span>);
+}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 5: throw e throws -->
+    <div class="card">
+      <div class="card-title">Palavras-chave throw e throws <span class="pill pill-grad">lan&ccedil;ar</span></div>
+      <p><code class="ic">throw</code> lan&ccedil;a manualmente uma exce&ccedil;&atilde;o. <code class="ic">throws</code> indica, na assinatura do m&eacute;todo, que ele pode gerar exce&ccedil;&otilde;es &mdash; obrigando quem o chama a tratar essa possibilidade.</p>
+      <div class="code-block" style="margin-top:14px"><span class="kw">public static void</span> <span class="mtd">verificarIdade</span>(<span class="kw">int</span> idade) <span class="kw">throws</span> <span class="typ">Exception</span> {
+  <span class="kw">if</span> (idade &lt; <span class="num">18</span>) {
+    <span class="kw">throw new</span> <span class="cls">Exception</span>(<span class="str">"Idade inv&aacute;lida! Deve ser maior que 18."</span>);
+  }
+}
+
+<span class="cmt">// Quem chama o m&eacute;todo precisa tratar a exce&ccedil;&atilde;o</span>
+<span class="kw">try</span> {
+  <span class="mtd">verificarIdade</span>(<span class="num">15</span>);
+} <span class="kw">catch</span> (<span class="typ">Exception</span> e) {
+  <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"Erro: "</span> + e.<span class="mtd">getMessage</span>());
+}
+<span class="cmt">// Sa&iacute;da: Erro: Idade inv&aacute;lida! Deve ser maior que 18.</span></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+        <span class="pill pill-red">throw &mdash; lan&ccedil;a</span>
+        <span class="pill pill-blue">throws &mdash; declara</span>
+      </div>
+    </div>
+
+    <!-- Card 6: Exceção Personalizada -->
+    <div class="card">
+      <div class="card-title">Exce&ccedil;&atilde;o Personalizada <span class="pill pill-green">extends Exception</span></div>
+      <p>Podemos criar nossas pr&oacute;prias exce&ccedil;&otilde;es para tratar erros espec&iacute;ficos do sistema, estendendo <code class="ic">Exception</code> e repassando a mensagem ao construtor da superclasse com <code class="ic">super(mensagem)</code>.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">
+        <div>
+          <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:6px;letter-spacing:.06em">MinhaExcecao.java</div>
+          <div class="code-block" style="font-size:12px"><span class="kw">public class</span> <span class="cls">MinhaExcecao</span>
+    <span class="kw">extends</span> <span class="cls">Exception</span> {
+
+  <span class="kw">public</span> <span class="cls">MinhaExcecao</span>(
+      <span class="typ">String</span> mensagem) {
+    <span class="kw">super</span>(mensagem);
+  }
+}</div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:6px;letter-spacing:.06em">USO &mdash; validarNota</div>
+          <div class="code-block" style="font-size:12px"><span class="kw">static void</span> <span class="mtd">validarNota</span>(<span class="kw">int</span> n)
+    <span class="kw">throws</span> <span class="cls">MinhaExcecao</span> {
+  <span class="kw">if</span> (n &lt; <span class="num">0</span> || n &gt; <span class="num">10</span>)
+    <span class="kw">throw new</span> <span class="cls">MinhaExcecao</span>(
+      <span class="str">"Nota inv&aacute;lida!"</span>);
+}
+
+<span class="kw">try</span> { <span class="mtd">validarNota</span>(<span class="num">15</span>); }
+<span class="kw">catch</span> (<span class="typ">MinhaExcecao</span> e) {
+  <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(
+    <span class="str">"Erro: "</span> + e.<span class="mtd">getMessage</span>());
+}</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /resumo5 -->
+
+  <!-- ═══ SIMULADOR 5 ═══ -->
+  <div id="simulador5" class="section">
+
+    <!-- Part 1: Tipos de Exceção -->
+    <div class="card">
+      <div class="card-title">&#x26A1; Tratando Exce&ccedil;&otilde;es em C&oacute;digo</div>
+      <p style="margin-bottom:14px">Selecione um cen&aacute;rio para ver como a exce&ccedil;&atilde;o &eacute; tratada em Java.</p>
+      <div class="ctor-btns">
+        <button class="ctor-btn" id="exc-checked" onclick="showExc('checked')">
+          &#x1F4C4; Checked<br>
+          <span style="font-size:10px;color:var(--muted)">IOException &mdash; verificada em compila&ccedil;&atilde;o</span>
+        </button>
+        <button class="ctor-btn" id="exc-unchecked" onclick="showExc('unchecked')">
+          &#x26A1; Unchecked<br>
+          <span style="font-size:10px;color:var(--muted)">ArithmeticException &mdash; verificada em execu&ccedil;&atilde;o</span>
+        </button>
+        <button class="ctor-btn" id="exc-personalizada" onclick="showExc('personalizada')">
+          &#x1F6E0; Personalizada<br>
+          <span style="font-size:10px;color:var(--muted)">MinhaExcecao &mdash; extends Exception</span>
+        </button>
+      </div>
+      <div id="excOutput" class="code-block" style="min-height:140px"><span style="color:#6c7086;font-style:italic">// Selecione um cen&aacute;rio acima...</span></div>
+    </div>
+
+    <!-- Part 2: Hierarchy Explorer -->
+    <div class="card">
+      <div class="card-title">&#x1F9F1; Explorador &mdash; Hierarquia <span class="ic">Throwable</span></div>
+      <p style="margin-bottom:16px">Clique em uma classe da hierarquia para ver seus detalhes.</p>
+      <div class="sim-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="cls-box" style="max-width:none">
+            <div class="cls-box-header" style="background:linear-gradient(270deg,#d63030,#8d62ff);cursor:pointer" onclick="selectExc5('throwable5',this)">&#x2B55; Throwable</div>
+          </div>
+          <div style="text-align:center;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.08em">&#x25BD; subclasses</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="cls-box" style="max-width:none">
+              <div class="cls-box-header" style="background:linear-gradient(270deg,#7a1f1f,#d63030);font-size:13px;cursor:pointer" onclick="selectExc5('error5',this)">&#x25EF; Error</div>
+            </div>
+            <div class="cls-box" style="max-width:none">
+              <div class="cls-box-header" style="background:linear-gradient(270deg,#00c896,#0088cc);font-size:13px;cursor:pointer" onclick="selectExc5('exception5',this)">&#x25EF; Exception</div>
+            </div>
+          </div>
+          <div style="text-align:center;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.08em">&#x25BD; subclasses de Exception</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="cls-box" style="max-width:none">
+              <div class="cls-box-header" style="background:linear-gradient(270deg,#cba6f7,#8d62ff);font-size:12px;cursor:pointer" onclick="selectExc5('runtime5',this)">&#x25AD; RuntimeException</div>
+            </div>
+            <div class="cls-box" style="max-width:none">
+              <div class="cls-box-header" style="background:linear-gradient(270deg,#d48a00,#cba6f7);font-size:12px;cursor:pointer" onclick="selectExc5('checked5',this)">&#x25AD; Other Exception</div>
+            </div>
+          </div>
+        </div>
+        <div id="excDetail5" class="detail-box">
+          <p style="color:var(--muted);font-size:13px">&#x1F449; Clique em uma classe para ver os detalhes.</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /simulador5 -->
+
+  <!-- ═══ EXERCÍCIOS 5 ═══ -->
+  <div id="exercicios5" class="section">
+
+    <div class="score-bar-area">
+      <div>
+        <div class="score-val"><span id="scoreVal5">0</span>/5</div>
+        <div class="score-label">acertos</div>
+      </div>
+      <div style="flex:1">
+        <div class="score-track"><div class="score-fill" id="scoreBar5"></div></div>
+      </div>
+    </div>
+
+    <div class="ex-block" id="ex5-0">
+      <div class="ex-q">Quest&atilde;o 1 &mdash; Exce&ccedil;&otilde;es <strong>checked</strong> (verificadas) s&atilde;o checadas em tempo de compila&ccedil;&atilde;o e o c&oacute;digo &eacute; obrigado a trat&aacute;-las com <code class="ic">try-catch</code> ou declar&aacute;-las com <code class="ic">throws</code>.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer5(0,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer5(0,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb5-0"></div>
+    </div>
+
+    <div class="ex-block" id="ex5-1">
+      <div class="ex-q">Quest&atilde;o 2 &mdash; <code class="ic">RuntimeException</code> &eacute; uma exce&ccedil;&atilde;o <strong>checked</strong>, ou seja, deve obrigatoriamente ser tratada com <code class="ic">try-catch</code>.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer5(1,this,false)">Verdadeiro</button>
+        <button class="choice" onclick="answer5(1,this,true)">Falso</button>
+      </div>
+      <div class="feedback" id="fb5-1"></div>
+    </div>
+
+    <div class="ex-block" id="ex5-2">
+      <div class="ex-q">Quest&atilde;o 3 &mdash; A palavra-chave <code class="ic">throw</code> lan&ccedil;a manualmente uma exce&ccedil;&atilde;o, enquanto <code class="ic">throws</code> apenas indica, na assinatura do m&eacute;todo, que ele pode lan&ccedil;ar exce&ccedil;&otilde;es.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer5(2,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer5(2,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb5-2"></div>
+    </div>
+
+    <div class="ex-block" id="ex5-3">
+      <div class="ex-q">Quest&atilde;o 4 &mdash; <code class="ic">Error</code> representa problemas leves que o pr&oacute;prio programa deve sempre conseguir tratar e recuperar normalmente.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer5(3,this,false)">Verdadeiro</button>
+        <button class="choice" onclick="answer5(3,this,true)">Falso</button>
+      </div>
+      <div class="feedback" id="fb5-3"></div>
+    </div>
+
+    <div class="ex-block" id="ex5-4">
+      <div class="ex-q">Quest&atilde;o 5 &mdash; Para criar uma exce&ccedil;&atilde;o personalizada, basta estender <code class="ic">Exception</code> e chamar <code class="ic">super(mensagem)</code> no construtor.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer5(4,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer5(4,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb5-4"></div>
+    </div>
+
+  </div><!-- /exercicios5 -->
+
+  <!-- ═══ QUESTIONÁRIOS 5 ═══ -->
+  <div id="questionarios5" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F4DD; Question&aacute;rios</div>
+      <p style="margin-bottom:1rem">Teste seu conhecimento sobre Tratamento de Exce&ccedil;&otilde;es e Exce&ccedil;&otilde;es Personalizadas com os question&aacute;rios abaixo.</p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a class="grad-btn" href="questionario-u2c5-01.html">&#x1F4CB; Quiz 01 &mdash; Tratamento de Exce&ccedil;&otilde;es e Hierarquia</a>
+        <a class="grad-btn" href="questionario-u2c5-02.html" style="background:linear-gradient(270deg,#00c896 0%,#00a0cc 100%)">&#x1F4CB; Quiz 02 &mdash; throw, throws e Exce&ccedil;&otilde;es Personalizadas</a>
+        <a class="grad-btn" href="questionario-u2c5-03.html" style="background:linear-gradient(270deg,#cba6f7 0%,#8d62ff 100%)">&#x1F6E0; Implementa&ccedil;&atilde;o &mdash; Tratamento de Exce&ccedil;&otilde;es na Pr&aacute;tica</a>
+      </div>
+    </div>
+  </div><!-- /questionarios5 -->
+
+  <!-- ═══ CURIOSIDADES 5 ═══ -->
+  <div id="curiosidades5" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F680; Curiosidades sobre Exce&ccedil;&otilde;es</div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F4A3;</div>
+        <div>
+          <div class="curi-title">Por que n&atilde;o capturar Error?</div>
+          <div class="curi-body">Embora seja tecnicamente poss&iacute;vel fazer <code>catch (Error e)</code>, isso &eacute; considerado m&aacute; pr&aacute;tica. Erros como <code>OutOfMemoryError</code> e <code>StackOverflowError</code> indicam que a JVM est&aacute; em um estado inst&aacute;vel &mdash; tentar continuar a execu&ccedil;&atilde;o normalmente pode causar mais danos do que deixar o programa encerrar.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F9F9;</div>
+        <div>
+          <div class="curi-title">O bloco finally sempre executa</div>
+          <div class="curi-body">Al&eacute;m de <code>try-catch</code>, Java oferece o bloco <code>finally</code>, que executa <strong>sempre</strong> &mdash; com ou sem exce&ccedil;&atilde;o, e at&eacute; mesmo se houver um <code>return</code> dentro do try. &Eacute; o lugar ideal para fechar recursos como arquivos e conex&otilde;es de banco de dados.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F50C;</div>
+        <div>
+          <div class="curi-title">try-with-resources</div>
+          <div class="curi-body">Desde o Java 7, recursos que implementam <code>AutoCloseable</code> (como <code>FileReader</code>) podem ser declarados dentro dos par&ecirc;nteses do <code>try</code> &mdash; o Java fecha o recurso automaticamente ao final do bloco, sem precisar de <code>finally</code>: <code>try (FileReader f = new FileReader("a.txt")) { ... }</code>.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x26D3;</div>
+        <div>
+          <div class="curi-title">Exception chaining (causa raiz)</div>
+          <div class="curi-body">&Eacute; poss&iacute;vel encadear exce&ccedil;&otilde;es passando a exce&ccedil;&atilde;o original como causa: <code>throw new MinhaExcecao("Falha", causaOriginal)</code>. Isso preserva o stack trace completo, essencial para depurar erros em sistemas com m&uacute;ltiplas camadas.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F4B8;</div>
+        <div>
+          <div class="curi-title">Exce&ccedil;&otilde;es t&ecirc;m custo de performance</div>
+          <div class="curi-body">Criar uma exce&ccedil;&atilde;o em Java captura o stack trace inteiro, o que tem custo computacional. Por isso, exce&ccedil;&otilde;es n&atilde;o devem ser usadas para controle de fluxo normal (como substituir um <code>if</code>) &mdash; apenas para situa&ccedil;&otilde;es realmente excepcionais.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F3DB;</div>
+        <div>
+          <div class="curi-title">Checked exceptions s&atilde;o pol&ecirc;micas</div>
+          <div class="curi-body">Linguagens modernas como Kotlin e C# n&atilde;o possuem exce&ccedil;&otilde;es checked &mdash; todas s&atilde;o tratadas como unchecked. A obrigatoriedade do Java em declarar <code>throws</code> &eacute; vista por muitos desenvolvedores como verbosa, embora ajude a documentar contratos de m&eacute;todos.</div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /curiosidades5 -->
+
+  <!-- ═══ LINKS 5 ═══ -->
+  <div id="links5" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F517; Links &Uacute;teis</div>
+      <div style="display:flex;flex-direction:column;gap:14px;margin-top:4px">
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4D6; Oracle &mdash; Tutorial Oficial de Exceptions</div>
+          <a class="link-item" href="https://docs.oracle.com/javase/tutorial/essential/exceptions/index.html" target="_blank">https://docs.oracle.com/javase/tutorial/essential/exceptions/index.html</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4DA; Oracle &mdash; Classe Throwable (Javadoc)</div>
+          <a class="link-item" href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html" target="_blank">https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4DD; Tratamento de Exceptions em Java &mdash; LinkedIn</div>
+          <a class="link-item" href="https://www.linkedin.com/pulse/tratamento-de-exceptions-java-douglas-dias?originalSubdomain=pt" target="_blank">https://www.linkedin.com/pulse/tratamento-de-exceptions-java-douglas-dias</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F9EA; JDoodle &mdash; Compilador Java Online</div>
+          <a class="link-item" href="https://www.jdoodle.com/online-java-compiler/" target="_blank">https://www.jdoodle.com/online-java-compiler/</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4BB; Apache NetBeans IDE</div>
+          <a class="link-item" href="https://netbeans.apache.org/" target="_blank">https://netbeans.apache.org/</a>
+        </div>
+
+      </div>
+    </div>
+  </div><!-- /links5 -->
+
+  </div><!-- /aula05 -->
+
 </div><!-- /wrap -->
 
 <footer>
@@ -2282,6 +2665,84 @@ function answer4(i, btn, isCorrect) {
     btn.classList.add('wrong');
     fb.classList.add('show', 'ko');
     fb.innerHTML = '&#x274C; ' + feedbacksErr4[i];
+  }
+}
+
+// ── AULA 05 — SIMULADOR TIPOS DE EXCEÇÃO ─────────────────────────────────────
+const excOutputs = {
+  checked: '// CHECKED — verificada em tempo de COMPILAÇÃO\n// O código É OBRIGADO a tratar com try-catch ou throws\ntry {\n    FileReader arquivo = new FileReader("dados.txt");\n} catch (IOException e) {\n    System.out.println("Erro ao ler o arquivo: " + e.getMessage());\n}\n// Se você não tratar uma checked exception, o\n// código NÃO COMPILA — é um erro de compilação!',
+  unchecked: '// UNCHECKED — verificada em tempo de EXECUÇÃO\n// O tratamento é OPCIONAL, mas recomendável\ntry {\n    int resultado = 10 / 0;\n} catch (ArithmeticException e) {\n    System.out.println("Erro: divisão por zero.");\n}\n// Mesmo sem o try-catch o código compilaria —\n// mas lançaria a exceção em tempo de execução!',
+  personalizada: '// EXCEÇÃO PERSONALIZADA — extends Exception\npublic class MinhaExcecao extends Exception {\n    public MinhaExcecao(String mensagem) {\n        super(mensagem); // repassa a mensagem ao construtor pai\n    }\n}\n\nstatic void validarNota(int nota) throws MinhaExcecao {\n    if (nota < 0 || nota > 10) {\n        throw new MinhaExcecao("Nota inválida! Deve estar entre 0 e 10.");\n    }\n}\n\ntry {\n    validarNota(15);\n} catch (MinhaExcecao e) {\n    System.out.println("Erro: " + e.getMessage());\n}\n// Saída: Erro: Nota inválida! Deve estar entre 0 e 10.'
+};
+
+function showExc(type) {
+  document.querySelectorAll('#simulador5 .ctor-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('exc-' + type).classList.add('active');
+  document.getElementById('excOutput').textContent = excOutputs[type];
+}
+
+// ── AULA 05 — EXPLORADOR HIERARQUIA THROWABLE ────────────────────────────────
+const excData5 = {
+  throwable5: { name: 'Throwable', tipo: 'raiz', desc: 'Classe <strong>raiz</strong> de toda a hierarquia de erros e exce&ccedil;&otilde;es em Java. Define m&eacute;todos como <code>getMessage()</code> e <code>printStackTrace()</code>, herdados por todas as suas subclasses.' },
+  error5:     { name: 'Error', tipo: 'n&atilde;o trat&aacute;vel', desc: 'Representa problemas <strong>graves</strong> que, em geral, n&atilde;o podem ser tratados pelo pr&oacute;prio programa &mdash; como <code>OutOfMemoryError</code> (falta de mem&oacute;ria) ou <code>StackOverflowError</code>. Capturar <code>Error</code> &eacute; considerado m&aacute; pr&aacute;tica.' },
+  exception5: { name: 'Exception', tipo: 'trat&aacute;vel', desc: 'Representa condi&ccedil;&otilde;es excepcionais que o programa <strong>pode e deve</strong> tratar. Divide-se em <code>RuntimeException</code> (unchecked) e as demais exce&ccedil;&otilde;es checked, como <code>IOException</code>.' },
+  runtime5:   { name: 'RuntimeException', tipo: 'unchecked', desc: 'Subclasse de <code>Exception</code> que representa exce&ccedil;&otilde;es <strong>n&atilde;o verificadas</strong> &mdash; geralmente erros de programa&ccedil;&atilde;o (l&oacute;gica incorreta). N&atilde;o precisam ser declaradas com <code>throws</code>. Exemplos: <code>NullPointerException</code>, <code>ArithmeticException</code>, <code>ArrayIndexOutOfBoundsException</code>.' },
+  checked5:   { name: 'Other Exception (checked)', tipo: 'checked', desc: 'Exce&ccedil;&otilde;es que <strong>n&atilde;o</strong> herdam de <code>RuntimeException</code> &mdash; s&atilde;o verificadas em tempo de compila&ccedil;&atilde;o. O compilador exige tratamento com <code>try-catch</code> ou <code>throws</code>. Exemplos: <code>IOException</code>, <code>SQLException</code>.' }
+};
+
+function selectExc5(name, btn) {
+  document.querySelectorAll('#simulador5 .cls-box-header').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const d = excData5[name];
+  if (!d) return;
+  let tipoClass = 'pill-java';
+  if (d.tipo === 'n&atilde;o trat&aacute;vel') tipoClass = 'pill-red';
+  if (d.tipo === 'trat&aacute;vel')  tipoClass = 'pill-green';
+  if (d.tipo === 'unchecked')       tipoClass = 'pill-amber';
+  if (d.tipo === 'checked')         tipoClass = 'pill-blue';
+  document.getElementById('excDetail5').innerHTML =
+    '<div style="font-family:\'JetBrains Mono\',monospace;font-size:15px;font-weight:700;color:var(--text);margin-bottom:10px">' + d.name + '</div>' +
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">' +
+      '<span class="pill ' + tipoClass + '">' + d.tipo + '</span>' +
+    '</div>' +
+    '<p style="font-size:13px;color:var(--muted);line-height:1.65">' + d.desc + '</p>';
+}
+
+// ── AULA 05 — EXERCÍCIOS ──────────────────────────────────────────────────────
+let score5 = 0;
+
+const feedbacksOk5 = [
+  'Correto! Exce&ccedil;&otilde;es <code>checked</code> s&atilde;o verificadas pelo compilador &mdash; se voc&ecirc; n&atilde;o tratar com <code>try-catch</code> ou declarar com <code>throws</code>, o c&oacute;digo n&atilde;o compila.',
+  'Correto! <code>RuntimeException</code> &eacute; exatamente o oposto &mdash; &eacute; <strong>unchecked</strong>. O tratamento &eacute; opcional, embora recomendado.',
+  'Correto! <code>throw</code> executa a a&ccedil;&atilde;o de lan&ccedil;ar uma exce&ccedil;&atilde;o (com <code>new</code>); <code>throws</code> apenas avisa, na assinatura do m&eacute;todo, que aquela exce&ccedil;&atilde;o pode ocorrer.',
+  'Correto! <code>Error</code> representa problemas graves e geralmente <strong>irrecuper&aacute;veis</strong>, como falta de mem&oacute;ria &mdash; o oposto de algo que o programa deveria tentar tratar normalmente.',
+  'Correto! Basta criar uma classe que estenda <code>Exception</code> (ou <code>RuntimeException</code>) com um construtor que chama <code>super(mensagem)</code> para repassar a mensagem de erro.'
+];
+
+const feedbacksErr5 = [
+  'Incorreto. Exce&ccedil;&otilde;es <code>checked</code> S&Atilde;O verificadas em tempo de compila&ccedil;&atilde;o e exigem tratamento obrigat&oacute;rio &mdash; sen&atilde;o o c&oacute;digo n&atilde;o compila.',
+  'Incorreto. <code>RuntimeException</code> &eacute; <strong>unchecked</strong> &mdash; o tratamento &eacute; opcional. Exce&ccedil;&otilde;es checked s&atilde;o as que N&Atilde;O herdam de <code>RuntimeException</code>, como <code>IOException</code>.',
+  'Incorreto. &Eacute; exatamente o contr&aacute;rio do que foi dito: <code>throw</code> lan&ccedil;a a exce&ccedil;&atilde;o manualmente, enquanto <code>throws</code> apenas declara a possibilidade na assinatura do m&eacute;todo.',
+  'Incorreto. <code>Error</code> representa problemas <strong>graves</strong> e geralmente n&atilde;o trat&aacute;veis pelo programa, como <code>OutOfMemoryError</code>. Quem &eacute; trat&aacute;vel &eacute; <code>Exception</code>.',
+  'Incorreto. Para criar uma exce&ccedil;&atilde;o personalizada &eacute; necess&aacute;rio estender <code>Exception</code> (ou uma subclasse) e chamar <code>super(mensagem)</code> no construtor &mdash; exatamente como descrito.'
+];
+
+function answer5(i, btn, isCorrect) {
+  const block = document.getElementById('ex5-' + i);
+  block.querySelectorAll('.choice').forEach(c => c.disabled = true);
+  const fb = document.getElementById('fb5-' + i);
+  if (isCorrect) {
+    btn.classList.add('correct');
+    fb.classList.add('show', 'ok');
+    fb.innerHTML = '&#x2705; ' + feedbacksOk5[i];
+    block.classList.add('done');
+    score5++;
+    document.getElementById('scoreVal5').textContent = score5;
+    document.getElementById('scoreBar5').style.width = (score5 / 5 * 100) + '%';
+  } else {
+    btn.classList.add('wrong');
+    fb.classList.add('show', 'ko');
+    fb.innerHTML = '&#x274C; ' + feedbacksErr5[i];
   }
 }
 
