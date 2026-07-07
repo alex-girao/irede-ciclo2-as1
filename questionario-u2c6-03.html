@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Implementa&ccedil;&atilde;o &mdash; Pacotes na Pr&aacute;tica</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#f0f0f5;--surface:#ffffff;--border:#d8d5e8;--accent:#8d62ff;--accent2:#00c896;
+  --text:#1a1730;--muted:#7a748f;--green:#155e35;--green-bg:#d6f5e5;--green-border:#6edaa8;
+  --red:#7a1f1f;--red-bg:#fde8e8;--red-border:#f0a0a0;--radius:10px;
+  --glow:0 0 18px rgba(141,98,255,0.15);
+  --grad:linear-gradient(270deg,#8d62ff 53.6%,#00ffbc 98.32%);--surface2:#f7f5ff;--danger:#d63030;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;padding:0 0 80px;
+  background-image:radial-gradient(ellipse 70% 40% at 50% -10%,rgba(141,98,255,0.08) 0%,transparent 70%),radial-gradient(ellipse 50% 30% at 80% 110%,rgba(0,200,150,0.06) 0%,transparent 70%);}
+header{text-align:center;padding:32px 20px 24px;border-bottom:1px solid var(--border);position:relative;background:var(--surface);box-shadow:0 2px 16px rgba(141,98,255,0.07);}
+header::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:120px;height:2px;background:linear-gradient(90deg,transparent,#8d62ff,transparent);}
+.header-logo{height:42px;margin-bottom:12px;display:block;margin-left:auto;margin-right:auto;}
+.logo{font-family:'JetBrains Mono',monospace;font-size:clamp(1.2rem,3vw,1.8rem);font-weight:700;letter-spacing:-0.5px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.logo span{opacity:0.6;}
+.subtitle{color:var(--muted);font-size:.82rem;margin-top:5px;letter-spacing:0.06em;text-transform:uppercase;}
+.header-badge{display:inline-block;margin-top:10px;padding:4px 14px;border-radius:99px;font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;background:linear-gradient(270deg,rgba(141,98,255,.15),rgba(0,255,188,.1));border:1px solid rgba(141,98,255,.3);color:var(--accent);letter-spacing:.06em;}
+.wrap{max-width:820px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.info-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:1.5rem;box-shadow:0 2px 8px rgba(141,98,255,0.06);position:relative;overflow:hidden;}
+.info-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad);}
+.info-title{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.info-sub{font-size:13px;color:var(--muted);margin-bottom:14px;}
+.info-meta{display:flex;gap:10px;flex-wrap:wrap;}
+.meta-tag{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:99px;font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;}
+.meta-green{background:rgba(0,200,150,.12);border:1px solid rgba(0,200,150,.3);color:#0a7a5a;}
+.meta-purple{background:rgba(141,98,255,.12);border:1px solid rgba(141,98,255,.3);color:var(--accent);}
+.meta-blue{background:rgba(89,130,250,.12);border:1px solid rgba(89,130,250,.3);color:#3050cc;}
+.progress-area{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 18px;margin-bottom:1.5rem;display:flex;align-items:center;gap:14px;box-shadow:0 2px 8px rgba(141,98,255,0.05);}
+.progress-label{font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--muted);white-space:nowrap;}
+.progress-track{flex:1;height:7px;background:#e5e2f0;border-radius:99px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--grad);border-radius:99px;width:0%;transition:width .4s cubic-bezier(.4,0,.2,1);}
+.ex-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:1.25rem;overflow:hidden;box-shadow:0 2px 8px rgba(141,98,255,0.06);}
+.ex-header{padding:1.1rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;}
+.ex-num{min-width:36px;height:36px;border-radius:10px;background:var(--surface2);border:1px solid rgba(141,98,255,.3);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--accent);flex-shrink:0;}
+.ex-title{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--text);flex:1;min-width:160px;line-height:1.4;}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;margin-left:4px;}
+.pill-grad{background:rgba(141,98,255,.12);border:1px solid rgba(141,98,255,.3);color:var(--accent);}
+.pill-green{background:rgba(0,200,150,.12);border:1px solid rgba(0,200,150,.3);color:#0a7a5a;}
+.pill-amber{background:rgba(212,138,0,.1);border:1px solid rgba(212,138,0,.25);color:#9a5000;}
+.pill-red{background:rgba(214,48,48,.1);border:1px solid rgba(214,48,48,.25);color:var(--danger);}
+.diff-bar{display:flex;gap:3px;align-items:center;margin-left:auto;flex-shrink:0;}
+.diff-dot{width:8px;height:8px;border-radius:50%;background:#e5e2f0;}
+.diff-dot.on-green{background:var(--accent2);}
+.diff-dot.on-amber{background:#f59e0b;}
+.diff-dot.on-red{background:var(--danger);}
+.ex-body{padding:1.25rem 1.4rem;}
+.enunciado{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:14px;}
+.enunciado strong{color:var(--text);}
+.enunciado code{background:rgba(141,98,255,.1);color:#5a30cc;padding:1px 6px;border-radius:4px;font-size:12px;font-family:'JetBrains Mono',monospace;font-weight:600;}
+.requisitos{margin-bottom:16px;}
+.req-title{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.06em;font-weight:600;margin-bottom:8px;text-transform:uppercase;}
+.req-list{display:flex;flex-direction:column;gap:5px;}
+.req-item{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--muted);}
+.req-item::before{content:'›';color:var(--accent);font-weight:700;flex-shrink:0;margin-top:1px;}
+.reveal-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 20px;border-radius:8px;border:1.5px solid rgba(141,98,255,.35);background:rgba(141,98,255,.06);color:var(--accent);cursor:pointer;font-size:13px;font-family:'JetBrains Mono',monospace;font-weight:700;transition:all .15s;letter-spacing:.02em;}
+.reveal-btn:hover{background:rgba(141,98,255,.12);border-color:var(--accent);}
+.reveal-btn.revealed{background:rgba(0,200,150,.08);border-color:var(--accent2);color:#0a7a5a;}
+.solution-area{display:none;margin-top:16px;padding-top:16px;border-top:1px dashed var(--border);}
+.solution-area.show{display:block;}
+.code-label{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.06em;font-weight:600;margin-bottom:6px;text-transform:uppercase;}
+.code-block{background:#1a1730;color:#c9d1d9;font-family:'JetBrains Mono',monospace;font-size:12.5px;padding:14px 16px;border-radius:var(--radius);overflow-x:auto;white-space:pre;line-height:1.65;margin-bottom:12px;}
+.kw{color:#ff79c6;}.cls{color:#8be9fd;}.typ{color:#66d9e8;}.str{color:#f1fa8c;}.num{color:#bd93f9;}.cmt{color:#6272a4;font-style:italic;}.mtd{color:#50fa7b;}.ann{color:#ffb86c;}
+.output-block{background:var(--surface2);border:1px solid rgba(141,98,255,.2);border-radius:var(--radius);padding:12px 16px;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--text);white-space:pre;overflow-x:auto;line-height:1.65;margin-bottom:8px;}
+.output-label{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--accent2);letter-spacing:.06em;font-weight:600;margin-bottom:6px;text-transform:uppercase;}
+.back-link{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--muted);font-size:13px;font-family:'JetBrains Mono',monospace;font-weight:600;margin-bottom:1.5rem;transition:color .15s;}
+.back-link:hover{color:var(--accent);}
+footer{text-align:center;margin-top:3rem;font-size:11px;color:var(--muted);letter-spacing:.04em;}
+footer span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:700;}
+</style>
+</head>
+<body>
+<header>
+  <img class="header-logo" src="https://capacitabrasil.irede.org.br/assets/capacitaLogo-Ct3BEyem.png" alt="Capacita Brasil"/>
+  <div class="logo">&#x2615; <span>//</span> Java</div>
+  <div class="subtitle">Desenvolvimento Java &mdash; Exerc&iacute;cios de Implementa&ccedil;&atilde;o</div>
+  <div class="header-badge">Unidade 02 | Cap. 06</div>
+</header>
+
+<div class="wrap">
+  <a class="back-link" href="index.html">&#x2190; Voltar para a Aula 06</a>
+
+  <div class="info-card">
+    <div class="info-title">&#x1F4BB; Implementa&ccedil;&atilde;o &mdash; Pacotes na Pr&aacute;tica</div>
+    <div class="info-sub">Aula 06 &mdash; Pacotes e Organiza&ccedil;&atilde;o de Projeto &nbsp;&#xB7;&nbsp; 10 exerc&iacute;cios de implementa&ccedil;&atilde;o</div>
+    <div class="info-meta">
+      <span class="meta-tag meta-green">&#x1F4E6; package</span>
+      <span class="meta-tag meta-purple">&#x1F4E5; import</span>
+      <span class="meta-tag meta-blue">&#x1F5C2; estrutura</span>
+    </div>
+  </div>
+
+  <div class="progress-area">
+    <span class="progress-label" id="revealedCount">0 / 10 revelados</span>
+    <div class="progress-track"><div class="progress-fill" id="progressBar"></div></div>
+  </div>
+
+  <!-- ── EXERCÍCIO 01 ─────────────────────────────────────────────────────── -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-num">01</div>
+      <div class="ex-title">DeclararPacote <span class="pill pill-grad">package</span></div>
+      <div class="diff-bar">
+        <div class="diff-dot on-green"></div><div class="diff-dot"></div><div class="diff-dot"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="enunciado">Crie uma classe chamada <code>Produto</code> que pertence ao pacote <code>com.loja.model</code>. A classe deve ter um atributo <code>nome</code> do tipo <code>String</code> e um atributo <code>preco</code> do tipo <code>double</code>, ambos privados, com getters e setters.</div>
+      <div class="requisitos">
+        <div class="req-title">Requisitos</div>
+        <div class="req-list">
+          <div class="req-item">Declarar <code>package com.loja.model;</code> como primeira linha do arquivo</div>
+          <div class="req-item">Atributos <code>private String nome</code> e <code>private double preco</code></div>
+          <div class="req-item">Getters e setters para ambos os atributos</div>
+        </div>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(1,this)">&#x1F441; Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol-1">
+        <div class="code-label">Produto.java &mdash; com/loja/model/</div>
+        <div class="code-block"><span class="kw">package</span> com.loja.model;
+
+<span class="kw">public class</span> <span class="cls">Produto</span> {
+    <span class="kw">private</span> <span class="typ">String</span> nome;
+    <span class="kw">private</span> <span class="kw">double</span> preco;
+
+    <span class="kw">public</span> <span class="typ">String</span> <span class="mtd">getNome</span>() { <span class="kw">return</span> nome; }
+    <span class="kw">public void</span> <span class="mtd">setNome</span>(<span class="typ">String</span> nome) { <span class="kw">this</span>.nome = nome; }
+
+    <span class="kw">public double</span> <span class="mtd">getPreco</span>() { <span class="kw">return</span> preco; }
+    <span class="kw">public void</span> <span class="mtd">setPreco</span>(<span class="kw">double</span> preco) { <span class="kw">this</span>.preco = preco; }
+}</div>
+        <div class="output-label">Estrutura no sistema de arquivos</div>
+        <div class="output-block">src/
+ └─ com/
+     └─ loja/
+         └─ model/
+             └─ Produto.java</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EXERCÍCIO 02 ─────────────────────────────────────────────────────── -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-num">02</div>
+      <div class="ex-title">ImportarClasse <span class="pill pill-grad">import</span></div>
+      <div class="diff-bar">
+        <div class="diff-dot on-green"></div><div class="diff-dot"></div><div class="diff-dot"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="enunciado">Crie a classe principal <code>Main</code> no pacote <code>com.loja</code> que importa e usa a classe <code>Produto</code> do pacote <code>com.loja.model</code>. Crie um objeto <code>Produto</code>, defina nome e preço e exiba-os.</div>
+      <div class="requisitos">
+        <div class="req-title">Requisitos</div>
+        <div class="req-list">
+          <div class="req-item">Declarar <code>package com.loja;</code></div>
+          <div class="req-item">Importar <code>import com.loja.model.Produto;</code></div>
+          <div class="req-item">Criar objeto <code>Produto</code>, usar setters e exibir com <code>System.out.println</code></div>
+        </div>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(2,this)">&#x1F441; Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol-2">
+        <div class="code-label">Main.java &mdash; com/loja/</div>
+        <div class="code-block"><span class="kw">package</span> com.loja;
+
+<span class="kw">import</span> com.loja.model.Produto;
+
+<span class="kw">public class</span> <span class="cls">Main</span> {
+    <span class="kw">public static void</span> <span class="mtd">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">Produto</span> p = <span class="kw">new</span> <span class="cls">Produto</span>();
+        p.<span class="mtd">setNome</span>(<span class="str">"Teclado Mecânico"</span>);
+        p.<span class="mtd">setPreco</span>(<span class="num">350.00</span>);
+
+        <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"Produto: "</span> + p.<span class="mtd">getNome</span>());
+        <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"Preço: R$ "</span> + p.<span class="mtd">getPreco</span>());
+    }
+}</div>
+        <div class="output-label">Saída</div>
+        <div class="output-block">Produto: Teclado Mecânico
+Preço: R$ 350.0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EXERCÍCIO 03 ─────────────────────────────────────────────────────── -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-num">03</div>
+      <div class="ex-title">ConvencaoNomeacao <span class="pill pill-grad">naming</span></div>
+      <div class="diff-bar">
+        <div class="diff-dot on-green"></div><div class="diff-dot"></div><div class="diff-dot"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="enunciado">Escreva as declarações de pacote corretas para um sistema chamado <strong>biblioteca</strong> da empresa com domínio <code>empresa.com.br</code>. Crie a declaração para os pacotes: entidades, serviços e exceções.</div>
+      <div class="requisitos">
+        <div class="req-title">Requisitos</div>
+        <div class="req-list">
+          <div class="req-item">Usar domínio invertido: <code>empresa.com.br</code> → <code>br.com.empresa</code></div>
+          <div class="req-item">Tudo em minúsculas, sem espaços ou caracteres especiais</div>
+          <div class="req-item">Pacotes: <code>model</code>, <code>service</code>, <code>exceptions</code></div>
+        </div>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(3,this)">&#x1F441; Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol-3">
+        <div class="code-label">Declarações de pacote corretas</div>
+        <div class="code-block"><span class="cmt">// Entidades (classes de dados)</span>
+<span class="kw">package</span> br.com.empresa.biblioteca.model;
+
+<span class="cmt">// Lógica de negócios</span>
+<span class="kw">package</span> br.com.empresa.biblioteca.service;
+
+<span class="cmt">// Exceções personalizadas</span>
+<span class="kw">package</span> br.com.empresa.biblioteca.exceptions;</div>
+        <div class="output-label">Estrutura resultante</div>
+        <div class="output-block">src/
+ └─ br/com/empresa/biblioteca/
+     ├─ model/         # entidades
+     ├─ service/       # lógica de negócios
+     └─ exceptions/    # exceções</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EXERCÍCIO 04 ─────────────────────────────────────────────────────── -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-num">04</div>
+      <div class="ex-title">CriarService <span class="pill pill-amber">service</span></div>
+      <div class="diff-bar">
+        <div class="diff-dot on-green"></div><div class="diff-dot on-amber"></div><div class="diff-dot"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="enunciado">Crie a classe <code>ProdutoService</code> no pacote <code>com.loja.service</code>. Ela deve importar <code>Produto</code> do pacote <code>com.loja.model</code> e ter um método <code>exibirProduto(Produto p)</code> que imprime o nome e preço do produto.</div>
+      <div class="requisitos">
+        <div class="req-title">Requisitos</div>
+        <div class="req-list">
+          <div class="req-item">Declarar pacote <code>com.loja.service</code></div>
+          <div class="req-item">Importar <code>com.loja.model.Produto</code></div>
+          <div class="req-item">Método <code>public void exibirProduto(Produto p)</code></div>
+        </div>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(4,this)">&#x1F441; Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol-4">
+        <div class="code-label">ProdutoService.java &mdash; com/loja/service/</div>
+        <div class="code-block"><span class="kw">package</span> com.loja.service;
+
+<span class="kw">import</span> com.loja.model.Produto;
+
+<span class="kw">public class</span> <span class="cls">ProdutoService</span> {
+
+    <span class="kw">public void</span> <span class="mtd">exibirProduto</span>(<span class="typ">Produto</span> p) {
+        <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"=== Produto ==="</span>);
+        <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"Nome:  "</span> + p.<span class="mtd">getNome</span>());
+        <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"Preço: R$ "</span> + p.<span class="mtd">getPreco</span>());
+    }
+}</div>
+        <div class="output-label">Exemplo de uso em Main</div>
+        <div class="output-block">Produto p = new Produto();
+p.setNome("Mouse"); p.setPreco(80.0);
+new ProdutoService().exibirProduto(p);
+// === Produto ===
+// Nome:  Mouse
+// Preço: R$ 80.0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EXERCÍCIO 05 ─────────────────────────────────────────────────────── -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-num">05</div>
+      <div class="ex-title">ExcecaoNoPackage <span class="pill pill-amber">exceptions</span></div>
+      <div class="diff-bar">
+        <div class="diff-dot on-green"></div><div class="diff-dot on-amber"></div><div class="diff-dot"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="enunciado">Crie a exceção personalizada <code>ProdutoNotFoundException</code> no pacote <code>com.loja.exceptions</code>, estendendo <code>Exception</code>. Em seguida, modifique <code>ProdutoService</code> para lançar essa exceção quando o produto for <code>null</code>.</div>
+      <div class="requisitos">
+        <div class="req-title">Requisitos</div>
+        <div class="req-list">
+          <div class="req-item">Criar <code>ProdutoNotFoundException extends Exception</code> em <code>com.loja.exceptions</code></div>
+          <div class="req-item">Construtor com <code>super(mensagem)</code></div>
+          <div class="req-item">Método em <code>ProdutoService</code> lançando a exceção com <code>throws</code></div>
+        </div>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(5,this)">&#x1F441; Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol-5">
+        <div class="code-label">ProdutoNotFoundException.java &mdash; com/loja/exceptions/</div>
+        <div class="code-block"><span class="kw">package</span> com.loja.exceptions;
+
+<span class="kw">public class</span> <span class="cls">ProdutoNotFoundException</span> <span class="kw">extends</span> <span class="cls">Exception</span> {
+    <span class="kw">public</span> <span class="cls">ProdutoNotFoundException</span>(<span class="typ">String</span> mensagem) {
+        <span class="kw">super</span>(mensagem);
+    }
+}</div>
+        <div class="code-label">ProdutoService.java (atualizado)</div>
+        <div class="code-block"><span class="kw">package</span> com.loja.service;
+
+<span class="kw">import</span> com.loja.model.Produto;
+<span class="kw">import</span> com.loja.exceptions.ProdutoNotFoundException;
+
+<span class="kw">public class</span> <span class="cls">ProdutoService</span> {
+
+    <span class="kw">public void</span> <span class="mtd">exibirProduto</span>(<span class="typ">Produto</span> p)
+            <span class="kw">throws</span> <span class="cls">ProdutoNotFoundException</span> {
+        <span class="kw">if</span> (p == <span class="kw">null</span>) {
+            <span class="kw">throw new</span> <span class="cls">ProdutoNotFoundException</span>(<span class="str">"Produto não encontrado!"</span>);
+        }
+        <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"Produto: "</span> + p.<span class="mtd">getNome</span>());
+    }
+}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EXERCÍCIO 06 ─────────────────────────────────────────────────────── -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-num">06</div>
+      <div class="ex-title">NomeQualificadoCompleto <span class="pill pill-grad">fully qualified</span></div>
+      <div class="diff-bar">
+        <div class="diff-dot on-green"></div><div class="diff-dot on-amber"></div><div class="diff-dot"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="enunciado">Reescreva a classe <code>Main</code> do Exercício 02 <strong>sem usar</strong> a instrução <code>import</code>. Use o nome qualificado completo de <code>Produto</code> para criar e usar o objeto.</div>
+      <div class="requisitos">
+        <div class="req-title">Requisitos</div>
+        <div class="req-list">
+          <div class="req-item">Sem <code>import com.loja.model.Produto;</code></div>
+          <div class="req-item">Usar <code>com.loja.model.Produto</code> no tipo e no <code>new</code></div>
+          <div class="req-item">Mesmo comportamento do Exercício 02</div>
+        </div>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(6,this)">&#x1F441; Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol-6">
+        <div class="code-label">Main.java &mdash; sem import</div>
+        <div class="code-block"><span class="kw">package</span> com.loja;
+
+<span class="cmt">// Sem import — usando nome qualificado completo</span>
+<span class="kw">public class</span> <span class="cls">Main</span> {
+    <span class="kw">public static void</span> <span class="mtd">main</span>(<span class="typ">String</span>[] args) {
+        com.loja.model.<span class="cls">Produto</span> p =
+            <span class="kw">new</span> com.loja.model.<span class="cls">Produto</span>();
+        p.<span class="mtd">setNome</span>(<span class="str">"Monitor"</span>);
+        p.<span class="mtd">setPreco</span>(<span class="num">1200.00</span>);
+
+        <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(p.<span class="mtd">getNome</span>() + <span class="str">": R$ "</span> + p.<span class="mtd">getPreco</span>());
+    }
+}</div>
+        <div class="output-label">Observação</div>
+        <div class="output-block">Monitor: R$ 1200.0
+// O import torna o código mais legível — mas é opcional.
+// O nome qualificado completo é a alternativa sem import.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EXERCÍCIO 07 ─────────────────────────────────────────────────────── -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-num">07</div>
+      <div class="ex-title">ImportWildcard <span class="pill pill-grad">import *</span></div>
+      <div class="diff-bar">
+        <div class="diff-dot on-green"></div><div class="diff-dot on-amber"></div><div class="diff-dot"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="enunciado">Crie a classe <code>Relatorio</code> no pacote <code>com.loja</code> que usa <code>ArrayList</code> e <code>Date</code> do pacote <code>java.util</code>. Demonstre o uso do import com wildcard (<code>*</code>) para importar todas as classes do pacote.</div>
+      <div class="requisitos">
+        <div class="req-title">Requisitos</div>
+        <div class="req-list">
+          <div class="req-item">Usar <code>import java.util.*</code> para importar todo o pacote</div>
+          <div class="req-item">Criar um <code>ArrayList&lt;String&gt;</code> e adicionar itens</div>
+          <div class="req-item">Criar um objeto <code>Date</code> e exibir a data atual</div>
+        </div>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(7,this)">&#x1F441; Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol-7">
+        <div class="code-label">Relatorio.java &mdash; com/loja/</div>
+        <div class="code-block"><span class="kw">package</span> com.loja;
+
+<span class="kw">import</span> java.util.*; <span class="cmt">// importa todas as classes de java.util</span>
+
+<span class="kw">public class</span> <span class="cls">Relatorio</span> {
+    <span class="kw">public static void</span> <span class="mtd">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">ArrayList</span>&lt;<span class="typ">String</span>&gt; itens = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();
+        itens.<span class="mtd">add</span>(<span class="str">"Teclado"</span>);
+        itens.<span class="mtd">add</span>(<span class="str">"Mouse"</span>);
+        itens.<span class="mtd">add</span>(<span class="str">"Monitor"</span>);
+
+        <span class="typ">Date</span> hoje = <span class="kw">new</span> <span class="cls">Date</span>();
+        <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"Relatório gerado em: "</span> + hoje);
+        <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"Produtos: "</span> + itens);
+    }
+}</div>
+        <div class="output-label">Observação sobre wildcard</div>
+        <div class="output-block">// import java.util.* NÃO importa subpacotes!
+// java.util.concurrent.locks.Lock precisaria de:
+// import java.util.concurrent.locks.Lock;
+// Wildcard pode dificultar leitura — prefira imports específicos.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EXERCÍCIO 08 ─────────────────────────────────────────────────────── -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-num">08</div>
+      <div class="ex-title">ConflitoDenomes <span class="pill pill-amber">ambiguidade</span></div>
+      <div class="diff-bar">
+        <div class="diff-dot on-green"></div><div class="diff-dot on-amber"></div><div class="diff-dot on-red"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="enunciado">Demonstre como usar <code>java.util.Date</code> e <code>java.sql.Date</code> no mesmo arquivo sem ambiguidade. Importe um e use o nome qualificado completo para o outro.</div>
+      <div class="requisitos">
+        <div class="req-title">Requisitos</div>
+        <div class="req-list">
+          <div class="req-item">Importar <code>java.util.Date</code></div>
+          <div class="req-item">Usar <code>java.sql.Date</code> pelo nome qualificado completo</div>
+          <div class="req-item">Demonstrar que classes com mesmo nome podem coexistir via pacotes</div>
+        </div>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(8,this)">&#x1F441; Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol-8">
+        <div class="code-label">ConflitoDatas.java</div>
+        <div class="code-block"><span class="kw">package</span> com.loja;
+
+<span class="kw">import</span> java.util.Date; <span class="cmt">// java.util.Date importada pelo nome simples</span>
+
+<span class="kw">public class</span> <span class="cls">ConflitoDatas</span> {
+    <span class="kw">public static void</span> <span class="mtd">main</span>(<span class="typ">String</span>[] args) {
+        <span class="cmt">// java.util.Date — usada pelo nome simples</span>
+        <span class="typ">Date</span> agora = <span class="kw">new</span> <span class="cls">Date</span>();
+        <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"Data atual: "</span> + agora);
+
+        <span class="cmt">// java.sql.Date — precisa do nome qualificado completo</span>
+        java.sql.<span class="cls">Date</span> dataSQL =
+            <span class="kw">new</span> java.sql.<span class="cls">Date</span>(agora.<span class="mtd">getTime</span>());
+        <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"Data SQL: "</span> + dataSQL);
+    }
+}</div>
+        <div class="output-label">Saída esperada</div>
+        <div class="output-block">Data atual: Thu Jul 06 10:30:00 BRT 2025
+Data SQL: 2025-07-06</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EXERCÍCIO 09 ─────────────────────────────────────────────────────── -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-num">09</div>
+      <div class="ex-title">EstruturaMultiCamadas <span class="pill pill-red">avançado</span></div>
+      <div class="diff-bar">
+        <div class="diff-dot on-green"></div><div class="diff-dot on-amber"></div><div class="diff-dot on-red"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="enunciado">Monte a estrutura completa de um sistema de <strong>clientes</strong> com pacotes separados por camada: <code>model</code> (entidade <code>Cliente</code>), <code>service</code> (<code>ClienteService</code> com método <code>cadastrar</code>), <code>exceptions</code> (<code>ClienteJaCadastradoException</code>) e <code>main</code> (classe principal que usa tudo).</div>
+      <div class="requisitos">
+        <div class="req-title">Requisitos</div>
+        <div class="req-list">
+          <div class="req-item">Pacote base: <code>com.sistema</code></div>
+          <div class="req-item">Cada camada no subpacote correto (<code>model</code>, <code>service</code>, <code>exceptions</code>)</div>
+          <div class="req-item">Classe <code>Main</code> usando <code>ClienteService</code> com try-catch</div>
+        </div>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(9,this)">&#x1F441; Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol-9">
+        <div class="code-label">model/Cliente.java</div>
+        <div class="code-block"><span class="kw">package</span> com.sistema.model;
+
+<span class="kw">public class</span> <span class="cls">Cliente</span> {
+    <span class="kw">private</span> <span class="typ">String</span> nome;
+    <span class="kw">private</span> <span class="typ">String</span> cpf;
+
+    <span class="kw">public</span> <span class="cls">Cliente</span>(<span class="typ">String</span> nome, <span class="typ">String</span> cpf) {
+        <span class="kw">this</span>.nome = nome; <span class="kw">this</span>.cpf = cpf;
+    }
+    <span class="kw">public</span> <span class="typ">String</span> <span class="mtd">getNome</span>() { <span class="kw">return</span> nome; }
+    <span class="kw">public</span> <span class="typ">String</span> <span class="mtd">getCpf</span>()  { <span class="kw">return</span> cpf; }
+}</div>
+        <div class="code-label">exceptions/ClienteJaCadastradoException.java</div>
+        <div class="code-block"><span class="kw">package</span> com.sistema.exceptions;
+
+<span class="kw">public class</span> <span class="cls">ClienteJaCadastradoException</span> <span class="kw">extends</span> <span class="cls">Exception</span> {
+    <span class="kw">public</span> <span class="cls">ClienteJaCadastradoException</span>(<span class="typ">String</span> msg) {
+        <span class="kw">super</span>(msg);
+    }
+}</div>
+        <div class="code-label">service/ClienteService.java</div>
+        <div class="code-block"><span class="kw">package</span> com.sistema.service;
+
+<span class="kw">import</span> com.sistema.model.Cliente;
+<span class="kw">import</span> com.sistema.exceptions.ClienteJaCadastradoException;
+<span class="kw">import</span> java.util.ArrayList;
+
+<span class="kw">public class</span> <span class="cls">ClienteService</span> {
+    <span class="kw">private</span> <span class="typ">ArrayList</span>&lt;<span class="typ">String</span>&gt; cpfsCadastrados = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();
+
+    <span class="kw">public void</span> <span class="mtd">cadastrar</span>(<span class="typ">Cliente</span> c)
+            <span class="kw">throws</span> <span class="cls">ClienteJaCadastradoException</span> {
+        <span class="kw">if</span> (cpfsCadastrados.<span class="mtd">contains</span>(c.<span class="mtd">getCpf</span>())) {
+            <span class="kw">throw new</span> <span class="cls">ClienteJaCadastradoException</span>(
+                <span class="str">"CPF já cadastrado: "</span> + c.<span class="mtd">getCpf</span>());
+        }
+        cpfsCadastrados.<span class="mtd">add</span>(c.<span class="mtd">getCpf</span>());
+        <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"Cadastrado: "</span> + c.<span class="mtd">getNome</span>());
+    }
+}</div>
+        <div class="code-label">Main.java</div>
+        <div class="code-block"><span class="kw">package</span> com.sistema;
+
+<span class="kw">import</span> com.sistema.model.Cliente;
+<span class="kw">import</span> com.sistema.service.ClienteService;
+<span class="kw">import</span> com.sistema.exceptions.ClienteJaCadastradoException;
+
+<span class="kw">public class</span> <span class="cls">Main</span> {
+    <span class="kw">public static void</span> <span class="mtd">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">ClienteService</span> svc = <span class="kw">new</span> <span class="cls">ClienteService</span>();
+        <span class="typ">Cliente</span> c1 = <span class="kw">new</span> <span class="cls">Cliente</span>(<span class="str">"Maria"</span>, <span class="str">"123.456.789-00"</span>);
+        <span class="typ">Cliente</span> c2 = <span class="kw">new</span> <span class="cls">Cliente</span>(<span class="str">"João"</span>,  <span class="str">"123.456.789-00"</span>);
+        <span class="kw">try</span> {
+            svc.<span class="mtd">cadastrar</span>(c1);
+            svc.<span class="mtd">cadastrar</span>(c2); <span class="cmt">// mesmo CPF → exceção</span>
+        } <span class="kw">catch</span> (<span class="cls">ClienteJaCadastradoException</span> e) {
+            <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"Erro: "</span> + e.<span class="mtd">getMessage</span>());
+        }
+    }
+}</div>
+        <div class="output-label">Saída</div>
+        <div class="output-block">Cadastrado: Maria
+Erro: CPF já cadastrado: 123.456.789-00</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EXERCÍCIO 10 ─────────────────────────────────────────────────────── -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-num">10</div>
+      <div class="ex-title">SistemaEmprestimoLivros <span class="pill pill-red">miniprojeto</span></div>
+      <div class="diff-bar">
+        <div class="diff-dot on-green"></div><div class="diff-dot on-amber"></div><div class="diff-dot on-red"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="enunciado">Implemente o esqueleto do <strong>Sistema de Empréstimo de Livros</strong> com pacotes organizados. Crie a entidade <code>Livro</code>, a exceção <code>LivroIndisponivelException</code> e o serviço <code>BibliotecaService</code> com os métodos <code>emprestarLivro</code> e <code>devolverLivro</code>.</div>
+      <div class="requisitos">
+        <div class="req-title">Requisitos</div>
+        <div class="req-list">
+          <div class="req-item">Pacote base: <code>com.biblioteca</code></div>
+          <div class="req-item"><code>Livro</code> com atributos <code>titulo</code>, <code>autor</code> e <code>disponivel</code></div>
+          <div class="req-item"><code>emprestarLivro</code> lança <code>LivroIndisponivelException</code> se não disponível</div>
+          <div class="req-item"><code>devolverLivro</code> marca o livro como disponível novamente</div>
+        </div>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(10,this)">&#x1F441; Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol-10">
+        <div class="code-label">model/Livro.java</div>
+        <div class="code-block"><span class="kw">package</span> com.biblioteca.model;
+
+<span class="kw">public class</span> <span class="cls">Livro</span> {
+    <span class="kw">private</span> <span class="typ">String</span> titulo;
+    <span class="kw">private</span> <span class="typ">String</span> autor;
+    <span class="kw">private boolean</span> disponivel = <span class="kw">true</span>;
+
+    <span class="kw">public</span> <span class="cls">Livro</span>(<span class="typ">String</span> titulo, <span class="typ">String</span> autor) {
+        <span class="kw">this</span>.titulo = titulo;
+        <span class="kw">this</span>.autor  = autor;
+    }
+    <span class="kw">public</span> <span class="typ">String</span>  <span class="mtd">getTitulo</span>()              { <span class="kw">return</span> titulo; }
+    <span class="kw">public</span> <span class="typ">String</span>  <span class="mtd">getAutor</span>()               { <span class="kw">return</span> autor; }
+    <span class="kw">public boolean</span> <span class="mtd">isDisponivel</span>()            { <span class="kw">return</span> disponivel; }
+    <span class="kw">public void</span>    <span class="mtd">setDisponivel</span>(<span class="kw">boolean</span> d) { disponivel = d; }
+}</div>
+        <div class="code-label">exceptions/LivroIndisponivelException.java</div>
+        <div class="code-block"><span class="kw">package</span> com.biblioteca.exceptions;
+
+<span class="kw">public class</span> <span class="cls">LivroIndisponivelException</span> <span class="kw">extends</span> <span class="cls">Exception</span> {
+    <span class="kw">public</span> <span class="cls">LivroIndisponivelException</span>(<span class="typ">String</span> msg) {
+        <span class="kw">super</span>(msg);
+    }
+}</div>
+        <div class="code-label">service/BibliotecaService.java</div>
+        <div class="code-block"><span class="kw">package</span> com.biblioteca.service;
+
+<span class="kw">import</span> com.biblioteca.model.Livro;
+<span class="kw">import</span> com.biblioteca.exceptions.LivroIndisponivelException;
+
+<span class="kw">public class</span> <span class="cls">BibliotecaService</span> {
+
+    <span class="kw">public void</span> <span class="mtd">emprestarLivro</span>(<span class="typ">Livro</span> livro)
+            <span class="kw">throws</span> <span class="cls">LivroIndisponivelException</span> {
+        <span class="kw">if</span> (!livro.<span class="mtd">isDisponivel</span>()) {
+            <span class="kw">throw new</span> <span class="cls">LivroIndisponivelException</span>(
+                <span class="str">"Livro indisponível: "</span> + livro.<span class="mtd">getTitulo</span>());
+        }
+        livro.<span class="mtd">setDisponivel</span>(<span class="kw">false</span>);
+        <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"Empréstimo realizado: "</span> + livro.<span class="mtd">getTitulo</span>());
+    }
+
+    <span class="kw">public void</span> <span class="mtd">devolverLivro</span>(<span class="typ">Livro</span> livro) {
+        livro.<span class="mtd">setDisponivel</span>(<span class="kw">true</span>);
+        <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"Devolvido: "</span> + livro.<span class="mtd">getTitulo</span>());
+    }
+}</div>
+        <div class="code-label">Main.java &mdash; testando o sistema</div>
+        <div class="code-block"><span class="kw">package</span> com.biblioteca;
+
+<span class="kw">import</span> com.biblioteca.model.Livro;
+<span class="kw">import</span> com.biblioteca.service.BibliotecaService;
+<span class="kw">import</span> com.biblioteca.exceptions.LivroIndisponivelException;
+
+<span class="kw">public class</span> <span class="cls">Main</span> {
+    <span class="kw">public static void</span> <span class="mtd">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">Livro</span> livro = <span class="kw">new</span> <span class="cls">Livro</span>(<span class="str">"Clean Code"</span>, <span class="str">"Robert Martin"</span>);
+        <span class="typ">BibliotecaService</span> svc = <span class="kw">new</span> <span class="cls">BibliotecaService</span>();
+        <span class="kw">try</span> {
+            svc.<span class="mtd">emprestarLivro</span>(livro);
+            svc.<span class="mtd">emprestarLivro</span>(livro); <span class="cmt">// já emprestado → exceção</span>
+        } <span class="kw">catch</span> (<span class="cls">LivroIndisponivelException</span> e) {
+            <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"Erro: "</span> + e.<span class="mtd">getMessage</span>());
+        }
+        svc.<span class="mtd">devolverLivro</span>(livro);
+    }
+}</div>
+        <div class="output-label">Saída</div>
+        <div class="output-block">Empréstimo realizado: Clean Code
+Erro: Livro indisponível: Clean Code
+Devolvido: Clean Code</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<footer>Capacita Brasil &mdash; <span>iRede</span> &mdash; Material Interativo de Java</footer>
+<script>
+let revealed = 0;
+const TOTAL = 10;
+function toggleSolution(num, btn) {
+  const sol = document.getElementById('sol-' + num);
+  const isOpen = sol.classList.contains('show');
+  if (isOpen) {
+    sol.classList.remove('show');
+    btn.classList.remove('revealed');
+    btn.innerHTML = '&#x1F441; Ver solu&ccedil;&atilde;o';
+  } else {
+    sol.classList.add('show');
+    btn.classList.add('revealed');
+    btn.innerHTML = '&#x1F648; Ocultar solu&ccedil;&atilde;o';
+    if (!btn.dataset.counted) {
+      btn.dataset.counted = '1';
+      revealed++;
+      document.getElementById('revealedCount').textContent = revealed + ' / ' + TOTAL + ' revelados';
+      document.getElementById('progressBar').style.width = (revealed / TOTAL * 100) + '%';
+    }
+  }
+}
+</script>
+</body>
+</html>

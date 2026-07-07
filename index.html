@@ -302,6 +302,7 @@ footer span { background: var(--grad); -webkit-background-clip: text; -webkit-te
     <button class="aula-tab"        onclick="switchAula('aula03',this)">&#x1F3AD; Aula 03 &mdash; Polimorfismo</button>
     <button class="aula-tab"        onclick="switchAula('aula04',this)">&#x1F9E9; Aula 04 &mdash; Abstratas, Composi&ccedil;&atilde;o e Associa&ccedil;&otilde;es</button>
     <button class="aula-tab"        onclick="switchAula('aula05',this)">&#x26A0;&#xFE0F; Aula 05 &mdash; Tratamento de Exce&ccedil;&otilde;es</button>
+    <button class="aula-tab"        onclick="switchAula('aula06',this)">&#x1F4E6; Aula 06 &mdash; Pacotes e Organiza&ccedil;&atilde;o</button>
   </div>
 
   <!-- ═══════════════ AULA 01 ═══════════════ -->
@@ -2358,6 +2359,417 @@ p.<span class="mtd">addItem</span>(<span class="str">"Mouse"</span>,   <span cla
 
   </div><!-- /aula05 -->
 
+  <!-- ═══════════════════════════ AULA 06 ═══════════════════════════ -->
+  <div id="aula06" class="aula-section">
+
+  <div class="tab-bar">
+    <button class="tab active"  onclick="showTab('resumo6',this)">&#x1F4D8; Resumo</button>
+    <button class="tab"         onclick="showTab('simulador6',this)">&#x26A1; Simulador</button>
+    <button class="tab"         onclick="showTab('exercicios6',this)">&#x1F3AF; Exerc&iacute;cios</button>
+    <button class="tab"         onclick="showTab('questionarios6',this)">&#x1F4DD; Question&aacute;rios</button>
+    <button class="tab"         onclick="showTab('curiosidades6',this)">&#x1F680; Curiosidades</button>
+    <button class="tab"         onclick="showTab('links6',this)">&#x1F517; Links</button>
+  </div>
+
+  <!-- ═══ RESUMO 6 ═══ -->
+  <div id="resumo6" class="section active">
+
+    <!-- Card 1: O que é um Pacote -->
+    <div class="card">
+      <div class="card-title">O que &eacute; um Pacote? <span class="pill pill-grad">package</span></div>
+      <p>Pacotes em Java s&atilde;o <strong style="color:var(--text)">estruturas organizacionais</strong> usadas para agrupar classes relacionadas dentro de um projeto. Eles funcionam como <strong style="color:var(--text)">pastas</strong>, separando responsabilidades e facilitando a manuten&ccedil;&atilde;o do c&oacute;digo.</p>
+      <div style="margin-top:14px;padding:12px 16px;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border)">
+        <div style="font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:8px;letter-spacing:.06em">ANALOGIA: Armário organizado</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <span class="pill pill-green">&#x1F4C2; model/ &mdash; entidades</span>
+          <span class="pill pill-blue">&#x1F4C2; service/ &mdash; l&oacute;gica</span>
+          <span class="pill pill-red">&#x1F4C2; exceptions/ &mdash; erros</span>
+          <span class="pill pill-amber">&#x1F4C2; controllers/ &mdash; controle</span>
+        </div>
+      </div>
+      <div class="code-block" style="margin-top:14px"><span class="cmt">// Declarar o pacote &mdash; PRIMEIRA linha do arquivo</span>
+<span class="kw">package</span> com.mycompany.ex28pacotes.models;
+
+<span class="kw">public class</span> <span class="cls">Cliente</span> {
+  <span class="kw">private</span> <span class="typ">String</span> nome;
+  <span class="cmt">// ...</span>
+}</div>
+    </div>
+
+    <!-- Card 2: Convenção de Nomeação -->
+    <div class="card">
+      <div class="card-title">Conven&ccedil;&atilde;o de Nomea&ccedil;&atilde;o de Pacotes <span class="pill pill-blue">dom&iacute;nio invertido</span></div>
+      <p>Pacotes seguem duas regras fundamentais: <strong style="color:var(--text)">tudo em min&uacute;sculo</strong> e <strong style="color:var(--text)">dom&iacute;nio da empresa em ordem invertida</strong>, garantindo unicidade global.</p>
+      <table style="margin-top:14px">
+        <tr><th>Dom&iacute;nio da Empresa</th><th>Formato do Pacote</th></tr>
+        <tr><td>empresa.com.br</td><td><code class="ic">br.com.empresa.sistema</code></td></tr>
+        <tr><td>universidade.org</td><td><code class="ic">org.universidade.controle</code></td></tr>
+        <tr><td>mycompany.com</td><td><code class="ic">com.mycompany.sistema.model</code></td></tr>
+      </table>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+        <span class="pill pill-green">min&uacute;sculas</span>
+        <span class="pill pill-blue">dom&iacute;nio invertido</span>
+        <span class="pill pill-amber">separador: ponto (.)</span>
+      </div>
+    </div>
+
+    <!-- Card 3: import -->
+    <div class="card">
+      <div class="card-title">Importa&ccedil;&atilde;o de Classes <span class="pill pill-java">import</span></div>
+      <p>A instrução <code class="ic">import</code> permite usar o <strong style="color:var(--text)">nome simples</strong> de uma classe de outro pacote, evitando escrever o nome qualificado completo toda vez.</p>
+      <div class="code-block" style="margin-top:14px"><span class="kw">package</span> com.mycompany.ex28pacotes;
+
+<span class="cmt">// Importando classes de outros pacotes</span>
+<span class="kw">import</span> com.mycompany.ex28pacotes.models.Cliente;
+<span class="kw">import</span> com.mycompany.ex28pacotes.models.controllers.ClienteController;
+
+<span class="kw">public class</span> <span class="cls">Ex28Pacotes</span> {
+  <span class="kw">public static void</span> <span class="mtd">main</span>(<span class="typ">String</span>[] args) {
+    <span class="typ">Cliente</span> c = <span class="kw">new</span> <span class="cls">Cliente</span>();
+    <span class="typ">ClienteController</span> cc = <span class="kw">new</span> <span class="cls">ClienteController</span>();
+    cc.<span class="mtd">salvarCliente</span>();
+  }
+}</div>
+      <div style="margin-top:12px;font-size:13px;color:var(--muted)">Sem <code class="ic">import</code>, seria necess&aacute;rio escrever o nome completo: <code class="ic">com.mycompany.ex28pacotes.models.Cliente c = new com.mycompany.ex28pacotes.models.Cliente();</code></div>
+    </div>
+
+    <!-- Card 4: Estrutura de Diretórios -->
+    <div class="card">
+      <div class="card-title">Estrutura de Diret&oacute;rios do Projeto <span class="pill pill-green">organiza&ccedil;&atilde;o</span></div>
+      <p>A <strong style="color:var(--text)">estrutura de pastas</strong> do projeto deve espelhar a estrutura de pacotes das classes. Cada subpasta tem uma responsabilidade clara.</p>
+      <div class="code-block" style="margin-top:14px">src/
+ &#x251C;&#x2500; model/          <span class="cmt"># Entidades do sistema</span>
+ &#x2502;   &#x251C;&#x2500; Livro.java
+ &#x2502;   &#x2514;&#x2500; Usuario.java
+ &#x251C;&#x2500; service/        <span class="cmt"># L&oacute;gica de neg&oacute;cios</span>
+ &#x2502;   &#x2514;&#x2500; BibliotecaService.java
+ &#x251C;&#x2500; exceptions/     <span class="cmt"># Tratamento de erros</span>
+ &#x2502;   &#x2514;&#x2500; LivroIndisponivelException.java
+ &#x2514;&#x2500; Main.java        <span class="cmt"># Ponto de entrada</span></div>
+    </div>
+
+    <!-- Card 5: ClienteController -->
+    <div class="card">
+      <div class="card-title">Subpacotes e Hierarquia <span class="pill pill-amber">subpacotes</span></div>
+      <p>Pacotes podem conter <strong style="color:var(--text)">subpacotes</strong>, formando hierarquias que organizam ainda mais o projeto. Cada classe declara seu pacote exato na primeira linha.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">
+        <div>
+          <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:6px;letter-spacing:.06em">models/Cliente.java</div>
+          <div class="code-block" style="font-size:12px"><span class="kw">package</span> com.mycompany
+  .ex28pacotes.models;
+
+<span class="kw">public class</span> <span class="cls">Cliente</span> {
+  <span class="kw">private</span> <span class="typ">String</span> nome;
+  <span class="cmt">// getters / setters</span>
+}</div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:6px;letter-spacing:.06em">models/controllers/ClienteController.java</div>
+          <div class="code-block" style="font-size:12px"><span class="kw">package</span> com.mycompany
+  .ex28pacotes
+  .models.controllers;
+
+<span class="kw">public class</span> <span class="cls">ClienteController</span> {
+  <span class="kw">public void</span> <span class="mtd">salvarCliente</span>() {
+    <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"Salvo!"</span>);
+  }
+}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 6: MiniProjeto -->
+    <div class="card">
+      <div class="card-title">MiniProjeto &mdash; Sistema de Empr&eacute;stimo de Livros <span class="pill pill-green">pr&aacute;tica</span></div>
+      <p>O miniprojeto consolida todos os conceitos de POO aprendidos: encapsulamento, heran&ccedil;a, polimorfismo e tratamento de exce&ccedil;&otilde;es, organizados com pacotes.</p>
+      <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted)">
+          <span style="color:var(--accent);font-weight:700;min-width:20px">&#x2713;</span>
+          <span>Listar livros dispon&iacute;veis</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted)">
+          <span style="color:var(--accent);font-weight:700;min-width:20px">&#x2713;</span>
+          <span>Empr&eacute;stimo de livro (com exce&ccedil;&atilde;o se n&atilde;o estiver dispon&iacute;vel)</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted)">
+          <span style="color:var(--accent);font-weight:700;min-width:20px">&#x2713;</span>
+          <span>Retorno de livro</span>
+        </div>
+      </div>
+      <div style="margin-top:14px;padding:12px 16px;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border);font-size:13px;color:var(--muted)">
+        &#x1F4CB; Consulte a <strong>Tarefa 09 &mdash; MiniProjeto 1</strong> e a <strong>Lista 09</strong> para o passo a passo completo.
+      </div>
+    </div>
+
+  </div><!-- /resumo6 -->
+
+  <!-- ═══ SIMULADOR 6 ═══ -->
+  <div id="simulador6" class="section">
+
+    <!-- Part 1: Cenários de Pacotes -->
+    <div class="card">
+      <div class="card-title">&#x1F4E6; Cen&aacute;rios de Pacotes em Java</div>
+      <p style="margin-bottom:14px">Selecione um cen&aacute;rio para ver a declara&ccedil;&atilde;o e uso de pacotes.</p>
+      <div class="ctor-btns">
+        <button class="ctor-btn active" id="pkg-declaracao" onclick="showPkg('declaracao')">
+          &#x1F4C4; Declara&ccedil;&atilde;o<br>
+          <span style="font-size:10px;color:var(--muted)">package &mdash; primeira linha</span>
+        </button>
+        <button class="ctor-btn" id="pkg-importacao" onclick="showPkg('importacao')">
+          &#x1F4E5; Importa&ccedil;&atilde;o<br>
+          <span style="font-size:10px;color:var(--muted)">import &mdash; usar classes externas</span>
+        </button>
+        <button class="ctor-btn" id="pkg-completo" onclick="showPkg('completo')">
+          &#x1F5C2; Estrutura Completa<br>
+          <span style="font-size:10px;color:var(--muted)">package + import + uso</span>
+        </button>
+      </div>
+      <pre id="pkgOutput" class="code-block" style="margin-top:16px;white-space:pre;overflow-x:auto">package com.mycompany.ex28pacotes.models;
+
+// A declaração de pacote é SEMPRE a primeira
+// instrução do arquivo Java — antes de imports.
+
+public class Cliente {
+    private String nome;
+    // getters e setters...
+}</pre>
+    </div>
+
+    <!-- Part 2: Explorador de Estrutura -->
+    <div class="card">
+      <div class="card-title">&#x1F5C2; Explorador de Estrutura de Projeto</div>
+      <p style="margin-bottom:14px">Clique em uma pasta para ver sua fun&ccedil;&atilde;o na organiza&ccedil;&atilde;o do projeto.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+        <div>
+          <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:10px;letter-spacing:.06em">ESTRUTURA DO PROJETO</div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <button class="cls-member" onclick="selectPkg('model',this)" style="text-align:left;padding:10px 14px;font-family:'JetBrains Mono',monospace;font-size:13px">
+              <span style="color:var(--muted)">src/</span><strong style="color:var(--accent)">model/</strong>
+              <div style="font-size:11px;color:var(--muted);margin-top:3px">Livro.java &bull; Usuario.java</div>
+            </button>
+            <button class="cls-member" onclick="selectPkg('service',this)" style="text-align:left;padding:10px 14px;font-family:'JetBrains Mono',monospace;font-size:13px">
+              <span style="color:var(--muted)">src/</span><strong style="color:var(--accent)">service/</strong>
+              <div style="font-size:11px;color:var(--muted);margin-top:3px">BibliotecaService.java</div>
+            </button>
+            <button class="cls-member" onclick="selectPkg('exceptions',this)" style="text-align:left;padding:10px 14px;font-family:'JetBrains Mono',monospace;font-size:13px">
+              <span style="color:var(--muted)">src/</span><strong style="color:var(--accent)">exceptions/</strong>
+              <div style="font-size:11px;color:var(--muted);margin-top:3px">LivroIndisponivelException.java</div>
+            </button>
+            <button class="cls-member" onclick="selectPkg('controllers',this)" style="text-align:left;padding:10px 14px;font-family:'JetBrains Mono',monospace;font-size:13px">
+              <span style="color:var(--muted)">src/</span><strong style="color:var(--accent)">controllers/</strong>
+              <div style="font-size:11px;color:var(--muted);margin-top:3px">ClienteController.java</div>
+            </button>
+          </div>
+        </div>
+        <div id="pkgDetail" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;min-height:160px;display:flex;flex-direction:column;justify-content:center">
+          <p style="color:var(--muted);font-size:13px;text-align:center">&#x1F4C2; Selecione uma pasta para ver os detalhes</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /simulador6 -->
+
+  <!-- ═══ EXERCÍCIOS 6 ═══ -->
+  <div id="exercicios6" class="section">
+
+    <div class="card" style="margin-bottom:1.5rem">
+      <div class="card-title">&#x1F3AF; Exerc&iacute;cios &mdash; Pacotes e Organiza&ccedil;&atilde;o de Projeto</div>
+      <p>Responda cada quest&atilde;o sobre pacotes e organiza&ccedil;&atilde;o de projetos Java. Voc&ecirc; tem apenas uma chance por quest&atilde;o.</p>
+      <div style="display:flex;align-items:center;gap:12px;margin-top:14px;padding:12px 16px;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border)">
+        <div style="font-size:22px;font-weight:700;color:var(--accent);font-family:'JetBrains Mono',monospace" id="scoreVal6">0</div>
+        <div style="flex:1;height:8px;background:rgba(141,98,255,.12);border-radius:99px;overflow:hidden">
+          <div id="scoreBar6" style="height:100%;background:var(--grad);border-radius:99px;width:0%;transition:width .4s"></div>
+        </div>
+        <div style="font-size:13px;color:var(--muted)">de 5</div>
+      </div>
+    </div>
+
+    <!-- Ex 0 -->
+    <div class="card" id="ex6-0">
+      <div style="font-size:13px;font-weight:700;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:10px">Quest&atilde;o 01</div>
+      <p style="font-size:14px;color:var(--text);margin-bottom:14px">Pacotes em Java servem para agrupar classes relacionadas e organizar o projeto em camadas de responsabilidade.</p>
+      <div style="display:flex;gap:10px">
+        <button class="choice" onclick="answer6(0,this,true)">&#x2714; Verdadeiro</button>
+        <button class="choice" onclick="answer6(0,this,false)">&#x2718; Falso</button>
+      </div>
+      <div class="feedback" id="fb6-0"></div>
+    </div>
+
+    <!-- Ex 1 -->
+    <div class="card" id="ex6-1">
+      <div style="font-size:13px;font-weight:700;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:10px">Quest&atilde;o 02</div>
+      <p style="font-size:14px;color:var(--text);margin-bottom:14px">A declara&ccedil;&atilde;o <code class="ic">package</code> deve aparecer <strong>ap&oacute;s</strong> a declara&ccedil;&atilde;o da classe Java.</p>
+      <div style="display:flex;gap:10px">
+        <button class="choice" onclick="answer6(1,this,false)">&#x2714; Verdadeiro</button>
+        <button class="choice" onclick="answer6(1,this,true)">&#x2718; Falso</button>
+      </div>
+      <div class="feedback" id="fb6-1"></div>
+    </div>
+
+    <!-- Ex 2 -->
+    <div class="card" id="ex6-2">
+      <div style="font-size:13px;font-weight:700;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:10px">Quest&atilde;o 03</div>
+      <p style="font-size:14px;color:var(--text);margin-bottom:14px">A conven&ccedil;&atilde;o de nomes para pacotes usa o dom&iacute;nio da empresa em ordem <strong>invertida</strong>: <code class="ic">br.com.empresa.sistema</code>.</p>
+      <div style="display:flex;gap:10px">
+        <button class="choice" onclick="answer6(2,this,true)">&#x2714; Verdadeiro</button>
+        <button class="choice" onclick="answer6(2,this,false)">&#x2718; Falso</button>
+      </div>
+      <div class="feedback" id="fb6-2"></div>
+    </div>
+
+    <!-- Ex 3 -->
+    <div class="card" id="ex6-3">
+      <div style="font-size:13px;font-weight:700;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:10px">Quest&atilde;o 04</div>
+      <p style="font-size:14px;color:var(--text);margin-bottom:14px">A instrução <code class="ic">import</code> permite usar o nome simples de uma classe de outro pacote, sem precisar escrever o nome qualificado completo.</p>
+      <div style="display:flex;gap:10px">
+        <button class="choice" onclick="answer6(3,this,true)">&#x2714; Verdadeiro</button>
+        <button class="choice" onclick="answer6(3,this,false)">&#x2718; Falso</button>
+      </div>
+      <div class="feedback" id="fb6-3"></div>
+    </div>
+
+    <!-- Ex 4 -->
+    <div class="card" id="ex6-4">
+      <div style="font-size:13px;font-weight:700;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:10px">Quest&atilde;o 05</div>
+      <p style="font-size:14px;color:var(--text);margin-bottom:14px">Uma classe Java pode pertencer a mais de um pacote simultaneamente.</p>
+      <div style="display:flex;gap:10px">
+        <button class="choice" onclick="answer6(4,this,false)">&#x2714; Verdadeiro</button>
+        <button class="choice" onclick="answer6(4,this,true)">&#x2718; Falso</button>
+      </div>
+      <div class="feedback" id="fb6-4"></div>
+    </div>
+
+  </div><!-- /exercicios6 -->
+
+  <!-- ═══ QUESTIONÁRIOS 6 ═══ -->
+  <div id="questionarios6" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F4DD; Question&aacute;rios &mdash; Pacotes e Organiza&ccedil;&atilde;o</div>
+      <p>Tes­te seu conhecimento com os question&aacute;rios de m&uacute;ltipla escolha (V/F). Cada question&aacute;rio aborda aspectos diferentes do conte&uacute;do da Aula 06.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-top:4px">
+
+      <a href="questionario-u2c6-01.html" target="_blank" style="text-decoration:none">
+        <div class="card" style="cursor:pointer;transition:box-shadow .2s" onmouseover="this.style.boxShadow='0 4px 20px rgba(141,98,255,.18)'" onmouseout="this.style.boxShadow=''">
+          <div style="display:flex;align-items:center;gap:14px">
+            <div style="font-size:28px">&#x1F4E6;</div>
+            <div>
+              <div style="font-weight:700;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:14px">Quiz 01 &mdash; Pacotes e Estrutura de Projeto</div>
+              <div style="font-size:13px;color:var(--muted);margin-top:3px">10 quest&otilde;es V/F &bull; declara&ccedil;&atilde;o, import, conven&ccedil;&atilde;o, estrutura de diret&oacute;rios</div>
+            </div>
+            <span class="pill pill-grad" style="margin-left:auto">Abrir &#x2192;</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="questionario-u2c6-02.html" target="_blank" style="text-decoration:none">
+        <div class="card" style="cursor:pointer;transition:box-shadow .2s" onmouseover="this.style.boxShadow='0 4px 20px rgba(141,98,255,.18)'" onmouseout="this.style.boxShadow=''">
+          <div style="display:flex;align-items:center;gap:14px">
+            <div style="font-size:28px">&#x1F5C2;</div>
+            <div>
+              <div style="font-weight:700;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:14px">Quiz 02 &mdash; Organiza&ccedil;&atilde;o e Boas Pr&aacute;ticas</div>
+              <div style="font-size:13px;color:var(--muted);margin-top:3px">10 quest&otilde;es V/F &bull; model, service, exceptions, import wildcard, Maven</div>
+            </div>
+            <span class="pill pill-grad" style="margin-left:auto">Abrir &#x2192;</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="questionario-u2c6-03.html" target="_blank" style="text-decoration:none">
+        <div class="card" style="cursor:pointer;transition:box-shadow .2s" onmouseover="this.style.boxShadow='0 4px 20px rgba(141,98,255,.18)'" onmouseout="this.style.boxShadow=''">
+          <div style="display:flex;align-items:center;gap:14px">
+            <div style="font-size:28px">&#x1F4BB;</div>
+            <div>
+              <div style="font-weight:700;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:14px">Implementa&ccedil;&atilde;o &mdash; Pacotes na Pr&aacute;tica</div>
+              <div style="font-size:13px;color:var(--muted);margin-top:3px">10 exerc&iacute;cios de implementa&ccedil;&atilde;o &bull; revelar solu&ccedil;&atilde;o</div>
+            </div>
+            <span class="pill pill-green" style="margin-left:auto">Abrir &#x2192;</span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </div><!-- /questionarios6 -->
+
+  <!-- ═══ CURIOSIDADES 6 ═══ -->
+  <div id="curiosidades6" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F680; Curiosidades sobre Pacotes e Organiza&ccedil;&atilde;o</div>
+
+      <div style="display:flex;flex-direction:column;gap:18px;margin-top:4px">
+
+        <div style="border-left:3px solid var(--accent);padding-left:16px">
+          <div style="font-weight:700;color:var(--text);margin-bottom:4px">&#x2728; java.lang &eacute; importado automaticamente</div>
+          <p style="font-size:13px;color:var(--muted)">O pacote <code class="ic">java.lang</code> (que cont&eacute;m <code class="ic">String</code>, <code class="ic">System</code>, <code class="ic">Math</code>, <code class="ic">Object</code> etc.) &eacute; o &uacute;nico importado <strong>automaticamente</strong> pelo compilador. Todos os outros precisam de <code class="ic">import</code> expl&iacute;cito.</p>
+        </div>
+
+        <div style="border-left:3px solid var(--accent2);padding-left:16px">
+          <div style="font-weight:700;color:var(--text);margin-bottom:4px">&#x1F513; Acesso package-private</div>
+          <p style="font-size:13px;color:var(--muted)">Membros sem modificador de acesso (<code class="ic">public</code>, <code class="ic">private</code> ou <code class="ic">protected</code>) t&ecirc;m acesso <strong>package-private</strong>: vis&iacute;veis apenas dentro do mesmo pacote. &Eacute; o padr&atilde;o de acesso "amigo do vizinho de bairro".</p>
+        </div>
+
+        <div style="border-left:3px solid var(--warn);padding-left:16px">
+          <div style="font-weight:700;color:var(--text);margin-bottom:4px">&#x26A0; import java.util.Date vs java.sql.Date</div>
+          <p style="font-size:13px;color:var(--muted)">Duas classes podem ter o mesmo nome simples em pacotes diferentes. Se precisar usar ambas no mesmo arquivo, uma deve ser importada e a outra referenciada pelo nome qualificado completo: <code class="ic">java.sql.Date sqlDate = new java.sql.Date(...);</code></p>
+        </div>
+
+        <div style="border-left:3px solid var(--accent);padding-left:16px">
+          <div style="font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4E6; Wildcard import n&atilde;o importa subpacotes</div>
+          <p style="font-size:13px;color:var(--muted)"><code class="ic">import java.util.*</code> importa <strong>todas as classes</strong> de <code class="ic">java.util</code>, mas N&Atilde;O os subpacotes. <code class="ic">java.util.concurrent.locks.Lock</code> precisaria de import pr&oacute;prio. Al&eacute;m disso, wildcard pode tornar o c&oacute;digo menos leg&iacute;vel.</p>
+        </div>
+
+        <div style="border-left:3px solid var(--accent2);padding-left:16px">
+          <div style="font-weight:700;color:var(--text);margin-bottom:4px">&#x1F528; Estrutura Maven: src/main/java</div>
+          <p style="font-size:13px;color:var(--muted)">Em projetos gerenciados pelo <strong>Maven</strong> (ou Gradle), a estrutura padr&atilde;o coloca o c&oacute;digo-fonte em <code class="ic">src/main/java</code> e os testes em <code class="ic">src/test/java</code>. Esta &eacute; a estrutura utilizada pelo NetBeans, Eclipse e IntelliJ quando voc&ecirc; cria um projeto Maven.</p>
+        </div>
+
+        <div style="border-left:3px solid var(--warn);padding-left:16px">
+          <div style="font-weight:700;color:var(--text);margin-bottom:4px">&#x1F310; Dom&iacute;nio invertido &eacute; conven&ccedil;&atilde;o universal</div>
+          <p style="font-size:13px;color:var(--muted)">A conven&ccedil;&atilde;o de dom&iacute;nio invertido (<code class="ic">com.empresa</code>) surgiu para garantir unicidade global dos pacotes, especialmente em distribui&ccedil;&atilde;o de bibliotecas. &Eacute; a mesma conven&ccedil;&atilde;o usada em Android (<code class="ic">com.example.myapp</code>) e no Maven Central Repository.</p>
+        </div>
+
+      </div>
+    </div>
+  </div><!-- /curiosidades6 -->
+
+  <!-- ═══ LINKS 6 ═══ -->
+  <div id="links6" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F517; Links Recomendados &mdash; Aula 06</div>
+      <p>Refer&ecirc;ncias oficiais e recursos para aprofundar o estudo de pacotes e organiza&ccedil;&atilde;o de projetos Java.</p>
+      <div style="display:flex;flex-direction:column;gap:18px;margin-top:18px">
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4D6; Java Packages &mdash; Oracle Documentation</div>
+          <a class="link-item" href="https://docs.oracle.com/javase/tutorial/java/package/index.html" target="_blank">https://docs.oracle.com/javase/tutorial/java/package/index.html</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F6E0; Apache NetBeans IDE</div>
+          <a class="link-item" href="https://netbeans.apache.org/" target="_blank">https://netbeans.apache.org/</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4E6; Conven&ccedil;&atilde;o de C&oacute;digo Java &mdash; Oracle</div>
+          <a class="link-item" href="https://www.oracle.com/java/technologies/javase/codeconventions-namingconventions.html" target="_blank">https://www.oracle.com/java/technologies/javase/codeconventions-namingconventions.html</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F9EA; JDoodle &mdash; Compilador Java Online</div>
+          <a class="link-item" href="https://www.jdoodle.com/online-java-compiler/" target="_blank">https://www.jdoodle.com/online-java-compiler/</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F528; Guia de Estrutura Maven</div>
+          <a class="link-item" href="https://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html" target="_blank">https://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html</a>
+        </div>
+
+      </div>
+    </div>
+  </div><!-- /links6 -->
+
+  </div><!-- /aula06 -->
+
 </div><!-- /wrap -->
 
 <footer>
@@ -2743,6 +3155,73 @@ function answer5(i, btn, isCorrect) {
     btn.classList.add('wrong');
     fb.classList.add('show', 'ko');
     fb.innerHTML = '&#x274C; ' + feedbacksErr5[i];
+  }
+}
+
+// ── AULA 06 — SIMULADOR ──────────────────────────────────────────────────────
+const pkgOutputs = {
+  declaracao: 'package com.mycompany.ex28pacotes.models;\n\n// A declaração de pacote é SEMPRE a primeira\n// instrução do arquivo Java — antes de imports.\n\npublic class Cliente {\n    private String nome;\n    // getters e setters...\n}',
+  importacao: 'package com.mycompany.ex28pacotes;\n\n// import traz o nome simples da classe\nimport com.mycompany.ex28pacotes.models.Cliente;\nimport com.mycompany.ex28pacotes.models.controllers.ClienteController;\n\npublic class Ex28Pacotes {\n    public static void main(String[] args) {\n        Cliente c = new Cliente();\n        ClienteController cc = new ClienteController();\n        cc.salvarCliente();\n    }\n}',
+  completo:   '// ESTRUTURA DO PROJETO:\n// src/\n//   model/\n//     Livro.java       → package com.biblioteca.model;\n//     Usuario.java     → package com.biblioteca.model;\n//   service/\n//     BibliotecaService.java → package com.biblioteca.service;\n//   exceptions/\n//     LivroIndisponivelException.java\n//   Main.java          → package com.biblioteca;\n\n// Em BibliotecaService.java:\npackage com.biblioteca.service;\nimport com.biblioteca.model.Livro;\nimport com.biblioteca.exceptions.LivroIndisponivelException;\n\npublic class BibliotecaService {\n    public void emprestarLivro(Livro livro) throws LivroIndisponivelException {\n        if (!livro.isDisponivel()) {\n            throw new LivroIndisponivelException("Livro indisponível!");\n        }\n        livro.setDisponivel(false);\n    }\n}'
+};
+
+function showPkg(type) {
+  document.querySelectorAll('#simulador6 .ctor-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('pkg-' + type).classList.add('active');
+  document.getElementById('pkgOutput').textContent = pkgOutputs[type];
+}
+
+const pkgTreeData = {
+  model:       { name: 'src/model/', desc: 'Cont&eacute;m as <strong>entidades</strong> do sistema &mdash; classes que representam os dados principais (ex: <code class="ic">Livro.java</code>, <code class="ic">Usuario.java</code>). Pacote: <code class="ic">com.empresa.sistema.model</code>' },
+  service:     { name: 'src/service/', desc: 'Cont&eacute;m a <strong>l&oacute;gica de neg&oacute;cios</strong> &mdash; regras do que o sistema faz (ex: <code class="ic">BibliotecaService.java</code>). Pacote: <code class="ic">com.empresa.sistema.service</code>' },
+  exceptions:  { name: 'src/exceptions/', desc: 'Cont&eacute;m as <strong>exce&ccedil;&otilde;es personalizadas</strong> do sistema (ex: <code class="ic">LivroIndisponivelException.java</code>). Pacote: <code class="ic">com.empresa.sistema.exceptions</code>' },
+  controllers: { name: 'src/controllers/', desc: 'Cont&eacute;m os <strong>controladores</strong> &mdash; orquestram a comunica&ccedil;&atilde;o entre camadas (ex: <code class="ic">ClienteController.java</code>). Pacote: <code class="ic">com.empresa.sistema.controllers</code>' }
+};
+
+function selectPkg(name, btn) {
+  document.querySelectorAll('#simulador6 .cls-member').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const d = pkgTreeData[name];
+  document.getElementById('pkgDetail').innerHTML =
+    '<div style="font-family:\'JetBrains Mono\',monospace;font-size:15px;font-weight:700;color:var(--accent);margin-bottom:10px">' + d.name + '</div>' +
+    '<p style="font-size:13px;color:var(--muted);line-height:1.65">' + d.desc + '</p>';
+}
+
+// ── AULA 06 — EXERCÍCIOS ──────────────────────────────────────────────────────
+let score6 = 0;
+
+const feedbacksOk6 = [
+  'Correto! Pacotes agrupam classes relacionadas como pastas organizam arquivos &mdash; separando responsabilidades e facilitando a manuten&ccedil;&atilde;o do projeto.',
+  'Correto! A declara&ccedil;&atilde;o <code>package</code> deve ser a PRIMEIRA instru&ccedil;&atilde;o do arquivo Java &mdash; antes de qualquer <code>import</code> ou declara&ccedil;&atilde;o de classe.',
+  'Correto! A conven&ccedil;&atilde;o de dom&iacute;nio invertido garante unicidade global: dom&iacute;nio <code>empresa.com.br</code> vira <code>br.com.empresa.sistema</code>.',
+  'Correto! O <code>import</code> traz o nome simples da classe para o arquivo. Sem ele, seria necess&aacute;rio escrever o nome qualificado completo toda vez.',
+  'Correto! Uma classe Java pertence exatamente a UM pacote, definido pela instru&ccedil;&atilde;o <code>package</code> na primeira linha do arquivo.'
+];
+
+const feedbacksErr6 = [
+  'Incorreto. Pacotes <strong>s&atilde;o</strong> usados exatamente para agrupar classes relacionadas e organizar o projeto em camadas de responsabilidade.',
+  'Incorreto. A declara&ccedil;&atilde;o <code>package</code> deve vir como PRIMEIRA instru&ccedil;&atilde;o &mdash; <strong>antes</strong> de imports e da declara&ccedil;&atilde;o da classe, n&atilde;o depois.',
+  'Incorreto. A conven&ccedil;&atilde;o usa o dom&iacute;nio em ordem INVERTIDA: <code>empresa.com.br</code> &rarr; <code>br.com.empresa.sistema</code>.',
+  'Incorreto. O <code>import</code> permite usar o nome simples. Sem ele, seria necess&aacute;rio escrever: <code>com.mycompany.models.Cliente c = new com.mycompany.models.Cliente();</code>',
+  'Incorreto. Uma classe pertence exatamente a UM &uacute;nico pacote. O pacote &eacute; definido pela instru&ccedil;&atilde;o <code>package</code> na primeira linha do arquivo.'
+];
+
+function answer6(i, btn, isCorrect) {
+  const block = document.getElementById('ex6-' + i);
+  block.querySelectorAll('.choice').forEach(c => c.disabled = true);
+  const fb = document.getElementById('fb6-' + i);
+  if (isCorrect) {
+    btn.classList.add('correct');
+    fb.classList.add('show', 'ok');
+    fb.innerHTML = '&#x2705; ' + feedbacksOk6[i];
+    block.classList.add('done');
+    score6++;
+    document.getElementById('scoreVal6').textContent = score6;
+    document.getElementById('scoreBar6').style.width = (score6 / 5 * 100) + '%';
+  } else {
+    btn.classList.add('wrong');
+    fb.classList.add('show', 'ko');
+    fb.innerHTML = '&#x274C; ' + feedbacksErr6[i];
   }
 }
 
