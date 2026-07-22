@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Quiz 01 &mdash; Reposit&oacute;rios Remotos</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#f5f3f0;--surface:#ffffff;--border:#e5ddd8;--accent:#f05033;--accent2:#f9a825;--text:#1a150e;--muted:#8a7f76;--green:#155e35;--green-bg:#d6f5e5;--green-border:#6edaa8;--red:#7a1f1f;--red-bg:#fde8e8;--red-border:#f0a0a0;--radius:10px;--grad:linear-gradient(270deg,#f05033 40%,#f9a825 95%);--surface2:#fff8f5;--danger:#d63030;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;padding:0 0 60px;background-image:radial-gradient(ellipse 70% 40% at 50% -10%,rgba(240,80,51,0.07) 0%,transparent 70%),radial-gradient(ellipse 50% 30% at 80% 110%,rgba(249,168,37,0.06) 0%,transparent 70%);}
+header{text-align:center;padding:32px 20px 24px;border-bottom:1px solid var(--border);position:relative;background:var(--surface);box-shadow:0 2px 16px rgba(240,80,51,0.07);}
+header::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:120px;height:2px;background:linear-gradient(90deg,transparent,#f05033,transparent);}
+.header-logo{height:42px;margin-bottom:12px;display:block;margin-left:auto;margin-right:auto;}
+.logo{font-family:'JetBrains Mono',monospace;font-size:clamp(1.2rem,3vw,1.8rem);font-weight:700;letter-spacing:-0.5px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.logo span{opacity:0.6;}
+.subtitle{color:var(--muted);font-size:.82rem;margin-top:5px;letter-spacing:0.06em;text-transform:uppercase;}
+.header-badge{display:inline-block;margin-top:10px;padding:4px 14px;border-radius:99px;font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;background:linear-gradient(270deg,rgba(240,80,51,.15),rgba(249,168,37,.1));border:1px solid rgba(240,80,51,.3);color:var(--accent);letter-spacing:.06em;}
+.wrap{max-width:720px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.info-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:1.5rem;box-shadow:0 2px 8px rgba(240,80,51,0.06);position:relative;overflow:hidden;}
+.info-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad);}
+.info-title{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.info-sub{font-size:13px;color:var(--muted);margin-bottom:14px;}
+.info-meta{display:flex;gap:10px;flex-wrap:wrap;}
+.meta-tag{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:99px;font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;}
+.meta-green{background:rgba(0,200,150,.12);border:1px solid rgba(0,200,150,.3);color:#0a7a5a;}
+.meta-orange{background:rgba(240,80,51,.12);border:1px solid rgba(240,80,51,.3);color:var(--accent);}
+.meta-amber{background:rgba(249,168,37,.15);border:1px solid rgba(249,168,37,.3);color:#8a6000;}
+.progress-bar-area{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:1.5rem;box-shadow:0 2px 8px rgba(240,80,51,0.06);}
+.progress-text{font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--muted);white-space:nowrap;}
+.progress-track{flex:1;background:#ede8e4;border-radius:99px;height:7px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:99px;background:var(--grad);width:0%;transition:width .35s cubic-bezier(.4,0,.2,1);}
+.q-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem;border-left:3px solid var(--border);box-shadow:0 2px 8px rgba(240,80,51,0.05);transition:border-left-color .2s;}
+.q-block.q-correct{border-left-color:#0a7a5a;}.q-block.q-wrong{border-left-color:var(--danger);}
+.q-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;}
+.q-num{min-width:32px;height:32px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--accent);flex-shrink:0;}
+.q-text{font-size:14px;font-weight:500;color:var(--text);line-height:1.6;padding-top:4px;}
+.q-text code{background:rgba(240,80,51,.12);color:#a02010;padding:1px 6px;border-radius:4px;font-size:12px;font-family:'JetBrains Mono',monospace;font-weight:600;}
+.q-choices{display:flex;gap:8px;}
+.q-btn{flex:1;padding:10px 16px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--text);cursor:pointer;font-size:14px;font-family:'JetBrains Mono',monospace;font-weight:700;transition:all .15s;letter-spacing:.03em;}
+.q-btn:hover:not(:disabled){border-color:var(--accent);background:rgba(240,80,51,.06);}
+.q-btn:disabled{cursor:default;opacity:.75;}
+.q-btn.chosen{background:rgba(240,80,51,.12);border-color:var(--accent);color:var(--accent);}
+.q-btn.reveal-correct{background:var(--green-bg)!important;color:#0a7a5a!important;border-color:var(--green-border)!important;}
+.q-btn.reveal-wrong{background:var(--red-bg)!important;color:var(--danger)!important;border-color:var(--red-border)!important;}
+.q-exp{display:none;margin-top:12px;padding:10px 14px;border-radius:var(--radius);font-size:13px;line-height:1.65;}
+.q-exp.ok{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);}
+.q-exp.ko{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);}
+.submit-area{text-align:center;margin:1.5rem 0;}
+.submit-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 40px;border-radius:10px;background:var(--grad);color:#fff;border:none;cursor:pointer;font-size:15px;font-weight:700;font-family:'JetBrains Mono',monospace;transition:opacity .2s,transform .15s;box-shadow:0 4px 18px rgba(240,80,51,.35);}
+.submit-btn:hover{opacity:.88;transform:translateY(-2px);}.submit-btn:disabled{opacity:.45;cursor:not-allowed;transform:none;}
+.result-card{display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;text-align:center;margin-bottom:1.5rem;box-shadow:0 2px 8px rgba(240,80,51,0.06);position:relative;overflow:hidden;}
+.result-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad);}
+.result-score{font-family:'JetBrains Mono',monospace;font-size:64px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.result-total{font-size:22px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:14px;}
+.result-msg{font-size:15px;color:var(--text);font-weight:600;margin-bottom:20px;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--muted);text-decoration:none;font-size:13px;font-family:'JetBrains Mono',monospace;font-weight:600;transition:all .15s;}
+.back-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(240,80,51,.06);}
+footer{text-align:center;margin-top:3rem;font-size:11px;color:var(--muted);letter-spacing:.04em;}
+footer span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:700;}
+</style>
+</head>
+<body>
+<header>
+  <img class="header-logo" src="https://capacitabrasil.irede.org.br/assets/capacitaLogo-Ct3BEyem.png" alt="Capacita Brasil"/>
+  <div class="logo">&#x1F9F0; <span>//</span> Git</div>
+  <div class="subtitle">Controle de Vers&atilde;o &mdash; Question&aacute;rio</div>
+  <div class="header-badge">Aula 03 &mdash; Reposit&oacute;rios Remotos</div>
+</header>
+<div class="wrap">
+  <div class="info-card">
+    <div class="info-title">&#x2753; Quiz 01 &mdash; Reposit&oacute;rios Remotos</div>
+    <div class="info-sub">Avalie se cada afirma&ccedil;&atilde;o sobre push, pull, fetch e reposit&oacute;rios remotos &eacute; Verdadeira ou Falsa.</div>
+    <div class="info-meta">
+      <span class="meta-tag meta-orange">&#x1F310; Remotos</span>
+      <span class="meta-tag meta-green">&#x2705; 10 quest&otilde;es</span>
+      <span class="meta-tag meta-amber">&#x23F1; Verdadeiro/Falso</span>
+    </div>
+  </div>
+  <div class="progress-bar-area">
+    <span class="progress-text" id="progText">0 / 10 respondidas</span>
+    <div class="progress-track"><div class="progress-fill" id="progFill"></div></div>
+    <span class="progress-text" id="scoreText">0 acertos</span>
+  </div>
+
+  <div id="q0" class="q-block">
+    <div class="q-header"><div class="q-num">01</div><div class="q-text">O nome padr&atilde;o dado ao reposit&oacute;rio remoto principal quando voc&ecirc; clona um projeto &eacute; <code>origin</code>.</div></div>
+    <div class="q-choices"><button class="q-btn" onclick="selectAnswer(0,true,this)">V Verdadeiro</button><button class="q-btn" onclick="selectAnswer(0,false,this)">F Falso</button></div>
+    <div class="q-exp" id="exp0"></div>
+  </div>
+
+  <div id="q1" class="q-block">
+    <div class="q-header"><div class="q-num">02</div><div class="q-text"><code>git pull</code> &eacute; equivalente a executar <code>git fetch</code> seguido de <code>git merge</code> automaticamente.</div></div>
+    <div class="q-choices"><button class="q-btn" onclick="selectAnswer(1,true,this)">V Verdadeiro</button><button class="q-btn" onclick="selectAnswer(1,false,this)">F Falso</button></div>
+    <div class="q-exp" id="exp1"></div>
+  </div>
+
+  <div id="q2" class="q-block">
+    <div class="q-header"><div class="q-num">03</div><div class="q-text"><code>git fetch</code> baixa as altera&ccedil;&otilde;es do reposit&oacute;rio remoto e j&aacute; as integra automaticamente ao seu branch local.</div></div>
+    <div class="q-choices"><button class="q-btn" onclick="selectAnswer(2,true,this)">V Verdadeiro</button><button class="q-btn" onclick="selectAnswer(2,false,this)">F Falso</button></div>
+    <div class="q-exp" id="exp2"></div>
+  </div>
+
+  <div id="q3" class="q-block">
+    <div class="q-header"><div class="q-num">04</div><div class="q-text">O comando <code>git remote -v</code> lista os reposit&oacute;rios remotos configurados e suas URLs de fetch e push.</div></div>
+    <div class="q-choices"><button class="q-btn" onclick="selectAnswer(3,true,this)">V Verdadeiro</button><button class="q-btn" onclick="selectAnswer(3,false,this)">F Falso</button></div>
+    <div class="q-exp" id="exp3"></div>
+  </div>
+
+  <div id="q4" class="q-block">
+    <div class="q-header"><div class="q-num">05</div><div class="q-text">Um reposit&oacute;rio Git local pode estar conectado a <strong>m&uacute;ltiplos</strong> reposit&oacute;rios remotos ao mesmo tempo.</div></div>
+    <div class="q-choices"><button class="q-btn" onclick="selectAnswer(4,true,this)">V Verdadeiro</button><button class="q-btn" onclick="selectAnswer(4,false,this)">F Falso</button></div>
+    <div class="q-exp" id="exp4"></div>
+  </div>
+
+  <div id="q5" class="q-block">
+    <div class="q-header"><div class="q-num">06</div><div class="q-text"><code>git push -u origin main</code> envia a branch main para o remoto <strong>e</strong> configura o rastreamento (tracking), associando a branch local &agrave; remota.</div></div>
+    <div class="q-choices"><button class="q-btn" onclick="selectAnswer(5,true,this)">V Verdadeiro</button><button class="q-btn" onclick="selectAnswer(5,false,this)">F Falso</button></div>
+    <div class="q-exp" id="exp5"></div>
+  </div>
+
+  <div id="q6" class="q-block">
+    <div class="q-header"><div class="q-num">07</div><div class="q-text">Se voc&ecirc; j&aacute; fez <code>git push</code> e depois faz <code>git commit --amend</code> localmente, um simples <code>git push</code> ser&aacute; suficiente para atualizar o remoto sem problemas.</div></div>
+    <div class="q-choices"><button class="q-btn" onclick="selectAnswer(6,true,this)">V Verdadeiro</button><button class="q-btn" onclick="selectAnswer(6,false,this)">F Falso</button></div>
+    <div class="q-exp" id="exp6"></div>
+  </div>
+
+  <div id="q7" class="q-block">
+    <div class="q-header"><div class="q-num">08</div><div class="q-text">GitHub, GitLab e Bitbucket s&atilde;o sistemas de controle de vers&atilde;o diferentes do Git.</div></div>
+    <div class="q-choices"><button class="q-btn" onclick="selectAnswer(7,true,this)">V Verdadeiro</button><button class="q-btn" onclick="selectAnswer(7,false,this)">F Falso</button></div>
+    <div class="q-exp" id="exp7"></div>
+  </div>
+
+  <div id="q8" class="q-block">
+    <div class="q-header"><div class="q-num">09</div><div class="q-text">Ap&oacute;s um <code>git fetch</code>, voc&ecirc; pode inspecionar os novos commits do remoto com <code>git log origin/main</code> antes de decidir fazer o merge.</div></div>
+    <div class="q-choices"><button class="q-btn" onclick="selectAnswer(8,true,this)">V Verdadeiro</button><button class="q-btn" onclick="selectAnswer(8,false,this)">F Falso</button></div>
+    <div class="q-exp" id="exp8"></div>
+  </div>
+
+  <div id="q9" class="q-block">
+    <div class="q-header"><div class="q-num">10</div><div class="q-text">O comando <code>git push origin --delete feature/login</code> deleta a branch <code>feature/login</code> do reposit&oacute;rio remoto.</div></div>
+    <div class="q-choices"><button class="q-btn" onclick="selectAnswer(9,true,this)">V Verdadeiro</button><button class="q-btn" onclick="selectAnswer(9,false,this)">F Falso</button></div>
+    <div class="q-exp" id="exp9"></div>
+  </div>
+
+  <div class="submit-area">
+    <button class="submit-btn" id="submitBtn" onclick="submitQuiz()" disabled>&#x1F4CA; Ver Resultado</button>
+  </div>
+  <div class="result-card" id="resultCard">
+    <div class="result-score" id="resultScore">0</div>
+    <div class="result-total">/ 10 acertos</div>
+    <div class="result-msg" id="resultMsg"></div>
+    <a class="back-btn" href="index.html">&#x2190; Voltar para a Aula 03</a>
+  </div>
+</div>
+<footer><p>&#x1F9F0; <span>Git &mdash; Controle de Vers&atilde;o</span> &bull; Capacita Brasil</p></footer>
+<script>
+const ANSWERS=[true,true,false,true,true,true,false,false,true,true];
+const EXPLANATIONS=[
+  ['Correto! Ao fazer <code>git clone</code>, o Git nomeia automaticamente o reposit&oacute;rio de origem como <code>origin</code>. Voc&ecirc; pode mudar esse nome ou adicionar outros remotos com <code>git remote add</code>.','Incorreto. O nome padr&atilde;o do remoto ap&oacute;s clone &eacute; sim <code>origin</code>. Voc&ecirc; pode ter outros remotos com nomes como <code>upstream</code> (comuns em forks), mas <code>origin</code> &eacute; a conven&ccedil;&atilde;o.'],
+  ['Correto! <code>git pull</code> = <code>git fetch</code> + <code>git merge</code>. Ele baixa as mudan&ccedil;as do remoto e j&aacute; integra ao branch local automaticamente.','Incorreto. <code>git pull</code> &eacute; exatamente <code>fetch</code> + <code>merge</code> em um passo. &Eacute; mais conveniente mas menos control&aacute;vel que fazer os dois separados.'],
+  ['Incorreto. <code>git fetch</code> baixa as mudan&ccedil;as para um cache local (<code>origin/main</code>) mas <strong>n&atilde;o</strong> faz merge automaticamente. Voc&ecirc; pode inspecionar e decidir quando (e se) mergear.','Correto! <code>git fetch</code> s&oacute; baixa &mdash; n&atilde;o integra. As mudan&ccedil;as ficam em <code>origin/main</code> e voc&ecirc; precisa fazer <code>git merge origin/main</code> manualmente.'],
+  ['Correto! <code>git remote -v</code> exibe os remotos com suas URLs. Mostra duas linhas por remoto: uma para fetch (baixar) e outra para push (enviar).','Incorreto. <code>git remote -v</code> sim exibe os reposit&oacute;rios remotos e suas URLs. Sem o <code>-v</code>, mostra s&oacute; os nomes (ex: "origin") sem as URLs.'],
+  ['Correto! Um reposit&oacute;rio pode ter v&aacute;rios remotos. &Eacute; comum em forks ter <code>origin</code> (seu fork) e <code>upstream</code> (repo original). Use <code>git remote add &lt;nome&gt; &lt;url&gt;</code>.','Incorreto. Sim, um repo pode ter v&aacute;rios remotos. Projetos open-source frequentemente configuram <code>origin</code> (pr&oacute;prio fork) e <code>upstream</code> (reposit&oacute;rio original).'],
+  ['Correto! O flag <code>-u</code> (ou <code>--set-upstream</code>) faz o push E configura o tracking, associando sua branch local &agrave; remota. Ap&oacute;s isso, simples <code>git push</code> e <code>git pull</code> funcionam sem especificar origin/branch.','Incorreto. O <code>-u</code> faz sim duas coisas: envia a branch E configura o tracking. Ap&oacute;s <code>git push -u origin main</code>, voc&ecirc; pode simplesmente usar <code>git push</code> ou <code>git pull</code> sem argumentos.'],
+  ['Incorreto. <code>git commit --amend</code> reescreve o commit (novo hash). O remote j&aacute; tem o hash antigo. Um simples push ser&aacute; rejeitado. Seria necess&aacute;rio <code>git push --force</code> (perigoso).','Correto! Ap&oacute;s push + amend, o push simples falha porque o hist&oacute;rico divergiu. Seria preciso <code>--force</code> (sobrescreve o remoto) ou <code>--force-with-lease</code> (mais seguro). Evite esse cen&aacute;rio!'],
+  ['Incorreto. GitHub, GitLab e Bitbucket s&atilde;o <strong>servi&ccedil;os de hospedagem</strong> de reposit&oacute;rios Git, n&atilde;o sistemas de controle de vers&atilde;o diferentes. O sistema de vers&atilde;o em si &eacute; o Git.','Correto! GitHub/GitLab/Bitbucket s&atilde;o plataformas que hospedam reposit&oacute;rios Git na nuvem. O Git &eacute; o sistema de controle de vers&atilde;o &mdash; essas plataformas apenas fornecem uma interface web e funcionalidades extras.'],
+  ['Correto! Ap&oacute;s <code>git fetch</code>, as mudan&ccedil;as ficam em <code>origin/main</code>. Voc&ecirc; pode usar <code>git log origin/main</code>, <code>git diff origin/main</code>, etc., para inspecionar antes de decidir mergear.','Incorreto. Ap&oacute;s <code>git fetch</code>, as mudan&ccedil;as ficam em <code>origin/main</code> e podem ser inspecionadas com <code>git log origin/main</code> ou comparadas com <code>git diff origin/main</code>.'],
+  ['Correto! <code>git push origin --delete feature/login</code> remove a branch do reposit&oacute;rio remoto. A branch local continua existindo e precisa ser deletada separadamente com <code>git branch -d</code>.','Incorreto. Esse comando deleta sim a branch do remoto. A sintaxe <code>--delete</code> (ou a forma curta <code>:feature/login</code>) envia uma instru&ccedil;&atilde;o de dele&ccedil;&atilde;o para o servidor.']
+];
+let answered=new Array(10).fill(null);
+function selectAnswer(idx,val,btn){
+  if(answered[idx]!==null)return;
+  answered[idx]=val;
+  const block=document.getElementById('q'+idx);
+  block.querySelectorAll('.q-btn').forEach(b=>b.classList.remove('chosen'));
+  btn.classList.add('chosen');
+  const total=answered.filter(a=>a!==null).length;
+  document.getElementById('progText').textContent=total+' / 10 respondidas';
+  document.getElementById('progFill').style.width=(total/10*100)+'%';
+  if(total===10)document.getElementById('submitBtn').disabled=false;
+}
+function submitQuiz(){
+  let score=0;
+  answered.forEach((ans,i)=>{
+    const correct=ANSWERS[i];const block=document.getElementById('q'+i);
+    const btns=block.querySelectorAll('.q-btn');const exp=document.getElementById('exp'+i);
+    const isCorrect=(ans===correct);
+    if(isCorrect){score++;block.classList.add('q-correct');}else{block.classList.add('q-wrong');}
+    btns.forEach(b=>{b.disabled=true;const btnVal=b.textContent.trim().startsWith('V');if(btnVal===correct)b.classList.add('reveal-correct');else if(b.classList.contains('chosen'))b.classList.add('reveal-wrong');});
+    exp.style.display='block';exp.className='q-exp '+(isCorrect?'ok':'ko');
+    exp.innerHTML=(isCorrect?'&#x2705; ':'&#x274C; ')+EXPLANATIONS[i][isCorrect?0:1];
+  });
+  document.getElementById('scoreText').textContent=score+' acertos';
+  const rc=document.getElementById('resultCard');rc.style.display='block';
+  document.getElementById('resultScore').textContent=score;
+  const msgs=['Revise remotos! &#x1F4DA;','Continue! &#x1F4AA;','Bom! &#x1F44D;','&Oacute;timo! &#x1F31F;','Expert em remotos! &#x1F3C6;'];
+  document.getElementById('resultMsg').innerHTML=msgs[Math.min(Math.floor(score/2.5),4)];
+  document.getElementById('submitBtn').disabled=true;
+  rc.scrollIntoView({behavior:'smooth',block:'center'});
+}
+</script>
+</body>
+</html>

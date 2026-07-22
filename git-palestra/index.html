@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Git &mdash; Controle de Vers&atilde;o</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:          #f5f3f0;
+  --surface:     #ffffff;
+  --border:      #e5ddd8;
+  --accent:      #f05033;
+  --accent2:     #f9a825;
+  --text:        #1a150e;
+  --muted:       #8a7f76;
+  --green:       #155e35;
+  --green-bg:    #d6f5e5;
+  --green-border:#6edaa8;
+  --red:         #7a1f1f;
+  --red-bg:      #fde8e8;
+  --red-border:  #f0a0a0;
+  --radius:      10px;
+  --glow:        0 0 18px rgba(240,80,51,0.15);
+  --grad:        linear-gradient(270deg, #f05033 40%, #f9a825 95%);
+  --surface2:    #fff8f5;
+  --mint:        #f9a825;
+  --danger:      #d63030;
+  --warn:        #d48a00;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  padding: 0 0 60px;
+  background-image:
+    radial-gradient(ellipse 70% 40% at 50% -10%, rgba(240,80,51,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 30% at 80% 110%, rgba(249,168,37,0.06) 0%, transparent 70%);
+}
+header {
+  text-align: center;
+  padding: 36px 20px 28px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  background: var(--surface);
+  box-shadow: 0 2px 16px rgba(240,80,51,0.07);
+}
+header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 2px;
+  background: linear-gradient(90deg, transparent, #f05033, transparent);
+}
+.header-logo { height: 48px; margin-bottom: 14px; display: block; margin-left: auto; margin-right: auto; }
+.logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.logo span { opacity: 0.6; }
+.subtitle { color: var(--muted); font-size: .85rem; margin-top: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
+.header-badge {
+  display: inline-block; margin-top: 12px; padding: 4px 16px; border-radius: 99px;
+  font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace;
+  background: linear-gradient(270deg, rgba(240,80,51,.15), rgba(249,168,37,.1));
+  border: 1px solid rgba(240,80,51,.3); color: var(--accent); letter-spacing: .06em;
+}
+.wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+/* ── AULA TABS ── */
+.aula-bar {
+  display: flex; gap: 4px; margin-bottom: 1.5rem;
+  background: var(--text); border-radius: 14px; padding: 6px;
+  box-shadow: 0 4px 20px rgba(26,21,14,0.18);
+}
+.aula-tab {
+  flex: 1; padding: 12px 20px; border-radius: 10px; border: none;
+  background: transparent; color: rgba(255,255,255,0.45); cursor: pointer;
+  font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+  transition: all .2s; letter-spacing: .02em;
+}
+.aula-tab.active { background: var(--grad); color: #fff; box-shadow: 0 2px 14px rgba(240,80,51,.45); }
+.aula-section { display: none; }
+.aula-section.active { display: block; }
+
+/* ── INNER TABS ── */
+.tab-bar {
+  display: flex; gap: 6px; margin-bottom: 1.5rem; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 14px; padding: 6px;
+  flex-wrap: wrap; box-shadow: 0 2px 10px rgba(240,80,51,0.06);
+}
+.tab {
+  flex: 1; min-width: 120px; padding: 9px 16px; border-radius: var(--radius);
+  border: none; background: transparent; color: var(--muted); cursor: pointer;
+  font-size: 13px; font-weight: 500; font-family: 'Space Grotesk', sans-serif; transition: all .2s;
+}
+.tab:hover:not(.active) { background: rgba(240,80,51,.08); color: var(--text); }
+.tab.active { background: var(--grad); color: #fff; font-weight: 700; box-shadow: 0 2px 12px rgba(240,80,51,.3); }
+.section { display: none; }
+.section.active { display: block; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.5rem; margin-bottom: 1.25rem; position: relative; overflow: hidden;
+  box-shadow: 0 2px 8px rgba(240,80,51,0.06);
+}
+.card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(240,80,51,.35), transparent);
+}
+.card-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700;
+  margin-bottom: 1rem; display: flex; align-items: center; gap: 10px; color: var(--text); flex-wrap: wrap;
+}
+.card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+/* ── PILLS ── */
+.pill { display: inline-block; padding: 3px 11px; border-radius: 99px; font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+.pill-grad  { background: rgba(240,80,51,.12); border: 1px solid rgba(240,80,51,.3);  color: var(--accent); }
+.pill-green { background: rgba(0,200,150,.12);  border: 1px solid rgba(0,200,150,.3);   color: #0a7a5a; }
+.pill-red   { background: rgba(214,48,48,.1);   border: 1px solid rgba(214,48,48,.25);  color: var(--danger); }
+.pill-amber { background: rgba(249,168,37,.15); border: 1px solid rgba(249,168,37,.35); color: #8a6000; }
+.pill-blue  { background: rgba(89,130,250,.12); border: 1px solid rgba(89,130,250,.25); color: #3050cc; }
+.pill-git   { background: rgba(240,80,51,.12);  border: 1px solid rgba(240,80,51,.35);  color: #a02010; }
+
+/* ── TABLE ── */
+table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 12px 0; }
+th {
+  background: rgba(240,80,51,.1); padding: 10px 14px; text-align: center;
+  font-weight: 700; font-size: 12px; color: var(--accent);
+  font-family: 'JetBrains Mono', monospace; letter-spacing: .05em; border-bottom: 1px solid var(--border);
+}
+td { padding: 10px 14px; text-align: left; border-bottom: 1px solid rgba(240,80,51,.08); font-size: 13px; font-family: 'JetBrains Mono', monospace; }
+td.desc { font-family: 'Space Grotesk', sans-serif; font-size: 13px; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(240,80,51,.04); }
+
+/* ── CODE BLOCK ── */
+.code-block {
+  background: #1a1510; border: 1px solid #3a2e28; border-radius: 10px;
+  padding: 16px 18px; margin: 12px 0; font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; line-height: 1.8; color: #d4cfc9; overflow-x: auto; white-space: pre;
+}
+.code-block .gpmt { color: #f05033; font-weight: 700; }
+.code-block .gcmd { color: #f9a825; font-weight: 600; }
+.code-block .gopt { color: #89b4fa; }
+.code-block .garg { color: #a8d8ea; }
+.code-block .gout { color: #a6e3a1; }
+.code-block .gbr  { color: #cba6f7; font-weight: 600; }
+.code-block .ghsh { color: #fab387; }
+.code-block .gcmt { color: #6c7086; font-style: italic; }
+.code-block .gmod { color: #f38ba8; }
+.code-block .gstg { color: #94e2d5; }
+
+/* ── SCORE BAR ── */
+.score-bar-area {
+  display: flex; align-items: center; gap: 16px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px 18px; margin-bottom: 1.25rem; box-shadow: 0 2px 8px rgba(240,80,51,0.06);
+}
+.score-val {
+  font-size: 28px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+  background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.score-label { font-size: 11px; color: var(--muted); }
+.score-track { flex: 1; background: #ede8e4; border-radius: 99px; height: 8px; overflow: hidden; }
+.score-fill { height: 100%; border-radius: 99px; background: var(--grad); width: 0%; transition: width .4s cubic-bezier(.4,0,.2,1); }
+
+/* ── EXERCISES ── */
+.ex-block {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem; margin-bottom: 1rem; border-left: 3px solid var(--accent);
+  transition: border-left-color .2s; box-shadow: 0 2px 8px rgba(240,80,51,0.06);
+}
+.ex-block.done { border-left-color: #0a7a5a; }
+.ex-q { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text); line-height: 1.55; }
+.ex-scenario { font-size: 13px; color: var(--muted); margin-bottom: 14px; line-height: 1.55; }
+.choices { display: flex; gap: 8px; flex-wrap: wrap; }
+.choice {
+  padding: 9px 18px; border-radius: 7px; border: 1.5px solid var(--border);
+  background: transparent; color: var(--text); cursor: pointer;
+  font-size: 13px; font-family: 'JetBrains Mono', monospace; font-weight: 600; transition: all .15s;
+}
+.choice:hover:not(:disabled) { background: rgba(240,80,51,.08); border-color: var(--accent); }
+.choice:disabled { cursor: default; }
+.choice.correct { background: var(--green-bg); color: #0a7a5a; border-color: var(--green-border); }
+.choice.wrong   { background: var(--red-bg);   color: var(--danger); border-color: var(--red-border); }
+.feedback { font-size: 13px; margin-top: 12px; padding: 10px 14px; border-radius: var(--radius); display: none; line-height: 1.6; }
+.feedback.show { display: block; }
+.feedback.ok { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.feedback.ko { background: var(--red-bg);   color: var(--red);   border: 1px solid var(--red-border); }
+
+/* ── CURIOSIDADES ── */
+.curi-item { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid rgba(240,80,51,.1); }
+.curi-item:last-of-type { border-bottom: none; }
+.curi-icon {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+  background: linear-gradient(270deg, rgba(240,80,51,.15), rgba(249,168,37,.1));
+  border: 1px solid rgba(240,80,51,.25);
+}
+.curi-title { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-bottom: 4px; color: var(--text); }
+.curi-body { font-size: 13px; color: var(--muted); line-height: 1.65; }
+.curi-body code { background: rgba(240,80,51,.12); color: #a02010; padding: 1px 6px; border-radius: 4px; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+
+/* ── LINKS ── */
+.link-item {
+  color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  text-decoration: none; word-break: break-all; transition: color .15s;
+}
+.link-item:hover { color: var(--accent2); text-decoration: underline; }
+
+/* ── GRAD BTN ── */
+.grad-btn {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 14px;
+  padding: 10px 22px; border-radius: 8px; background: var(--grad); color: #fff;
+  border: none; cursor: pointer; font-size: 13px; font-weight: 700;
+  font-family: 'JetBrains Mono', monospace; text-decoration: none;
+  transition: opacity .2s, transform .15s; box-shadow: 0 3px 14px rgba(240,80,51,.3);
+}
+.grad-btn:hover { opacity: .88; transform: translateY(-1px); }
+
+/* ── INLINE CODE ── */
+.ic { background: rgba(240,80,51,.12); color: #a02010; padding: 1px 7px; border-radius: 4px; font-size: 12px; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+/* ── SIMULATOR ── */
+.sim-btn {
+  padding: 9px 16px; border-radius: 8px; border: 1.5px solid var(--border);
+  background: transparent; color: var(--text); cursor: pointer;
+  font-size: 12px; font-family: 'JetBrains Mono', monospace; font-weight: 600;
+  transition: all .15s;
+}
+.sim-btn:hover { border-color: var(--accent); background: rgba(240,80,51,.06); }
+.sim-btn.active { background: rgba(240,80,51,.12); border-color: var(--accent); color: var(--accent); }
+
+/* ── BRANCH TREE ── */
+.branch-display {
+  background: #1a1510; border: 1px solid #3a2e28; border-radius: 10px;
+  padding: 18px 20px; font-family: 'JetBrains Mono', monospace; font-size: 13px;
+  line-height: 1.9; color: #d4cfc9; min-height: 160px;
+}
+.branch-info {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1rem 1.25rem; margin-top: 12px; font-size: 13px; color: var(--muted); line-height: 1.65;
+}
+.branch-info strong { color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+
+/* ── REMOTE FLOW ── */
+.flow-area {
+  display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap;
+  padding: 24px 0; min-height: 120px;
+}
+.flow-box {
+  background: var(--surface2); border: 2px solid var(--border); border-radius: 12px;
+  padding: 16px 24px; text-align: center; min-width: 140px;
+}
+.flow-box-title { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
+.flow-box-sub { font-size: 11px; color: var(--muted); }
+.flow-arrow { font-size: 22px; color: var(--accent2); font-weight: 700; }
+.flow-label {
+  text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  font-weight: 700; color: var(--accent); background: rgba(240,80,51,.1);
+  border: 1px solid rgba(240,80,51,.25); border-radius: 6px; padding: 4px 12px;
+  display: inline-block; margin-bottom: 4px;
+}
+.flow-desc { font-size: 13px; color: var(--muted); line-height: 1.65; text-align: center; }
+
+/* ── QUIZ LINK CARDS ── */
+.quiz-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem 1.5rem; margin-bottom: .75rem; display: flex; align-items: center;
+  gap: 16px; text-decoration: none; color: var(--text); transition: all .2s;
+  box-shadow: 0 2px 8px rgba(240,80,51,0.05); position: relative; overflow: hidden;
+}
+.quiz-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--grad); }
+.quiz-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(240,80,51,0.12); }
+.quiz-icon { width: 44px; height: 44px; border-radius: 10px; background: linear-gradient(270deg, rgba(240,80,51,.15), rgba(249,168,37,.1)); border: 1px solid rgba(240,80,51,.25); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.quiz-title { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.quiz-sub { font-size: 12px; color: var(--muted); }
+.quiz-arrow { margin-left: auto; color: var(--accent); font-size: 18px; opacity: .5; }
+
+footer { text-align: center; margin-top: 3rem; font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+footer span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700; }
+
+@media (max-width: 600px) {
+  .tab { min-width: 80px; font-size: 12px; }
+  .aula-tab { font-size: 12px; padding: 10px 8px; }
+  .flow-area { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img class="header-logo" src="https://capacitabrasil.irede.org.br/assets/capacitaLogo-Ct3BEyem.png" alt="Capacita Brasil"/>
+  <div class="logo">&#x1F9F0; <span>//</span> Git</div>
+  <div class="subtitle">Controle de Vers&atilde;o &mdash; Palestra Interativa</div>
+  <div class="header-badge">Git B&aacute;sico &mdash; Do init ao remote</div>
+</header>
+
+<div class="wrap">
+
+  <div class="aula-bar">
+    <button class="aula-tab active" onclick="switchAula('gaula01',this)">&#x1F4C1; Aula 01 &mdash; Reposit&oacute;rio e Commits</button>
+    <button class="aula-tab"       onclick="switchAula('gaula02',this)">&#x1F333; Aula 02 &mdash; Branches e Fus&atilde;o</button>
+    <button class="aula-tab"       onclick="switchAula('gaula03',this)">&#x1F310; Aula 03 &mdash; Remotos e Desfazendo</button>
+  </div>
+
+  <!-- ═══════════════ AULA 01 ═══════════════ -->
+  <div id="gaula01" class="aula-section active">
+
+  <div class="tab-bar">
+    <button class="tab active" onclick="showTab('gresumo1',this)">&#x1F4D8; Resumo</button>
+    <button class="tab"        onclick="showTab('gsimulador1',this)">&#x26A1; Simulador</button>
+    <button class="tab"        onclick="showTab('gexercicios1',this)">&#x1F3AF; Exerc&iacute;cios</button>
+    <button class="tab"        onclick="showTab('gquestionarios1',this)">&#x1F4DD; Question&aacute;rios</button>
+    <button class="tab"        onclick="showTab('gcuriosidades1',this)">&#x1F680; Curiosidades</button>
+    <button class="tab"        onclick="showTab('glinks1',this)">&#x1F517; Links</button>
+  </div>
+
+  <!-- RESUMO 1 -->
+  <div id="gresumo1" class="section active">
+    <div class="card">
+      <div class="card-title">&#x1F4C1; O que &eacute; Git?</div>
+      <p>Git &eacute; um <strong>sistema de controle de vers&atilde;o distribu&iacute;do</strong> criado por Linus Torvalds em 2005 para gerenciar o desenvolvimento do kernel Linux. Ele registra o hist&oacute;rico completo de altera&ccedil;&otilde;es de um projeto, permite trabalho paralelo em equipe e garante que nenhum c&oacute;digo seja perdido.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#x1F5FA;&#xFE0F; As Tr&ecirc;s &Aacute;reas do Git</div>
+      <table>
+        <tr><th>&Aacute;rea</th><th>Tamb&eacute;m chamada de</th><th class="desc">O que guarda</th></tr>
+        <tr><td>Working Directory</td><td>Working Tree</td><td class="desc">Seus arquivos do projeto como voc&ecirc; os edita agora</td></tr>
+        <tr><td>Staging Area</td><td>Index / Cache</td><td class="desc">Altera&ccedil;&otilde;es marcadas para entrar no pr&oacute;ximo commit</td></tr>
+        <tr><td>Repository</td><td>.git / Object DB</td><td class="desc">Hist&oacute;rico permanente de todos os commits j&aacute; feitos</td></tr>
+      </table>
+      <div class="code-block"><span class="gcmt"># Fluxo básico: editar → adicionar → commitar</span>
+<span class="gcmt"># Working Dir    →     Staging Area    →     Repository</span>
+<span class="gcmt">#   (edit)         git add arquivo       git commit -m "..."</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#x1F527; Comandos Essenciais &mdash; Iniciar e Configurar</div>
+      <table>
+        <tr><th>Comando</th><th class="desc">Fun&ccedil;&atilde;o</th></tr>
+        <tr><td>git init</td><td class="desc">Inicializa um reposit&oacute;rio Git na pasta atual</td></tr>
+        <tr><td>git clone &lt;url&gt;</td><td class="desc">Clona um reposit&oacute;rio remoto para a m&aacute;quina local</td></tr>
+        <tr><td>git status</td><td class="desc">Mostra o estado atual dos arquivos (modified, staged, untracked)</td></tr>
+        <tr><td>git add &lt;arquivo&gt;</td><td class="desc">Adiciona um arquivo espec&iacute;fico &agrave; Staging Area</td></tr>
+        <tr><td>git add .</td><td class="desc">Adiciona TODOS os arquivos modificados ao staging</td></tr>
+        <tr><td>git commit -m "msg"</td><td class="desc">Registra as altera&ccedil;&otilde;es staged como um novo commit</td></tr>
+        <tr><td>git commit --amend</td><td class="desc">Corrige o &uacute;ltimo commit (mensagem ou conte&uacute;do) &mdash; s&oacute; antes do push!</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#x1F4DC; Inspecionar o Hist&oacute;rico</div>
+      <table>
+        <tr><th>Comando</th><th class="desc">Fun&ccedil;&atilde;o</th></tr>
+        <tr><td>git log</td><td class="desc">Mostra o hist&oacute;rico completo de commits</td></tr>
+        <tr><td>git log --oneline --graph --all</td><td class="desc">Vis&atilde;o gr&aacute;fica compacta de todos os commits e branches</td></tr>
+        <tr><td>git diff</td><td class="desc">Diferen&ccedil;as entre working directory e &uacute;ltimo commit</td></tr>
+        <tr><td>git diff --staged</td><td class="desc">Diferen&ccedil;as entre staging area e &uacute;ltimo commit</td></tr>
+      </table>
+      <div class="code-block"><span class="gpmt">$</span> <span class="gcmd">git log</span> <span class="gopt">--oneline --graph --all</span>
+<span class="gout">* a3f8c12 (HEAD -> main) Adiciona página de contato</span>
+<span class="gout">* b7e2d09 Corrige bug no formulário</span>
+<span class="gout">* c1a4f56 Commit inicial</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#x1F4A1; O que &eacute; HEAD?</div>
+      <p>HEAD &eacute; um ponteiro especial que indica qual &eacute; o commit atual &mdash; normalmente aponta para a ponta da branch ativa. Quando voc&ecirc; faz um novo commit, HEAD avan&ccedil;a automaticamente. Entender o HEAD &eacute; fundamental para comandos como <span class="ic">git reset</span>, <span class="ic">git revert</span> e <span class="ic">git checkout</span>.</p>
+    </div>
+  </div><!-- /gresumo1 -->
+
+  <!-- SIMULADOR 1 -->
+  <div id="gsimulador1" class="section">
+    <div class="card">
+      <div class="card-title">&#x26A1; Terminal Interativo &mdash; Fluxo B&aacute;sico</div>
+      <p style="margin-bottom:14px">Clique nos cen&aacute;rios para ver o que acontece no terminal:</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+        <button class="sim-btn active" id="sbtn1a" onclick="showScenario1('init',this)">&#x1F4C1; git init</button>
+        <button class="sim-btn" id="sbtn1b" onclick="showScenario1('status',this)">&#x1F50D; git status</button>
+        <button class="sim-btn" id="sbtn1c" onclick="showScenario1('add',this)">&#x2795; git add</button>
+        <button class="sim-btn" id="sbtn1d" onclick="showScenario1('commit',this)">&#x2705; git commit</button>
+        <button class="sim-btn" id="sbtn1e" onclick="showScenario1('log',this)">&#x1F4DC; git log</button>
+      </div>
+      <div class="branch-display" id="terminal1"></div>
+      <div class="branch-info" id="termInfo1">
+        <strong>git init</strong> — Inicializa um reposit&oacute;rio Git vazio na pasta atual. Cria a pasta oculta <strong>.git/</strong> que guarda todo o hist&oacute;rico e configura&ccedil;&otilde;es.
+      </div>
+    </div>
+  </div><!-- /gsimulador1 -->
+
+  <!-- EXERCÍCIOS 1 -->
+  <div id="gexercicios1" class="section">
+    <div class="score-bar-area">
+      <div>
+        <div class="score-val" id="scoreVal1">0</div>
+        <div class="score-label">pontos</div>
+      </div>
+      <div class="score-track"><div class="score-fill" id="scoreBar1"></div></div>
+      <div style="font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace">/ 5</div>
+    </div>
+
+    <div class="ex-block" id="ex1-0">
+      <div class="ex-q">1. Qual comando inicializa um novo reposit&oacute;rio Git na pasta atual?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(0,this,false)">git start</button>
+        <button class="choice" onclick="answer1(0,this,true)">git init</button>
+        <button class="choice" onclick="answer1(0,this,false)">git create</button>
+        <button class="choice" onclick="answer1(0,this,false)">git new</button>
+      </div>
+      <div class="feedback" id="fb1-0"></div>
+    </div>
+
+    <div class="ex-block" id="ex1-1">
+      <div class="ex-q">2. Voc&ecirc; editou tr&ecirc;s arquivos e quer adicionar <strong>todos</strong> de uma vez &agrave; Staging Area. Qual comando usar?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(1,this,false)">git commit -a</button>
+        <button class="choice" onclick="answer1(1,this,false)">git stage all</button>
+        <button class="choice" onclick="answer1(1,this,true)">git add .</button>
+        <button class="choice" onclick="answer1(1,this,false)">git push .</button>
+      </div>
+      <div class="feedback" id="fb1-1"></div>
+    </div>
+
+    <div class="ex-block" id="ex1-2">
+      <div class="ex-q">3. Qual &eacute; a fun&ccedil;&atilde;o da <strong>Staging Area</strong> (Index)?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(2,this,false)">Guardar backups remotos do projeto</button>
+        <button class="choice" onclick="answer1(2,this,true)">Preparar altera&ccedil;&otilde;es para o pr&oacute;ximo commit</button>
+        <button class="choice" onclick="answer1(2,this,false)">Sincronizar com o servidor automaticamente</button>
+        <button class="choice" onclick="answer1(2,this,false)">Listar os reposit&oacute;rios remotos</button>
+      </div>
+      <div class="feedback" id="fb1-2"></div>
+    </div>
+
+    <div class="ex-block" id="ex1-3">
+      <div class="ex-q">4. Voc&ecirc; percebeu um erro na mensagem do &uacute;ltimo commit (que ainda n&atilde;o foi publicado). Como corigir?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(3,this,false)">git commit -fix</button>
+        <button class="choice" onclick="answer1(3,this,false)">git revert HEAD</button>
+        <button class="choice" onclick="answer1(3,this,true)">git commit --amend</button>
+        <button class="choice" onclick="answer1(3,this,false)">git reset --hard HEAD</button>
+      </div>
+      <div class="feedback" id="fb1-3"></div>
+    </div>
+
+    <div class="ex-block" id="ex1-4">
+      <div class="ex-q">5. Qual combina&ccedil;&atilde;o de flags do <span class="ic">git log</span> exibe um gr&aacute;fico visual e compacto de todos os commits e branches?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(4,this,false)">--verbose --tree</button>
+        <button class="choice" onclick="answer1(4,this,true)">--oneline --graph --all</button>
+        <button class="choice" onclick="answer1(4,this,false)">--short --visual</button>
+        <button class="choice" onclick="answer1(4,this,false)">--compact --branches</button>
+      </div>
+      <div class="feedback" id="fb1-4"></div>
+    </div>
+  </div><!-- /gexercicios1 -->
+
+  <!-- QUESTIONÁRIOS 1 -->
+  <div id="gquestionarios1" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F4DD; Question&aacute;rios &mdash; Aula 01</div>
+      <p style="margin-bottom:1rem">Teste seus conhecimentos sobre Reposit&oacute;rio e Commits com os question&aacute;rios abaixo:</p>
+      <a class="quiz-card" href="questionario-git-01-01.html">
+        <div class="quiz-icon">&#x2753;</div>
+        <div><div class="quiz-title">Quiz 01 &mdash; Reposit&oacute;rio e Commits</div><div class="quiz-sub">10 quest&otilde;es Verdadeiro/Falso &mdash; conceitos fundamentais</div></div>
+        <div class="quiz-arrow">&#x276F;</div>
+      </a>
+      <a class="quiz-card" href="questionario-git-01-02.html">
+        <div class="quiz-icon">&#x2753;</div>
+        <div><div class="quiz-title">Quiz 02 &mdash; Staging e Hist&oacute;rico</div><div class="quiz-sub">10 quest&otilde;es Verdadeiro/Falso &mdash; add, commit, log, diff</div></div>
+        <div class="quiz-arrow">&#x276F;</div>
+      </a>
+      <a class="quiz-card" href="questionario-git-01-03.html">
+        <div class="quiz-icon">&#x1F4BB;</div>
+        <div><div class="quiz-title">Implementa&ccedil;&atilde;o &mdash; Comandos B&aacute;sicos na Pr&aacute;tica</div><div class="quiz-sub">10 exerc&iacute;cios de escrever comandos Git</div></div>
+        <div class="quiz-arrow">&#x276F;</div>
+      </a>
+    </div>
+  </div><!-- /gquestionarios1 -->
+
+  <!-- CURIOSIDADES 1 -->
+  <div id="gcuriosidades1" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F680; Curiosidades &mdash; Reposit&oacute;rio e Commits</div>
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F9B8;</div>
+        <div><div class="curi-title">Git foi criado em 10 dias</div><div class="curi-body">Linus Torvalds criou a primeira vers&atilde;o funcional do Git em apenas 10 dias (abril de 2005), ap&oacute;s o BitKeeper &mdash; ferramenta que o kernel Linux usava &mdash; revogar a licen&ccedil;a gratuita para projetos open-source.</div></div>
+      </div>
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F522;</div>
+        <div><div class="curi-title">Commits s&atilde;o identificados por SHA-1</div><div class="curi-body">Cada commit no Git recebe um hash SHA-1 de 40 caracteres hexadecimais (ex: <code>a3f8c12...</code>). Esse hash &eacute; calculado com base no conte&uacute;do, autor, data e commit pai, garantindo integridade e unicidade.</div></div>
+      </div>
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F4C2;</div>
+        <div><div class="curi-title">A pasta .git &eacute; o reposit&oacute;rio</div><div class="curi-body">Todo reposit&oacute;rio Git &eacute; autocontido na pasta oculta <code>.git/</code>. Isso significa que voc&ecirc; pode copiar essa pasta para qualquer lugar e ter o hist&oacute;rico completo do projeto &mdash; sem depender de servidor.</div></div>
+      </div>
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F4AF;</div>
+        <div><div class="curi-title">O nome "Git" foi intencional</div><div class="curi-body">Linus Torvalds disse que "git" &eacute; uma gíria brit&acirc;nica para pessoa idiota. Ele costuma nomear seus projetos com auto-refer&ecirc;ncia: "I'm an egotistical bastard, and I name all my projects after myself. First 'Linux', now 'git'."</div></div>
+      </div>
+      <div class="curi-item">
+        <div class="curi-icon">&#x26A1;</div>
+        <div><div class="curi-title">Git &eacute; distribu&iacute;do, n&atilde;o centralizado</div><div class="curi-body">Diferente do SVN ou CVS, no Git <strong>todo desenvolvedor tem uma c&oacute;pia completa do hist&oacute;rico</strong>. N&atilde;o existe um servidor "obrigat&oacute;rio" &mdash; voc&ecirc; pode trabalhar offline e sincronizar depois.</div></div>
+      </div>
+    </div>
+  </div><!-- /gcuriosidades1 -->
+
+  <!-- LINKS 1 -->
+  <div id="glinks1" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F517; Recursos &mdash; Reposit&oacute;rio e Commits</div>
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F4D6;</div>
+        <div><div class="curi-title">Documenta&ccedil;&atilde;o Oficial</div><div class="curi-body"><a class="link-item" href="https://git-scm.com/docs" target="_blank">git-scm.com/docs</a> &mdash; Refer&ecirc;ncia completa de todos os comandos Git</div></div>
+      </div>
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F4D9;</div>
+        <div><div class="curi-title">Pro Git Book (gratuito)</div><div class="curi-body"><a class="link-item" href="https://git-scm.com/book/pt-br/v2" target="_blank">git-scm.com/book/pt-br/v2</a> &mdash; Livro completo sobre Git em portugu&ecirc;s</div></div>
+      </div>
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F579;&#xFE0F;</div>
+        <div><div class="curi-title">Learn Git Branching (Interativo)</div><div class="curi-body"><a class="link-item" href="https://learngitbranching.js.org/?locale=pt_BR" target="_blank">learngitbranching.js.org</a> &mdash; Aprenda Git visualmente com exerc&iacute;cios interativos</div></div>
+      </div>
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F3AF;</div>
+        <div><div class="curi-title">Git Cheat Sheet (GitHub)</div><div class="curi-body"><a class="link-item" href="https://education.github.com/git-cheat-sheet-education.pdf" target="_blank">education.github.com/git-cheat-sheet-education.pdf</a> &mdash; Refer&ecirc;ncia r&aacute;pida em PDF</div></div>
+      </div>
+    </div>
+  </div><!-- /glinks1 -->
+
+  </div><!-- /gaula01 -->
+
+  <!-- ═══════════════ AULA 02 ═══════════════ -->
+  <div id="gaula02" class="aula-section">
+
+  <div class="tab-bar">
+    <button class="tab active" onclick="showTab('gresumo2',this)">&#x1F4D8; Resumo</button>
+    <button class="tab"        onclick="showTab('gsimulador2',this)">&#x26A1; Simulador</button>
+    <button class="tab"        onclick="showTab('gexercicios2',this)">&#x1F3AF; Exerc&iacute;cios</button>
+    <button class="tab"        onclick="showTab('gquestionarios2',this)">&#x1F4DD; Question&aacute;rios</button>
+    <button class="tab"        onclick="showTab('gcuriosidades2',this)">&#x1F680; Curiosidades</button>
+    <button class="tab"        onclick="showTab('glinks2',this)">&#x1F517; Links</button>
+  </div>
+
+  <!-- RESUMO 2 -->
+  <div id="gresumo2" class="section active">
+    <div class="card">
+      <div class="card-title">&#x1F333; O que s&atilde;o Branches?</div>
+      <p>Uma branch (&ldquo;ramo&rdquo;) &eacute; uma <strong>linha de desenvolvimento independente</strong>. Ao criar uma branch, voc&ecirc; pode trabalhar em uma funcionalidade, corre&ccedil;&atilde;o ou experimento sem afetar o c&oacute;digo principal. Branches s&atilde;o leves no Git &mdash; criar uma nova branch &eacute; instant&acirc;neo e custa apenas um ponteiro de 40 bytes.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#x1F527; Comandos de Branch</div>
+      <table>
+        <tr><th>Comando</th><th class="desc">Fun&ccedil;&atilde;o</th></tr>
+        <tr><td>git branch</td><td class="desc">Lista todas as branches locais</td></tr>
+        <tr><td>git branch &lt;nome&gt;</td><td class="desc">Cria uma nova branch (sem trocar para ela)</td></tr>
+        <tr><td>git checkout &lt;branch&gt;</td><td class="desc">Troca para a branch indicada (comando cl&aacute;ssico)</td></tr>
+        <tr><td>git switch &lt;branch&gt;</td><td class="desc">Troca para a branch indicada (comando moderno)</td></tr>
+        <tr><td>git checkout -b &lt;branch&gt;</td><td class="desc">Cria E j&aacute; troca para a nova branch</td></tr>
+        <tr><td>git switch -c &lt;branch&gt;</td><td class="desc">Cria E j&aacute; troca (vers&atilde;o moderna)</td></tr>
+        <tr><td>git merge &lt;branch&gt;</td><td class="desc">Mescla a branch indicada NA branch atual</td></tr>
+        <tr><td>git rebase &lt;branch&gt;</td><td class="desc">Reaplica commits sobre outra base</td></tr>
+        <tr><td>git branch -d &lt;nome&gt;</td><td class="desc">Deleta uma branch j&aacute; mesclada</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#x2194;&#xFE0F; Merge vs Rebase</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px">
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px">
+          <div style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent);margin-bottom:8px;font-size:13px">git merge</div>
+          <ul style="font-size:13px;color:var(--muted);line-height:1.7;padding-left:18px">
+            <li>Cria um <em>merge commit</em></li>
+            <li>Preserva o hist&oacute;rico exato</li>
+            <li>Seguro para branches compartilhadas</li>
+            <li>Hist&oacute;rico pode ficar "cheio"</li>
+          </ul>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px">
+          <div style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent2);margin-bottom:8px;font-size:13px">git rebase</div>
+          <ul style="font-size:13px;color:var(--muted);line-height:1.7;padding-left:18px">
+            <li>Reescreve commits sobre nova base</li>
+            <li>Hist&oacute;rico linear e limpo</li>
+            <li>N&atilde;o use em branches p&uacute;blicas!</li>
+            <li>Ótimo para branches locais</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#x1F4CB; Estrat&eacute;gias de Branch</div>
+      <table>
+        <tr><th>Branch</th><th class="desc">Quando usar</th></tr>
+        <tr><td>main / master</td><td class="desc">C&oacute;digo est&aacute;vel e pronto para produ&ccedil;&atilde;o &mdash; nunca commite direto aqui</td></tr>
+        <tr><td>develop</td><td class="desc">Integra&ccedil;&atilde;o cont&iacute;nua das features antes de ir para main</td></tr>
+        <tr><td>feature/nome</td><td class="desc">Nova funcionalidade em desenvolvimento</td></tr>
+        <tr><td>fix/nome ou hotfix/</td><td class="desc">Corre&ccedil;&atilde;o de bug &mdash; hotfix vai direto de main para main</td></tr>
+        <tr><td>release/v1.0</td><td class="desc">Prepara&ccedil;&atilde;o de uma vers&atilde;o para lan&ccedil;amento</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#x1F4A1; Fast-Forward vs 3-Way Merge</div>
+      <div class="code-block"><span class="gcmt"># Fast-forward: main não teve commits novos → só move o ponteiro</span>
+<span class="gpmt">$</span> <span class="gcmd">git merge</span> <span class="gbr">feature/login</span>
+<span class="gout">Updating a3f8c12..d9e2b47</span>
+<span class="gout">Fast-forward</span>
+
+<span class="gcmt"># 3-way merge: ambas as branches evoluíram → cria merge commit</span>
+<span class="gpmt">$</span> <span class="gcmd">git merge</span> <span class="gbr">feature/carrinho</span>
+<span class="gout">Merge made by the 'recursive' strategy.</span></div>
+    </div>
+  </div><!-- /gresumo2 -->
+
+  <!-- SIMULADOR 2 -->
+  <div id="gsimulador2" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F333; Explorador de Branches</div>
+      <p style="margin-bottom:14px">Clique em cada tipo de branch para ver seu papel no projeto:</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+        <button class="sim-btn active" id="bbtn-main" onclick="showBranch('main',this)">main</button>
+        <button class="sim-btn" id="bbtn-develop" onclick="showBranch('develop',this)">develop</button>
+        <button class="sim-btn" id="bbtn-feature" onclick="showBranch('feature',this)">feature/login</button>
+        <button class="sim-btn" id="bbtn-hotfix" onclick="showBranch('hotfix',this)">hotfix/crash</button>
+        <button class="sim-btn" id="bbtn-merge" onclick="showBranch('merge',this)">merge demo</button>
+      </div>
+      <div class="branch-display" id="branchTree"></div>
+      <div class="branch-info" id="branchInfo"></div>
+    </div>
+  </div><!-- /gsimulador2 -->
+
+  <!-- EXERCÍCIOS 2 -->
+  <div id="gexercicios2" class="section">
+    <div class="score-bar-area">
+      <div>
+        <div class="score-val" id="scoreVal2">0</div>
+        <div class="score-label">pontos</div>
+      </div>
+      <div class="score-track"><div class="score-fill" id="scoreBar2"></div></div>
+      <div style="font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace">/ 5</div>
+    </div>
+
+    <div class="ex-block" id="ex2-0">
+      <div class="ex-q">1. Qual comando cria uma nova branch <strong>E</strong> j&aacute; troca para ela em um &uacute;nico passo?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer2(0,this,false)">git branch -new</button>
+        <button class="choice" onclick="answer2(0,this,true)">git checkout -b feature/login</button>
+        <button class="choice" onclick="answer2(0,this,false)">git create feature/login</button>
+        <button class="choice" onclick="answer2(0,this,false)">git branch --switch</button>
+      </div>
+      <div class="feedback" id="fb2-0"></div>
+    </div>
+
+    <div class="ex-block" id="ex2-1">
+      <div class="ex-q">2. Qual &eacute; o principal risco de usar <span class="ic">git rebase</span> em uma branch que j&aacute; foi publicada (pushed) para o remoto?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer2(1,this,false)">O rebase demora muito em branches grandes</button>
+        <button class="choice" onclick="answer2(1,this,false)">N&atilde;o h&aacute; risco, rebase &eacute; sempre seguro</button>
+        <button class="choice" onclick="answer2(1,this,true)">Reescreve o hist&oacute;rico, causando conflitos para outros desenvolvedores</button>
+        <button class="choice" onclick="answer2(1,this,false)">O rebase apaga automaticamente commits antigos</button>
+      </div>
+      <div class="feedback" id="fb2-1"></div>
+    </div>
+
+    <div class="ex-block" id="ex2-2">
+      <div class="ex-q">3. Voc&ecirc; est&aacute; na branch <span class="ic">main</span> e quer incorporar as altera&ccedil;&otilde;es da branch <span class="ic">feature/pagamento</span>. Qual comando usar?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer2(2,this,false)">git merge main</button>
+        <button class="choice" onclick="answer2(2,this,true)">git merge feature/pagamento</button>
+        <button class="choice" onclick="answer2(2,this,false)">git switch feature/pagamento</button>
+        <button class="choice" onclick="answer2(2,this,false)">git pull feature/pagamento</button>
+      </div>
+      <div class="feedback" id="fb2-2"></div>
+    </div>
+
+    <div class="ex-block" id="ex2-3">
+      <div class="ex-q">4. O que &eacute; um <strong>fast-forward merge</strong>?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer2(3,this,false)">Um merge que resolve conflitos automaticamente</button>
+        <button class="choice" onclick="answer2(3,this,false)">Um merge que sempre cria um commit extra</button>
+        <button class="choice" onclick="answer2(3,this,true)">Um merge em que o ponteiro da branch simplesmente avan&ccedil;a, sem criar merge commit</button>
+        <button class="choice" onclick="answer2(3,this,false)">Um merge que usa rebase por baixo dos panos</button>
+      </div>
+      <div class="feedback" id="fb2-3"></div>
+    </div>
+
+    <div class="ex-block" id="ex2-4">
+      <div class="ex-q">5. Em qual branch c&oacute;digo nunca deve ser commitado diretamente, apenas recebido via merge/PR?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer2(4,this,false)">feature/qualquer</button>
+        <button class="choice" onclick="answer2(4,this,false)">develop</button>
+        <button class="choice" onclick="answer2(4,this,true)">main (ou master)</button>
+        <button class="choice" onclick="answer2(4,this,false)">hotfix/nome</button>
+      </div>
+      <div class="feedback" id="fb2-4"></div>
+    </div>
+  </div><!-- /gexercicios2 -->
+
+  <!-- QUESTIONÁRIOS 2 -->
+  <div id="gquestionarios2" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F4DD; Question&aacute;rios &mdash; Aula 02</div>
+      <p style="margin-bottom:1rem">Teste seus conhecimentos sobre Branches e Fus&atilde;o:</p>
+      <a class="quiz-card" href="questionario-git-02-01.html">
+        <div class="quiz-icon">&#x2753;</div>
+        <div><div class="quiz-title">Quiz 01 &mdash; Branches</div><div class="quiz-sub">10 quest&otilde;es Verdadeiro/Falso &mdash; branch, checkout, switch</div></div>
+        <div class="quiz-arrow">&#x276F;</div>
+      </a>
+      <a class="quiz-card" href="questionario-git-02-02.html">
+        <div class="quiz-icon">&#x2753;</div>
+        <div><div class="quiz-title">Quiz 02 &mdash; Merge e Rebase</div><div class="quiz-sub">10 quest&otilde;es Verdadeiro/Falso &mdash; merge, rebase, conflitos</div></div>
+        <div class="quiz-arrow">&#x276F;</div>
+      </a>
+      <a class="quiz-card" href="questionario-git-02-03.html">
+        <div class="quiz-icon">&#x1F4BB;</div>
+        <div><div class="quiz-title">Implementa&ccedil;&atilde;o &mdash; Branches na Pr&aacute;tica</div><div class="quiz-sub">10 exerc&iacute;cios de workflow com branches</div></div>
+        <div class="quiz-arrow">&#x276F;</div>
+      </a>
+    </div>
+  </div><!-- /gquestionarios2 -->
+
+  <!-- CURIOSIDADES 2 -->
+  <div id="gcuriosidades2" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F680; Curiosidades &mdash; Branches e Fus&atilde;o</div>
+      <div class="curi-item">
+        <div class="curi-icon">&#x26A1;</div>
+        <div><div class="curi-title">Branches s&atilde;o apenas ponteiros</div><div class="curi-body">No Git, uma branch &eacute; literalmente um arquivo texto de 40 bytes com o hash do commit atual. Criar uma branch &eacute; t&atilde;o barato quanto criar um arquivo &mdash; por isso o Git incentiva criar branches para tudo.</div></div>
+      </div>
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F91D;</div>
+        <div><div class="curi-title">GitHub popularizou o Pull Request</div><div class="curi-body">O conceito de "Pull Request" (PR) n&atilde;o &eacute; do Git em si, mas foi criado e popularizado pelo GitHub. No GitLab o equivalente se chama "Merge Request" (MR). Ambos s&atilde;o formas de revisar c&oacute;digo antes do merge.</div></div>
+      </div>
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F300;</div>
+        <div><div class="curi-title">Git Flow vs Trunk-Based Development</div><div class="curi-body">O Git Flow (com develop, feature, release, hotfix) foi muito popular mas &eacute; considerado pesado por muitas equipes modernas. O Trunk-Based Development &mdash; commitar frequentemente na main &mdash; &eacute; o modelo preferido em empresas como Google e Meta.</div></div>
+      </div>
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F9F9;</div>
+        <div><div class="curi-title">Conflitos s&atilde;o normais, n&atilde;o erros</div><div class="curi-body">Conflitos de merge acontecem quando duas branches alteram a <strong>mesma linha</strong> do mesmo arquivo. O Git n&atilde;o sabe qual vers&atilde;o &eacute; "certa" &mdash; ele marca os conflitos e pede para voc&ecirc; decidir. Conflito = colabora&ccedil;&atilde;o ativa.</div></div>
+      </div>
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F4B9;</div>
+        <div><div class="curi-title">O Linux tem +1000 branches ativas</div><div class="curi-body">O reposit&oacute;rio oficial do kernel Linux &eacute; um dos maiores do mundo: mais de 1 milh&atilde;o de commits, dezenas de branches de manuten&ccedil;&atilde;o ativas, e contribui&ccedil;&otilde;es de milhares de desenvolvedores por vers&atilde;o.</div></div>
+      </div>
+    </div>
+  </div><!-- /gcuriosidades2 -->
+
+  <!-- LINKS 2 -->
+  <div id="glinks2" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F517; Recursos &mdash; Branches e Fus&atilde;o</div>
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F579;&#xFE0F;</div>
+        <div><div class="curi-title">Learn Git Branching</div><div class="curi-body"><a class="link-item" href="https://learngitbranching.js.org/?locale=pt_BR" target="_blank">learngitbranching.js.org</a> &mdash; Exerc&iacute;cios interativos visuais para aprender branches</div></div>
+      </div>
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F4D6;</div>
+        <div><div class="curi-title">Atlassian Git Tutorials &mdash; Branching</div><div class="curi-body"><a class="link-item" href="https://www.atlassian.com/br/git/tutorials/using-branches" target="_blank">atlassian.com/br/git/tutorials/using-branches</a> &mdash; Guia completo sobre branches</div></div>
+      </div>
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F333;</div>
+        <div><div class="curi-title">A successful Git branching model (Git Flow)</div><div class="curi-body"><a class="link-item" href="https://nvie.com/posts/a-successful-git-branching-model/" target="_blank">nvie.com/posts/a-successful-git-branching-model/</a> &mdash; O artigo original do Git Flow por Vincent Driessen</div></div>
+      </div>
+    </div>
+  </div><!-- /glinks2 -->
+
+  </div><!-- /gaula02 -->
+
+  <!-- ═══════════════ AULA 03 ═══════════════ -->
+  <div id="gaula03" class="aula-section">
+
+  <div class="tab-bar">
+    <button class="tab active" onclick="showTab('gresumo3',this)">&#x1F4D8; Resumo</button>
+    <button class="tab"        onclick="showTab('gsimulador3',this)">&#x26A1; Simulador</button>
+    <button class="tab"        onclick="showTab('gexercicios3',this)">&#x1F3AF; Exerc&iacute;cios</button>
+    <button class="tab"        onclick="showTab('gquestionarios3',this)">&#x1F4DD; Question&aacute;rios</button>
+    <button class="tab"        onclick="showTab('gcuriosidades3',this)">&#x1F680; Curiosidades</button>
+    <button class="tab"        onclick="showTab('glinks3',this)">&#x1F517; Links</button>
+  </div>
+
+  <!-- RESUMO 3 -->
+  <div id="gresumo3" class="section active">
+    <div class="card">
+      <div class="card-title">&#x1F310; Reposit&oacute;rios Remotos</div>
+      <p>Um reposit&oacute;rio remoto &eacute; uma c&oacute;pia do projeto hospedada em um servidor (GitHub, GitLab, Bitbucket). O remoto padr&atilde;o se chama <span class="ic">origin</span>. Permite colabora&ccedil;&atilde;o entre m&uacute;ltiplos desenvolvedores e serve como backup do projeto.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#x1F527; Comandos Remotos</div>
+      <table>
+        <tr><th>Comando</th><th class="desc">Fun&ccedil;&atilde;o</th></tr>
+        <tr><td>git remote -v</td><td class="desc">Lista os reposit&oacute;rios remotos configurados e suas URLs</td></tr>
+        <tr><td>git push</td><td class="desc">Envia commits locais para o remoto</td></tr>
+        <tr><td>git push origin &lt;branch&gt;</td><td class="desc">Envia uma branch espec&iacute;fica para o remoto</td></tr>
+        <tr><td>git pull</td><td class="desc">Busca alterações do remoto E j&aacute; faz merge (fetch + merge)</td></tr>
+        <tr><td>git fetch</td><td class="desc">Busca altera&ccedil;&otilde;es do remoto SEM fazer merge (mais seguro)</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#x23EA;&#xFE0F; Desfazendo Altera&ccedil;&otilde;es</div>
+      <table>
+        <tr><th>Comando</th><th class="desc">O que faz</th><th class="desc">Seguro em p&uacute;blico?</th></tr>
+        <tr><td>git stash</td><td class="desc">Guarda altera&ccedil;&otilde;es n&atilde;o commitadas temporariamente</td><td class="desc">&#x2705; Sim</td></tr>
+        <tr><td>git stash pop</td><td class="desc">Recupera altera&ccedil;&otilde;es guardadas no stash</td><td class="desc">&#x2705; Sim</td></tr>
+        <tr><td>git revert &lt;commit&gt;</td><td class="desc">Cria novo commit que desfaz o commit indicado</td><td class="desc">&#x2705; Sim</td></tr>
+        <tr><td>git reset &lt;commit&gt;</td><td class="desc">Move HEAD para outro commit (pode reescrever hist&oacute;rico)</td><td class="desc">&#x26A0;&#xFE0F; Cuidado</td></tr>
+        <tr><td>git tag &lt;nome&gt;</td><td class="desc">Cria uma marca&ccedil;&atilde;o no commit atual (ex: v1.0)</td><td class="desc">&#x2705; Sim</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#x2194;&#xFE0F; git fetch vs git pull</div>
+      <div class="code-block"><span class="gcmt"># git pull = git fetch + git merge (automático)</span>
+<span class="gpmt">$</span> <span class="gcmd">git pull</span>
+<span class="gout">remote: Enumerating objects: 5, done.</span>
+<span class="gout">Updating a3f8c12..d9e2b47</span>
+<span class="gout">Fast-forward</span>
+
+<span class="gcmt"># git fetch: baixa sem mesclar — você inspeciona antes</span>
+<span class="gpmt">$</span> <span class="gcmd">git fetch</span>
+<span class="gout">remote: Enumerating objects: 5, done.</span>
+<span class="gpmt">$</span> <span class="gcmd">git log</span> <span class="gopt">--oneline</span> <span class="gbr">origin/main</span>  <span class="gcmt"># inspeciona</span>
+<span class="gpmt">$</span> <span class="gcmd">git merge</span> <span class="gbr">origin/main</span>          <span class="gcmt"># mescla quando pronto</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#x26A0;&#xFE0F; git reset &mdash; os tr&ecirc;s modos</div>
+      <table>
+        <tr><th>Modo</th><th class="desc">O que reseta</th><th class="desc">Working Dir</th></tr>
+        <tr><td>--soft</td><td class="desc">S&oacute; move o HEAD (commits desfeitos mas arquivos no staging)</td><td class="desc">Intacto</td></tr>
+        <tr><td>--mixed (padr&atilde;o)</td><td class="desc">Move HEAD e limpa staging (arquivos ficam modificados)</td><td class="desc">Intacto</td></tr>
+        <tr><td>--hard</td><td class="desc">Move HEAD, limpa staging E descarta altera&ccedil;&otilde;es &mdash; IRREVERS&Iacute;VEL</td><td class="desc">&#x26A0; Apagado</td></tr>
+      </table>
+    </div>
+  </div><!-- /gresumo3 -->
+
+  <!-- SIMULADOR 3 -->
+  <div id="gsimulador3" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F310; Fluxo Local &#x2194; Remoto</div>
+      <p style="margin-bottom:14px">Clique em cada opera&ccedil;&atilde;o para ver o fluxo de dados:</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+        <button class="sim-btn active" id="rbtn-push" onclick="showRemote('push',this)">git push</button>
+        <button class="sim-btn" id="rbtn-pull" onclick="showRemote('pull',this)">git pull</button>
+        <button class="sim-btn" id="rbtn-fetch" onclick="showRemote('fetch',this)">git fetch</button>
+        <button class="sim-btn" id="rbtn-stash" onclick="showRemote('stash',this)">git stash</button>
+        <button class="sim-btn" id="rbtn-revert" onclick="showRemote('revert',this)">git revert</button>
+      </div>
+      <div id="remoteFlow" style="padding:8px 0">
+        <div class="flow-area">
+          <div class="flow-box"><div class="flow-box-title">Local</div><div class="flow-box-sub">seus commits</div></div>
+          <div style="text-align:center"><div class="flow-label">git push</div><div style="font-size:26px;color:var(--accent)">&#x2192;</div></div>
+          <div class="flow-box"><div class="flow-box-title">Remote</div><div class="flow-box-sub">origin/main</div></div>
+        </div>
+        <p class="flow-desc"><strong>git push</strong> envia os commits locais para o reposit&oacute;rio remoto. Use <code style="background:rgba(240,80,51,.1);color:#a02010;padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:12px">git push origin &lt;branch&gt;</code> para enviar uma branch espec&iacute;fica.</p>
+      </div>
+    </div>
+  </div><!-- /gsimulador3 -->
+
+  <!-- EXERCÍCIOS 3 -->
+  <div id="gexercicios3" class="section">
+    <div class="score-bar-area">
+      <div>
+        <div class="score-val" id="scoreVal3">0</div>
+        <div class="score-label">pontos</div>
+      </div>
+      <div class="score-track"><div class="score-fill" id="scoreBar3"></div></div>
+      <div style="font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace">/ 5</div>
+    </div>
+
+    <div class="ex-block" id="ex3-0">
+      <div class="ex-q">1. Qual comando busca altera&ccedil;&otilde;es do remoto <strong>sem</strong> fazer merge automaticamente?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer3(0,this,false)">git pull</button>
+        <button class="choice" onclick="answer3(0,this,true)">git fetch</button>
+        <button class="choice" onclick="answer3(0,this,false)">git sync</button>
+        <button class="choice" onclick="answer3(0,this,false)">git download</button>
+      </div>
+      <div class="feedback" id="fb3-0"></div>
+    </div>
+
+    <div class="ex-block" id="ex3-1">
+      <div class="ex-q">2. Voc&ecirc; precisa desfazer um commit j&aacute; publicado (pushed) sem reescrever o hist&oacute;rico. Qual comando usar?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer3(1,this,false)">git reset --hard HEAD~1</button>
+        <button class="choice" onclick="answer3(1,this,false)">git checkout HEAD~1</button>
+        <button class="choice" onclick="answer3(1,this,true)">git revert &lt;hash-do-commit&gt;</button>
+        <button class="choice" onclick="answer3(1,this,false)">git commit --undo</button>
+      </div>
+      <div class="feedback" id="fb3-1"></div>
+    </div>
+
+    <div class="ex-block" id="ex3-2">
+      <div class="ex-q">3. Voc&ecirc; est&aacute; no meio de um trabalho e precisa trocar urgentemente de branch, mas n&atilde;o quer commitar ainda. O que fazer?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer3(2,this,false)">git reset --soft</button>
+        <button class="choice" onclick="answer3(2,this,true)">git stash</button>
+        <button class="choice" onclick="answer3(2,this,false)">git commit -m "WIP" e desfaz depois</button>
+        <button class="choice" onclick="answer3(2,this,false)">git diff &gt; patch.txt</button>
+      </div>
+      <div class="feedback" id="fb3-2"></div>
+    </div>
+
+    <div class="ex-block" id="ex3-3">
+      <div class="ex-q">4. O que o comando <span class="ic">git remote -v</span> exibe?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer3(3,this,false)">O hist&oacute;rico de commits do remoto</button>
+        <button class="choice" onclick="answer3(3,this,false)">As branches remotas dispon&iacute;veis</button>
+        <button class="choice" onclick="answer3(3,this,true)">Os reposit&oacute;rios remotos configurados e suas URLs</button>
+        <button class="choice" onclick="answer3(3,this,false)">A vers&atilde;o mais recente do remoto</button>
+      </div>
+      <div class="feedback" id="fb3-3"></div>
+    </div>
+
+    <div class="ex-block" id="ex3-4">
+      <div class="ex-q">5. Qual modo do <span class="ic">git reset</span> move o HEAD mas MANT&Eacute;M as altera&ccedil;&otilde;es no working directory como arquivos modificados (fora do staging)?</div>
+      <div class="choices">
+        <button class="choice" onclick="answer3(4,this,false)">--hard</button>
+        <button class="choice" onclick="answer3(4,this,false)">--soft</button>
+        <button class="choice" onclick="answer3(4,this,true)">--mixed (padr&atilde;o)</button>
+        <button class="choice" onclick="answer3(4,this,false)">--safe</button>
+      </div>
+      <div class="feedback" id="fb3-4"></div>
+    </div>
+  </div><!-- /gexercicios3 -->
+
+  <!-- QUESTIONÁRIOS 3 -->
+  <div id="gquestionarios3" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F4DD; Question&aacute;rios &mdash; Aula 03</div>
+      <p style="margin-bottom:1rem">Teste seus conhecimentos sobre Remotos e Desfazendo:</p>
+      <a class="quiz-card" href="questionario-git-03-01.html">
+        <div class="quiz-icon">&#x2753;</div>
+        <div><div class="quiz-title">Quiz 01 &mdash; Reposit&oacute;rios Remotos</div><div class="quiz-sub">10 quest&otilde;es Verdadeiro/Falso &mdash; push, pull, fetch, remote</div></div>
+        <div class="quiz-arrow">&#x276F;</div>
+      </a>
+      <a class="quiz-card" href="questionario-git-03-02.html">
+        <div class="quiz-icon">&#x2753;</div>
+        <div><div class="quiz-title">Quiz 02 &mdash; Desfazendo Altera&ccedil;&otilde;es</div><div class="quiz-sub">10 quest&otilde;es Verdadeiro/Falso &mdash; stash, revert, reset, tag</div></div>
+        <div class="quiz-arrow">&#x276F;</div>
+      </a>
+      <a class="quiz-card" href="questionario-git-03-03.html">
+        <div class="quiz-icon">&#x1F4BB;</div>
+        <div><div class="quiz-title">Implementa&ccedil;&atilde;o &mdash; Workflow Completo</div><div class="quiz-sub">10 exerc&iacute;cios do fluxo Git do zero ao deploy</div></div>
+        <div class="quiz-arrow">&#x276F;</div>
+      </a>
+    </div>
+  </div><!-- /gquestionarios3 -->
+
+  <!-- CURIOSIDADES 3 -->
+  <div id="gcuriosidades3" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F680; Curiosidades &mdash; Remotos e Desfazendo</div>
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F310;</div>
+        <div><div class="curi-title">GitHub n&atilde;o &eacute; Git</div><div class="curi-body">Git &eacute; o sistema de controle de vers&atilde;o (instalado localmente). GitHub, GitLab e Bitbucket s&atilde;o <strong>servi&ccedil;os de hospedagem</strong> de reposit&oacute;rios Git na nuvem. Voc&ecirc; pode usar Git sem GitHub.</div></div>
+      </div>
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F9F3;</div>
+        <div><div class="curi-title">git stash &eacute; uma pilha</div><div class="curi-body">O <code>git stash</code> funciona como uma <strong>pilha (stack)</strong>: voc&ecirc; pode guardar v&aacute;rios "estados" com <code>git stash push -m "descricao"</code> e recuperar qualquer um com <code>git stash apply stash@{2}</code>.</div></div>
+      </div>
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F3F7;&#xFE0F;</div>
+        <div><div class="curi-title">Tags s&atilde;o imut&aacute;veis por conven&ccedil;&atilde;o</div><div class="curi-body">Existem duas tags no Git: <strong>lightweight</strong> (s&oacute; um ponteiro) e <strong>annotated</strong> (<code>git tag -a v1.0 -m "Release"</code>). Annotated tags s&atilde;o assinadas e incluem metadados &mdash; preferidas para releases.</div></div>
+      </div>
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F512;</div>
+        <div><div class="curi-title">git reflog &eacute; o "desfazer m&aacute;ximo"</div><div class="curi-body">O <code>git reflog</code> guarda um hist&oacute;rico de TUDO que aconteceu com o HEAD nos &uacute;ltimos 90 dias. &Eacute; poss&iacute;vel recuperar commits perdidos com <code>git reset --hard</code> ou at&eacute; branches deletadas acidentalmente.</div></div>
+      </div>
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F30D;</div>
+        <div><div class="curi-title">O GitHub hospeda +100 milh&otilde;es de reposit&oacute;rios</div><div class="curi-body">O GitHub ultrapassou a marca de 100 milh&otilde;es de reposit&oacute;rios e mais de 100 milh&otilde;es de desenvolvedores em 2023. Foi adquirido pela Microsoft em 2018 por US$ 7,5 bilh&otilde;es.</div></div>
+      </div>
+    </div>
+  </div><!-- /gcuriosidades3 -->
+
+  <!-- LINKS 3 -->
+  <div id="glinks3" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F517; Recursos &mdash; Remotos e Desfazendo</div>
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F4D6;</div>
+        <div><div class="curi-title">Atlassian &mdash; Undoing Changes</div><div class="curi-body"><a class="link-item" href="https://www.atlassian.com/br/git/tutorials/undoing-changes" target="_blank">atlassian.com/br/git/tutorials/undoing-changes</a> &mdash; Guia completo sobre desfazer altera&ccedil;&otilde;es no Git</div></div>
+      </div>
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F310;</div>
+        <div><div class="curi-title">GitHub Docs</div><div class="curi-body"><a class="link-item" href="https://docs.github.com/pt" target="_blank">docs.github.com/pt</a> &mdash; Documenta&ccedil;&atilde;o oficial do GitHub em portugu&ecirc;s</div></div>
+      </div>
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F9F0;</div>
+        <div><div class="curi-title">Oh Shit, Git!? (socorro com Git)</div><div class="curi-body"><a class="link-item" href="https://ohshitgit.com/pt_BR" target="_blank">ohshitgit.com/pt_BR</a> &mdash; Solu&ccedil;&otilde;es r&aacute;pidas para situa&ccedil;&otilde;es dif&iacute;ceis no Git</div></div>
+      </div>
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F3AF;</div>
+        <div><div class="curi-title">Git Visualization (visualiza&ccedil;&atilde;o interativa)</div><div class="curi-body"><a class="link-item" href="https://git-school.github.io/visualizing-git/" target="_blank">git-school.github.io/visualizing-git/</a> &mdash; Visualize o que cada comando Git faz em tempo real</div></div>
+      </div>
+    </div>
+  </div><!-- /glinks3 -->
+
+  </div><!-- /gaula03 -->
+
+</div><!-- /wrap -->
+
+<footer>
+  <p>&#x1F9F0; <span>Git &mdash; Controle de Vers&atilde;o</span> &bull; Capacita Brasil &bull; iRede</p>
+</footer>
+
+<script>
+/* ── NAVIGATION ─────────────────────────────────────────────────────────── */
+function switchAula(id, btn) {
+  document.querySelectorAll('.aula-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.aula-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function showTab(id, btn) {
+  const aula = btn.closest('.aula-section');
+  aula.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  aula.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+/* ── SIMULADOR 1 — TERMINAL ─────────────────────────────────────────────── */
+const scenarios1 = {
+  init: {
+    terminal: '<span class="gpmt">$</span> <span class="gcmd">git init</span>\n<span class="gout">Initialized empty Git repository in /meu-projeto/.git/</span>\n\n<span class="gpmt">$</span> <span class="gcmd">ls</span> <span class="gopt">-a</span>\n<span class="gout">.  ..  .git</span>\n\n<span class="gpmt">$</span> <span class="gcmd">git status</span>\n<span class="gout">On branch main</span>\n<span class="gout">No commits yet</span>\n<span class="gout">nothing to commit</span>',
+    info: '<strong>git init</strong> — Inicializa um repositório Git vazio. Cria a pasta oculta <strong>.git/</strong> que contém todo o histórico, configurações e objetos do repositório. Só precisa ser executado uma vez por projeto.'
+  },
+  status: {
+    terminal: '<span class="gpmt">$</span> <span class="gcmd">git status</span>\n<span class="gout">On branch main</span>\n\n<span class="gmod">Changes not staged for commit:</span>\n<span class="gmod">  modified:   src/App.java</span>\n\n<span class="gstg">Changes to be committed:</span>\n<span class="gstg">  new file:   README.md</span>\n\n<span class="gcmt">Untracked files:</span>\n<span class="gcmt">  config.properties</span>',
+    info: '<strong>git status</strong> — Exibe o estado atual do repositório. Mostra três categorias: <strong>Changes to be committed</strong> (na Staging Area), <strong>Changes not staged</strong> (modificados mas não no staging) e <strong>Untracked files</strong> (novos arquivos que o Git ainda não rastreia).'
+  },
+  add: {
+    terminal: '<span class="gcmt"># Adicionar arquivo específico</span>\n<span class="gpmt">$</span> <span class="gcmd">git add</span> <span class="garg">src/App.java</span>\n\n<span class="gcmt"># Adicionar tudo</span>\n<span class="gpmt">$</span> <span class="gcmd">git add</span> <span class="garg">.</span>\n\n<span class="gpmt">$</span> <span class="gcmd">git status</span>\n<span class="gstg">Changes to be committed:</span>\n<span class="gstg">  modified:   src/App.java</span>\n<span class="gstg">  new file:   README.md</span>',
+    info: '<strong>git add</strong> — Move arquivos para a Staging Area. Use <strong>git add &lt;arquivo&gt;</strong> para arquivos específicos ou <strong>git add .</strong> para tudo. Você pode revisar exatamente o que será commitado antes de confirmar.'
+  },
+  commit: {
+    terminal: '<span class="gpmt">$</span> <span class="gcmd">git commit</span> <span class="gopt">-m</span> <span class="garg">"Adiciona tela de login"</span>\n<span class="gout">[main a3f8c12] Adiciona tela de login</span>\n<span class="gout"> 2 files changed, 48 insertions(+)</span>\n\n<span class="gcmt"># Corrigir último commit (antes do push)</span>\n<span class="gpmt">$</span> <span class="gcmd">git commit</span> <span class="gopt">--amend</span> <span class="gopt">-m</span> <span class="garg">"feat: adiciona tela de login com validação"</span>\n<span class="gout">[main a3f8c12] feat: adiciona tela de login com validação</span>',
+    info: '<strong>git commit -m "msg"</strong> — Cria um snapshot permanente das mudanças na Staging Area. Use mensagens claras no imperativo: "Adiciona", "Corrige", "Remove". O <strong>--amend</strong> reescreve o último commit — use somente antes de fazer push!'
+  },
+  log: {
+    terminal: '<span class="gpmt">$</span> <span class="gcmd">git log</span> <span class="gopt">--oneline --graph --all</span>\n<span class="gbr">* d9e2b47 (HEAD -> main)</span> <span class="gout">feat: adiciona tela de login</span>\n<span class="gbr">* b7e2d09</span> <span class="gout">fix: corrige validação do formulário</span>\n<span class="gbr">* c1a4f56</span> <span class="gout">chore: configuração inicial do projeto</span>\n\n<span class="gpmt">$</span> <span class="gcmd">git diff</span> <span class="ghsh">c1a4f56</span> <span class="ghsh">b7e2d09</span>\n<span class="gout">diff --git a/src/Form.java b/src/Form.java</span>\n<span class="gout">--- a/src/Form.java</span>\n<span class="gout">+++ b/src/Form.java</span>',
+    info: '<strong>git log --oneline --graph --all</strong> — Exibe o histórico de commits de forma compacta e gráfica. O <strong>--all</strong> mostra todas as branches. Use <strong>git diff &lt;hash1&gt; &lt;hash2&gt;</strong> para ver as diferenças entre dois commits específicos.'
+  }
+};
+
+function showScenario1(key, btn) {
+  document.querySelectorAll('#gsimulador1 .sim-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const s = scenarios1[key];
+  document.getElementById('terminal1').innerHTML = s.terminal;
+  document.getElementById('termInfo1').innerHTML = s.info;
+}
+document.getElementById('terminal1').innerHTML = scenarios1.init.terminal;
+
+/* ── SIMULADOR 2 — BRANCHES ─────────────────────────────────────────────── */
+const branches = {
+  main: {
+    tree: '<span class="ghsh">*</span> <span class="gbr">(HEAD -> main, origin/main)</span> <span class="gout">v2.1.0 — Release estável</span>\n<span class="ghsh">*</span> <span class="gout">v2.0.0 — Novo sistema de pagamento</span>\n<span class="ghsh">*</span> <span class="gout">v1.5.0 — Módulo de relatórios</span>\n<span class="ghsh">*</span> <span class="gout">v1.0.0 — Lançamento inicial</span>',
+    info: '<strong>main (ou master)</strong> — Branch principal. Representa o estado de produção estável. <strong>Nunca faça commit direto aqui.</strong> Só recebe código via merge de branches de feature ou hotfix. Cada commit na main representa uma versão entregável.'
+  },
+  develop: {
+    tree: '<span class="ghsh">*</span> <span class="gbr">(HEAD -> develop)</span> <span class="gout">Merge feature/relatorio</span>\n<span class="ghsh">|\\</span>\n<span class="ghsh">| *</span> <span class="gbr">(feature/relatorio)</span> <span class="gout">Adiciona exportação PDF</span>\n<span class="ghsh">| *</span> <span class="gout">Cria modelo de relatório</span>\n<span class="ghsh">|/</span>\n<span class="ghsh">*</span> <span class="gbr">(main)</span> <span class="gout">v2.0.0</span>',
+    info: '<strong>develop</strong> — Branch de integração. Features concluídas são mergeadas aqui antes de ir para main. Permite testar a integração de múltiplas features juntas. Quando develop está estável, faz-se o merge para main (nova release).'
+  },
+  feature: {
+    tree: '<span class="ghsh">*</span> <span class="gbr">(HEAD -> feature/login)</span> <span class="gout">Adiciona 2FA ao login</span>\n<span class="ghsh">*</span> <span class="gout">Implementa validação de senha</span>\n<span class="ghsh">*</span> <span class="gout">Cria tela de login</span>\n<span class="ghsh">*</span> <span class="gbr">(develop)</span> <span class="gout">Ponto de partida</span>',
+    info: '<strong>feature/nome</strong> — Uma branch para cada funcionalidade nova. Criada a partir de develop (ou main). Quando a feature fica pronta, é mergeada de volta. Convenção de nome: <strong>feature/descricao-da-funcionalidade</strong>. Isolamento total da feature em desenvolvimento.'
+  },
+  hotfix: {
+    tree: '<span class="ghsh">*</span> <span class="gbr">(HEAD -> hotfix/crash-login)</span> <span class="gout">Fix: resolve NullPointerException no login</span>\n<span class="ghsh">*</span> <span class="gbr">(main, tag: v2.1.0)</span> <span class="gout">v2.1.0 — Release</span>\n\n<span class="gcmt"># Após o fix: merge em main E develop</span>\n<span class="gcmt">$ git checkout main &amp;&amp; git merge hotfix/crash-login</span>\n<span class="gcmt">$ git checkout develop &amp;&amp; git merge hotfix/crash-login</span>',
+    info: '<strong>hotfix/nome</strong> — Criada diretamente de main para corrigir um bug crítico em produção. Após a correção, é mergeada em DOIS lugares: <strong>main</strong> (corrige produção) e <strong>develop</strong> (garante que o fix não seja perdido). Depois é deletada.'
+  },
+  merge: {
+    tree: '<span class="ghsh">*</span>   <span class="gbr">(main)</span> <span class="gout">Merge branch feature/login</span>\n<span class="ghsh">|\\</span>\n<span class="ghsh">| *</span> <span class="gbr">(feature/login)</span> <span class="gout">Adiciona 2FA</span>\n<span class="ghsh">| *</span> <span class="gout">Cria tela de login</span>\n<span class="ghsh">|/</span>\n<span class="ghsh">*</span> <span class="gout">Commit anterior em main</span>',
+    info: '<strong>merge demo</strong> — Visualização de um 3-way merge: a branch <strong>feature/login</strong> foi criada de main, evoluiu com 2 commits e foi mergeada de volta. O Git cria automaticamente um <strong>merge commit</strong> unindo os dois históricos. Em caso de conflitos, o Git para e pede sua intervenção.'
+  }
+};
+
+function showBranch(key, btn) {
+  document.querySelectorAll('#gsimulador2 .sim-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const b = branches[key];
+  document.getElementById('branchTree').innerHTML = b.tree;
+  document.getElementById('branchInfo').innerHTML = b.info;
+}
+document.getElementById('branchTree').innerHTML = branches.main.tree;
+document.getElementById('branchInfo').innerHTML = branches.main.info;
+
+/* ── SIMULADOR 3 — REMOTO ───────────────────────────────────────────────── */
+const remotes = {
+  push: {
+    flow: '<div class="flow-area"><div class="flow-box"><div class="flow-box-title">&#x1F4BB; Local</div><div class="flow-box-sub">seus commits</div></div><div style="text-align:center"><div class="flow-label">git push</div><div style="font-size:26px;color:var(--accent)">&#x2192;</div></div><div class="flow-box"><div class="flow-box-title">&#x1F310; Remote</div><div class="flow-box-sub">origin/main</div></div></div>',
+    desc: '<strong>git push</strong> envia os commits locais para o repositório remoto. Use <code style="background:rgba(240,80,51,.1);color:#a02010;padding:1px 5px;border-radius:4px;font-family:\'JetBrains Mono\',monospace;font-size:12px">git push origin &lt;branch&gt;</code> para enviar uma branch específica. Na primeira vez, use <code style="background:rgba(240,80,51,.1);color:#a02010;padding:1px 5px;border-radius:4px;font-family:\'JetBrains Mono\',monospace;font-size:12px">git push -u origin main</code> para vincular a branch local ao remoto.'
+  },
+  pull: {
+    flow: '<div class="flow-area"><div class="flow-box"><div class="flow-box-title">&#x1F310; Remote</div><div class="flow-box-sub">origin/main</div></div><div style="text-align:center"><div class="flow-label">git pull</div><div style="font-size:26px;color:var(--accent)">&#x2192;</div></div><div class="flow-box"><div class="flow-box-title">&#x1F4BB; Local</div><div class="flow-box-sub">fetch + merge</div></div></div>',
+    desc: '<strong>git pull</strong> é equivalente a <strong>git fetch</strong> seguido de <strong>git merge</strong>. Baixa as mudanças do remoto e já integra ao seu histórico local. Útil no dia a dia, mas se preferir revisar antes de mesclar, use <code style="background:rgba(240,80,51,.1);color:#a02010;padding:1px 5px;border-radius:4px;font-family:\'JetBrains Mono\',monospace;font-size:12px">git fetch</code> separado.'
+  },
+  fetch: {
+    flow: '<div class="flow-area"><div class="flow-box"><div class="flow-box-title">&#x1F310; Remote</div><div class="flow-box-sub">origin/main</div></div><div style="text-align:center"><div class="flow-label">git fetch</div><div style="font-size:26px;color:var(--accent)">&#x2192;</div></div><div class="flow-box"><div class="flow-box-title">&#x1F4CB; origin/main</div><div class="flow-box-sub">local cache</div></div><div style="text-align:center;opacity:.4"><div style="font-size:11px;color:var(--muted)">merge manual</div><div style="font-size:26px;color:var(--muted)">&#x2192;</div></div><div class="flow-box" style="opacity:.5"><div class="flow-box-title">&#x1F4BB; main</div><div class="flow-box-sub">quando pronto</div></div></div>',
+    desc: '<strong>git fetch</strong> baixa as mudanças do remoto para um cache local (<strong>origin/main</strong>) sem tocar no seu código. Você pode inspecionar com <code style="background:rgba(240,80,51,.1);color:#a02010;padding:1px 5px;border-radius:4px;font-family:\'JetBrains Mono\',monospace;font-size:12px">git log origin/main</code> e só mesclar quando quiser. Mais seguro que pull direto.'
+  },
+  stash: {
+    flow: '<div class="flow-area"><div class="flow-box"><div class="flow-box-title">&#x270F;&#xFE0F; Working Dir</div><div class="flow-box-sub">mudanças não commitadas</div></div><div style="text-align:center"><div class="flow-label">git stash</div><div style="font-size:26px;color:var(--accent)">&#x2192;</div></div><div class="flow-box"><div class="flow-box-title">&#x1F9F3; Stash Stack</div><div class="flow-box-sub">salvo temporariamente</div></div><div style="text-align:center"><div class="flow-label">git stash pop</div><div style="font-size:26px;color:var(--accent)">&#x2192;</div></div><div class="flow-box"><div class="flow-box-title">&#x270F;&#xFE0F; Working Dir</div><div class="flow-box-sub">restaurado</div></div></div>',
+    desc: '<strong>git stash</strong> guarda temporariamente as mudanças não commitadas, limpando o working directory. Útil quando você precisa trocar de branch urgentemente. <strong>git stash pop</strong> restaura o último estado salvo e o remove da pilha. Use <code style="background:rgba(240,80,51,.1);color:#a02010;padding:1px 5px;border-radius:4px;font-family:\'JetBrains Mono\',monospace;font-size:12px">git stash list</code> para ver todos os stashes.'
+  },
+  revert: {
+    flow: '<div class="flow-area"><div class="flow-box"><div class="flow-box-title">&#x1F4DC; Commit A</div><div class="flow-box-sub">commit com erro</div></div><div style="text-align:center"><div class="flow-label">git revert A</div><div style="font-size:26px;color:var(--accent)">&#x2192;</div></div><div class="flow-box"><div class="flow-box-title">&#x2705; Commit B</div><div class="flow-box-sub">desfaz commit A</div></div></div>',
+    desc: '<strong>git revert &lt;hash&gt;</strong> cria um <strong>novo commit</strong> que desfaz as mudanças do commit indicado. O histórico não é reescrito — o commit problemático continua lá, mas um novo commit o cancela. É o método seguro para desfazer em branches públicas/compartilhadas.'
+  }
+};
+
+function showRemote(key, btn) {
+  document.querySelectorAll('#gsimulador3 .sim-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const r = remotes[key];
+  document.getElementById('remoteFlow').innerHTML =
+    r.flow + '<p class="flow-desc" style="margin-top:14px">' + r.desc + '</p>';
+}
+
+/* ── EXERCÍCIOS — AULA 01 ───────────────────────────────────────────────── */
+let score1 = 0;
+const feedbacksOk1 = [
+  'Correto! <strong>git init</strong> inicializa um repositório Git vazio na pasta atual, criando a pasta oculta <strong>.git/</strong>.',
+  'Correto! <strong>git add .</strong> adiciona todos os arquivos modificados e novos ao staging de uma só vez.',
+  'Correto! A Staging Area (Index) &eacute; onde as altera&ccedil;&otilde;es ficam "prontas" antes de serem salvas permanentemente com o commit.',
+  'Correto! <strong>git commit --amend</strong> reescreve o último commit &mdash; mas use apenas ANTES do push, pois altera o histórico.',
+  'Correto! <strong>--oneline --graph --all</strong> mostra um grafo ASCII compacto de todos os commits e branches do repositório.'
+];
+const feedbacksErr1 = [
+  'Incorreto. O comando correto é <strong>git init</strong>. Comandos como "git start", "git create" ou "git new" não existem.',
+  'Incorreto. <strong>git add .</strong> adiciona tudo ao staging. O <strong>git commit -a</strong> pula o staging para arquivos já rastreados, mas não adiciona novos arquivos.',
+  'Incorreto. A Staging Area prepara as mudanças para o próximo commit. Backups remotos são responsabilidade do <strong>git push</strong>.',
+  'Incorreto. <strong>git revert</strong> cria um novo commit de desfazer (seguro após push). O <strong>--amend</strong> é o correto para corrigir o último commit antes do push.',
+  'Incorreto. Não existem flags <strong>--verbose --tree</strong>, <strong>--short --visual</strong> ou <strong>--compact --branches</strong>. A combinação correta é <strong>--oneline --graph --all</strong>.'
+];
+
+function answer1(i, btn, isCorrect) {
+  const block = document.getElementById('ex1-' + i);
+  block.querySelectorAll('.choice').forEach(c => c.disabled = true);
+  const fb = document.getElementById('fb1-' + i);
+  if (isCorrect) {
+    btn.classList.add('correct');
+    fb.classList.add('show', 'ok');
+    fb.innerHTML = '&#x2705; ' + feedbacksOk1[i];
+    block.classList.add('done');
+    score1++;
+    document.getElementById('scoreVal1').textContent = score1;
+    document.getElementById('scoreBar1').style.width = (score1 / 5 * 100) + '%';
+  } else {
+    btn.classList.add('wrong');
+    fb.classList.add('show', 'ko');
+    fb.innerHTML = '&#x274C; ' + feedbacksErr1[i];
+  }
+}
+
+/* ── EXERCÍCIOS — AULA 02 ───────────────────────────────────────────────── */
+let score2 = 0;
+const feedbacksOk2 = [
+  'Correto! <strong>git checkout -b feature/login</strong> (ou <strong>git switch -c feature/login</strong>) cria e já ativa a nova branch em um único comando.',
+  'Correto! O rebase reescreve o histórico, criando novos hashes para os commits. Isso conflita com o histórico que outros já baixaram, causando problemas na equipe.',
+  'Correto! Estando em <strong>main</strong>, você usa <strong>git merge feature/pagamento</strong> para trazer as mudanças da feature para a branch atual.',
+  'Correto! No fast-forward, como main não teve commits novos, o Git simplesmente move o ponteiro de main para o último commit da feature &mdash; sem criar merge commit.',
+  'Correto! A branch <strong>main</strong> (ou master) representa o estado de produção. Commits diretos aqui podem introduzir código não revisado em produção.'
+];
+const feedbacksErr2 = [
+  'Incorreto. <strong>git branch -new</strong> não existe. O correto é <strong>git checkout -b</strong> ou <strong>git switch -c</strong> para criar e trocar de uma vez.',
+  'Incorreto. O rebase não é sempre seguro. Quando usado em branches já publicadas, reescreve hashes que outros desenvolvedores já têm, causando históricos divergentes.',
+  'Incorreto. <strong>git merge main</strong> traria commits de main PARA a branch atual (invertido). Você precisa estar em main e mergear a feature.',
+  'Incorreto. O fast-forward não usa rebase. Ele simplesmente move o ponteiro de main para frente, porque não houve divergência de histórico.',
+  'Incorreto. A branch <strong>main</strong> é quem não recebe commits diretos. Branches feature e hotfix são criadas exatamente para isolar o desenvolvimento.'
+];
+
+function answer2(i, btn, isCorrect) {
+  const block = document.getElementById('ex2-' + i);
+  block.querySelectorAll('.choice').forEach(c => c.disabled = true);
+  const fb = document.getElementById('fb2-' + i);
+  if (isCorrect) {
+    btn.classList.add('correct');
+    fb.classList.add('show', 'ok');
+    fb.innerHTML = '&#x2705; ' + feedbacksOk2[i];
+    block.classList.add('done');
+    score2++;
+    document.getElementById('scoreVal2').textContent = score2;
+    document.getElementById('scoreBar2').style.width = (score2 / 5 * 100) + '%';
+  } else {
+    btn.classList.add('wrong');
+    fb.classList.add('show', 'ko');
+    fb.innerHTML = '&#x274C; ' + feedbacksErr2[i];
+  }
+}
+
+/* ── EXERCÍCIOS — AULA 03 ───────────────────────────────────────────────── */
+let score3 = 0;
+const feedbacksOk3 = [
+  'Correto! <strong>git fetch</strong> baixa as mudanças do remoto para um cache local sem tocar no seu código. Você decide quando e se mescla.',
+  'Correto! <strong>git revert</strong> cria um novo commit que desfaz o anterior, sem reescrever o histórico. É o único método seguro para branches públicas.',
+  'Correto! <strong>git stash</strong> salva temporariamente as mudanças não commitadas, limpando o working directory para que você possa trocar de branch.',
+  'Correto! <strong>git remote -v</strong> lista os repositórios remotos configurados (geralmente "origin") com suas URLs de fetch e push.',
+  'Correto! <strong>--mixed</strong> é o modo padrão do git reset: move o HEAD e limpa o staging, mas mantém os arquivos modificados no working directory.'
+];
+const feedbacksErr3 = [
+  'Incorreto. <strong>git pull</strong> = fetch + merge automático. <strong>git fetch</strong> é o que busca sem mesclar. <strong>git sync</strong> e <strong>git download</strong> não existem.',
+  'Incorreto. <strong>git reset --hard</strong> reescreve o histórico &mdash; perigoso em histórico público. <strong>git revert</strong> é a forma segura que preserva o histórico.',
+  'Incorreto. <strong>git stash</strong> é o comando correto para guardar mudanças temporariamente. Fazer "commit WIP" funciona, mas é uma prática ruim que suja o histórico.',
+  'Incorreto. <strong>git remote -v</strong> mostra os remotos (URLs), não o histórico de commits nem as branches. Para ver branches remotas, use <strong>git branch -r</strong>.',
+  'Incorreto. <strong>--hard</strong> apaga as mudanças (perigoso). <strong>--soft</strong> mantém tudo no staging. <strong>--mixed</strong> (padrão) mantém no working directory mas limpa o staging. <strong>--safe</strong> não existe.'
+];
+
+function answer3(i, btn, isCorrect) {
+  const block = document.getElementById('ex3-' + i);
+  block.querySelectorAll('.choice').forEach(c => c.disabled = true);
+  const fb = document.getElementById('fb3-' + i);
+  if (isCorrect) {
+    btn.classList.add('correct');
+    fb.classList.add('show', 'ok');
+    fb.innerHTML = '&#x2705; ' + feedbacksOk3[i];
+    block.classList.add('done');
+    score3++;
+    document.getElementById('scoreVal3').textContent = score3;
+    document.getElementById('scoreBar3').style.width = (score3 / 5 * 100) + '%';
+  } else {
+    btn.classList.add('wrong');
+    fb.classList.add('show', 'ko');
+    fb.innerHTML = '&#x274C; ' + feedbacksErr3[i];
+  }
+}
+</script>
+</body>
+</html>

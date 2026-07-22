@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Quiz 01 &mdash; Reposit&oacute;rio e Commits</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#f5f3f0;--surface:#ffffff;--border:#e5ddd8;--accent:#f05033;--accent2:#f9a825;
+  --text:#1a150e;--muted:#8a7f76;--green:#155e35;--green-bg:#d6f5e5;--green-border:#6edaa8;
+  --red:#7a1f1f;--red-bg:#fde8e8;--red-border:#f0a0a0;--radius:10px;
+  --grad:linear-gradient(270deg,#f05033 40%,#f9a825 95%);--surface2:#fff8f5;--danger:#d63030;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;padding:0 0 60px;
+  background-image:radial-gradient(ellipse 70% 40% at 50% -10%,rgba(240,80,51,0.07) 0%,transparent 70%),radial-gradient(ellipse 50% 30% at 80% 110%,rgba(249,168,37,0.06) 0%,transparent 70%);}
+header{text-align:center;padding:32px 20px 24px;border-bottom:1px solid var(--border);position:relative;background:var(--surface);box-shadow:0 2px 16px rgba(240,80,51,0.07);}
+header::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:120px;height:2px;background:linear-gradient(90deg,transparent,#f05033,transparent);}
+.header-logo{height:42px;margin-bottom:12px;display:block;margin-left:auto;margin-right:auto;}
+.logo{font-family:'JetBrains Mono',monospace;font-size:clamp(1.2rem,3vw,1.8rem);font-weight:700;letter-spacing:-0.5px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.logo span{opacity:0.6;}
+.subtitle{color:var(--muted);font-size:.82rem;margin-top:5px;letter-spacing:0.06em;text-transform:uppercase;}
+.header-badge{display:inline-block;margin-top:10px;padding:4px 14px;border-radius:99px;font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;background:linear-gradient(270deg,rgba(240,80,51,.15),rgba(249,168,37,.1));border:1px solid rgba(240,80,51,.3);color:var(--accent);letter-spacing:.06em;}
+.wrap{max-width:720px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.info-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:1.5rem;box-shadow:0 2px 8px rgba(240,80,51,0.06);position:relative;overflow:hidden;}
+.info-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad);}
+.info-title{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.info-sub{font-size:13px;color:var(--muted);margin-bottom:14px;}
+.info-meta{display:flex;gap:10px;flex-wrap:wrap;}
+.meta-tag{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:99px;font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;}
+.meta-green{background:rgba(0,200,150,.12);border:1px solid rgba(0,200,150,.3);color:#0a7a5a;}
+.meta-orange{background:rgba(240,80,51,.12);border:1px solid rgba(240,80,51,.3);color:var(--accent);}
+.meta-amber{background:rgba(249,168,37,.15);border:1px solid rgba(249,168,37,.3);color:#8a6000;}
+.progress-bar-area{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:1.5rem;box-shadow:0 2px 8px rgba(240,80,51,0.06);}
+.progress-text{font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--muted);white-space:nowrap;}
+.progress-track{flex:1;background:#ede8e4;border-radius:99px;height:7px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:99px;background:var(--grad);width:0%;transition:width .35s cubic-bezier(.4,0,.2,1);}
+.q-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem;border-left:3px solid var(--border);box-shadow:0 2px 8px rgba(240,80,51,0.05);transition:border-left-color .2s;}
+.q-block.q-correct{border-left-color:#0a7a5a;}
+.q-block.q-wrong{border-left-color:var(--danger);}
+.q-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;}
+.q-num{min-width:32px;height:32px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--accent);flex-shrink:0;}
+.q-text{font-size:14px;font-weight:500;color:var(--text);line-height:1.6;padding-top:4px;}
+.q-text code{background:rgba(240,80,51,.12);color:#a02010;padding:1px 6px;border-radius:4px;font-size:12px;font-family:'JetBrains Mono',monospace;font-weight:600;}
+.q-choices{display:flex;gap:8px;}
+.q-btn{flex:1;padding:10px 16px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--text);cursor:pointer;font-size:14px;font-family:'JetBrains Mono',monospace;font-weight:700;transition:all .15s;letter-spacing:.03em;}
+.q-btn:hover:not(:disabled){border-color:var(--accent);background:rgba(240,80,51,.06);}
+.q-btn:disabled{cursor:default;opacity:.75;}
+.q-btn.chosen{background:rgba(240,80,51,.12);border-color:var(--accent);color:var(--accent);}
+.q-btn.reveal-correct{background:var(--green-bg)!important;color:#0a7a5a!important;border-color:var(--green-border)!important;}
+.q-btn.reveal-wrong{background:var(--red-bg)!important;color:var(--danger)!important;border-color:var(--red-border)!important;}
+.q-exp{display:none;margin-top:12px;padding:10px 14px;border-radius:var(--radius);font-size:13px;line-height:1.65;}
+.q-exp.ok{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);}
+.q-exp.ko{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);}
+.submit-area{text-align:center;margin:1.5rem 0;}
+.submit-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 40px;border-radius:10px;background:var(--grad);color:#fff;border:none;cursor:pointer;font-size:15px;font-weight:700;font-family:'JetBrains Mono',monospace;transition:opacity .2s,transform .15s;box-shadow:0 4px 18px rgba(240,80,51,.35);}
+.submit-btn:hover{opacity:.88;transform:translateY(-2px);}
+.submit-btn:disabled{opacity:.45;cursor:not-allowed;transform:none;}
+.result-card{display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;text-align:center;margin-bottom:1.5rem;box-shadow:0 2px 8px rgba(240,80,51,0.06);position:relative;overflow:hidden;}
+.result-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad);}
+.result-score{font-family:'JetBrains Mono',monospace;font-size:64px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.result-total{font-size:22px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:14px;}
+.result-msg{font-size:15px;color:var(--text);font-weight:600;margin-bottom:20px;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--muted);text-decoration:none;font-size:13px;font-family:'JetBrains Mono',monospace;font-weight:600;transition:all .15s;}
+.back-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(240,80,51,.06);}
+footer{text-align:center;margin-top:3rem;font-size:11px;color:var(--muted);letter-spacing:.04em;}
+footer span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:700;}
+</style>
+</head>
+<body>
+<header>
+  <img class="header-logo" src="https://capacitabrasil.irede.org.br/assets/capacitaLogo-Ct3BEyem.png" alt="Capacita Brasil"/>
+  <div class="logo">&#x1F9F0; <span>//</span> Git</div>
+  <div class="subtitle">Controle de Vers&atilde;o &mdash; Question&aacute;rio</div>
+  <div class="header-badge">Aula 01 &mdash; Reposit&oacute;rio e Commits</div>
+</header>
+<div class="wrap">
+  <div class="info-card">
+    <div class="info-title">&#x2753; Quiz 01 &mdash; Reposit&oacute;rio e Commits</div>
+    <div class="info-sub">Avalie se cada afirma&ccedil;&atilde;o sobre Git, reposit&oacute;rios e commits &eacute; Verdadeira ou Falsa.</div>
+    <div class="info-meta">
+      <span class="meta-tag meta-orange">&#x1F9F0; Git B&aacute;sico</span>
+      <span class="meta-tag meta-green">&#x2705; 10 quest&otilde;es</span>
+      <span class="meta-tag meta-amber">&#x23F1; Verdadeiro/Falso</span>
+    </div>
+  </div>
+
+  <div class="progress-bar-area">
+    <span class="progress-text" id="progText">0 / 10 respondidas</span>
+    <div class="progress-track"><div class="progress-fill" id="progFill"></div></div>
+    <span class="progress-text" id="scoreText">0 acertos</span>
+  </div>
+
+  <div id="q0" class="q-block">
+    <div class="q-header"><div class="q-num">01</div><div class="q-text">Git &eacute; um sistema de controle de vers&atilde;o <strong>distribu&iacute;do</strong>, o que significa que cada desenvolvedor possui uma c&oacute;pia completa do hist&oacute;rico do reposit&oacute;rio.</div></div>
+    <div class="q-choices">
+      <button class="q-btn" onclick="selectAnswer(0,true,this)">V Verdadeiro</button>
+      <button class="q-btn" onclick="selectAnswer(0,false,this)">F Falso</button>
+    </div>
+    <div class="q-exp" id="exp0"></div>
+  </div>
+
+  <div id="q1" class="q-block">
+    <div class="q-header"><div class="q-num">02</div><div class="q-text">O comando <code>git init</code> &eacute; usado para clonar um reposit&oacute;rio remoto para a m&aacute;quina local.</div></div>
+    <div class="q-choices">
+      <button class="q-btn" onclick="selectAnswer(1,true,this)">V Verdadeiro</button>
+      <button class="q-btn" onclick="selectAnswer(1,false,this)">F Falso</button>
+    </div>
+    <div class="q-exp" id="exp1"></div>
+  </div>
+
+  <div id="q2" class="q-block">
+    <div class="q-header"><div class="q-num">03</div><div class="q-text">A pasta oculta <code>.git/</code> criada pelo <code>git init</code> cont&eacute;m todo o hist&oacute;rico de commits, branches e configura&ccedil;&otilde;es do reposit&oacute;rio.</div></div>
+    <div class="q-choices">
+      <button class="q-btn" onclick="selectAnswer(2,true,this)">V Verdadeiro</button>
+      <button class="q-btn" onclick="selectAnswer(2,false,this)">F Falso</button>
+    </div>
+    <div class="q-exp" id="exp2"></div>
+  </div>
+
+  <div id="q3" class="q-block">
+    <div class="q-header"><div class="q-num">04</div><div class="q-text">O HEAD no Git &eacute; um ponteiro especial que normalmente aponta para o &uacute;ltimo commit da branch ativa.</div></div>
+    <div class="q-choices">
+      <button class="q-btn" onclick="selectAnswer(3,true,this)">V Verdadeiro</button>
+      <button class="q-btn" onclick="selectAnswer(3,false,this)">F Falso</button>
+    </div>
+    <div class="q-exp" id="exp3"></div>
+  </div>
+
+  <div id="q4" class="q-block">
+    <div class="q-header"><div class="q-num">05</div><div class="q-text">O comando <code>git status</code> &eacute; usado para criar um novo commit com as altera&ccedil;&otilde;es da Staging Area.</div></div>
+    <div class="q-choices">
+      <button class="q-btn" onclick="selectAnswer(4,true,this)">V Verdadeiro</button>
+      <button class="q-btn" onclick="selectAnswer(4,false,this)">F Falso</button>
+    </div>
+    <div class="q-exp" id="exp4"></div>
+  </div>
+
+  <div id="q5" class="q-block">
+    <div class="q-header"><div class="q-num">06</div><div class="q-text">A Staging Area (tamb&eacute;m chamada de Index) &eacute; a &aacute;rea onde as altera&ccedil;&otilde;es s&atilde;o preparadas antes de serem registradas permanentemente em um commit.</div></div>
+    <div class="q-choices">
+      <button class="q-btn" onclick="selectAnswer(5,true,this)">V Verdadeiro</button>
+      <button class="q-btn" onclick="selectAnswer(5,false,this)">F Falso</button>
+    </div>
+    <div class="q-exp" id="exp5"></div>
+  </div>
+
+  <div id="q6" class="q-block">
+    <div class="q-header"><div class="q-num">07</div><div class="q-text">O comando <code>git add .</code> adiciona ao staging apenas os arquivos da pasta raiz do projeto, ignorando subpastas.</div></div>
+    <div class="q-choices">
+      <button class="q-btn" onclick="selectAnswer(6,true,this)">V Verdadeiro</button>
+      <button class="q-btn" onclick="selectAnswer(6,false,this)">F Falso</button>
+    </div>
+    <div class="q-exp" id="exp6"></div>
+  </div>
+
+  <div id="q7" class="q-block">
+    <div class="q-header"><div class="q-num">08</div><div class="q-text">Cada commit no Git recebe um identificador &uacute;nico de 40 caracteres hexadecimais, calculado com base no conte&uacute;do, autor e data.</div></div>
+    <div class="q-choices">
+      <button class="q-btn" onclick="selectAnswer(7,true,this)">V Verdadeiro</button>
+      <button class="q-btn" onclick="selectAnswer(7,false,this)">F Falso</button>
+    </div>
+    <div class="q-exp" id="exp7"></div>
+  </div>
+
+  <div id="q8" class="q-block">
+    <div class="q-header"><div class="q-num">09</div><div class="q-text">O comando <code>git commit --amend</code> &eacute; seguro de usar mesmo ap&oacute;s fazer <code>git push</code>, pois n&atilde;o altera o hist&oacute;rico remoto.</div></div>
+    <div class="q-choices">
+      <button class="q-btn" onclick="selectAnswer(8,true,this)">V Verdadeiro</button>
+      <button class="q-btn" onclick="selectAnswer(8,false,this)">F Falso</button>
+    </div>
+    <div class="q-exp" id="exp8"></div>
+  </div>
+
+  <div id="q9" class="q-block">
+    <div class="q-header"><div class="q-num">10</div><div class="q-text">Para clonar um reposit&oacute;rio existente do GitHub para a sua m&aacute;quina, o comando correto &eacute; <code>git clone &lt;url&gt;</code>.</div></div>
+    <div class="q-choices">
+      <button class="q-btn" onclick="selectAnswer(9,true,this)">V Verdadeiro</button>
+      <button class="q-btn" onclick="selectAnswer(9,false,this)">F Falso</button>
+    </div>
+    <div class="q-exp" id="exp9"></div>
+  </div>
+
+  <div class="submit-area">
+    <button class="submit-btn" id="submitBtn" onclick="submitQuiz()" disabled>&#x1F4CA; Ver Resultado</button>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-score" id="resultScore">0</div>
+    <div class="result-total">/ 10 acertos</div>
+    <div class="result-msg" id="resultMsg"></div>
+    <a class="back-btn" href="index.html">&#x2190; Voltar para a Aula 01</a>
+  </div>
+</div>
+<footer><p>&#x1F9F0; <span>Git &mdash; Controle de Vers&atilde;o</span> &bull; Capacita Brasil</p></footer>
+<script>
+const ANSWERS=[true,false,true,true,false,true,false,true,false,true];
+const EXPLANATIONS=[
+  ['Correto! O Git &eacute; distribu&iacute;do: cada clone &eacute; um reposit&oacute;rio completo com todo o hist&oacute;rico. N&atilde;o h&aacute; depend&ecirc;ncia de um servidor central para trabalhar.','Incorreto. Git &eacute; distribu&iacute;do: cada desenvolvedor tem uma c&oacute;pia <strong>completa</strong> do hist&oacute;rico. Voc&ecirc; pode commitar, criar branches e ver o log mesmo sem internet.'],
+  ['Incorreto. <code>git init</code> inicializa um reposit&oacute;rio NOVO vazio. Para clonar um reposit&oacute;rio remoto, o comando correto &eacute; <code>git clone &lt;url&gt;</code>.','Correto! <code>git init</code> cria um reposit&oacute;rio novo na pasta atual. Para copiar um reposit&oacute;rio existente, usa-se <code>git clone &lt;url&gt;</code>.'],
+  ['Correto! A pasta <code>.git/</code> &eacute; o pr&oacute;prio reposit&oacute;rio. Apagar essa pasta apaga todo o hist&oacute;rico local. Ela cont&eacute;m objetos, refs, config e muito mais.','Incorreto. A pasta <code>.git/</code> cont&eacute;m <strong>todo</strong> o hist&oacute;rico. Isso &eacute; o que torna o Git distribu&iacute;do &mdash; cada clone carrega uma c&oacute;pia completa.'],
+  ['Correto! O HEAD aponta para a ponta da branch ativa. Quando voc&ecirc; faz um commit, HEAD avan&ccedil;a automaticamente para o novo commit.','Incorreto. O HEAD normalmente aponta para o &uacute;ltimo commit da branch ativa. Ele s&oacute; fica "detached" quando voc&ecirc; faz checkout direto em um commit espec&iacute;fico.'],
+  ['Incorreto. <code>git status</code> apenas <strong>exibe</strong> o estado atual dos arquivos. Para criar um commit, o comando &eacute; <code>git commit -m "mensagem"</code>.','Correto! <code>git status</code> mostra o estado dos arquivos (modified, staged, untracked) mas n&atilde;o altera nada. Commit &eacute; feito com <code>git commit</code>.'],
+  ['Correto! A Staging Area (Index) &eacute; a "zona de prepara&ccedil;&atilde;o". Voc&ecirc; escolhe exatamente quais mudan&ccedil;as entram no pr&oacute;ximo commit usando <code>git add</code>.','Incorreto. A Staging Area &eacute; exatamente isso: a &aacute;rea onde voc&ecirc; prepara (seleciona) as mudan&ccedil;as antes de criar um commit permanente.'],
+  ['Incorreto. <code>git add .</code> adiciona recursivamente <strong>todos</strong> os arquivos modificados e novos, incluindo subpastas. Para a raiz apenas, n&atilde;o h&aacute; uma flag padr&atilde;o simples.','Correto! <code>git add .</code> &eacute; recursivo: adiciona todos os arquivos da pasta atual E de todas as subpastas. Por isso &eacute; o comando mais usado para "adicionar tudo".'],
+  ['Correto! O hash SHA-1 de 40 caracteres &eacute; calculado sobre o conte&uacute;do do commit, autor, data e hash do commit pai. Isso garante integridade e unicidade.','Incorreto. Cada commit tem sim um hash SHA-1 de 40 caracteres &uacute;nico. Na pr&aacute;tica s&atilde;o usados os primeiros 7 caracteres (ex: <code>a3f8c12</code>).'],
+  ['Incorreto. <code>git commit --amend</code> <strong>reescreve</strong> o &uacute;ltimo commit, gerando um novo hash. Ap&oacute;s o push, isso conflita com o hist&oacute;rico de outros colaboradores.','Correto! <code>git commit --amend</code> &eacute; perigoso ap&oacute;s o push. Ele reescreve o commit com um novo hash, causando conflito para quem j&aacute; baixou o commit original.'],
+  ['Correto! <code>git clone &lt;url&gt;</code> copia o reposit&oacute;rio remoto completo (hist&oacute;rico, branches, tags) para a m&aacute;quina local e j&aacute; configura o remote "origin".','Incorreto. Para clonar um reposit&oacute;rio existente, o comando &eacute; <code>git clone &lt;url&gt;</code>. O <code>git init</code> cria um reposit&oacute;rio vazio novo.']
+];
+
+let answered=new Array(10).fill(null);
+let userAnswers=new Array(10).fill(null);
+
+function selectAnswer(idx,val,btn){
+  if(answered[idx]!==null)return;
+  answered[idx]=val;
+  userAnswers[idx]=val;
+  const block=document.getElementById('q'+idx);
+  const btns=block.querySelectorAll('.q-btn');
+  btns.forEach(b=>b.classList.add('chosen'));
+  btn.classList.add('chosen');
+  const total=answered.filter(a=>a!==null).length;
+  document.getElementById('progText').textContent=total+' / 10 respondidas';
+  document.getElementById('progFill').style.width=(total/10*100)+'%';
+  if(total===10)document.getElementById('submitBtn').disabled=false;
+}
+
+function submitQuiz(){
+  let score=0;
+  answered.forEach((ans,i)=>{
+    const correct=ANSWERS[i];
+    const block=document.getElementById('q'+i);
+    const btns=block.querySelectorAll('.q-btn');
+    const exp=document.getElementById('exp'+i);
+    const isCorrect=(ans===correct);
+    if(isCorrect){score++;block.classList.add('q-correct');}else{block.classList.add('q-wrong');}
+    btns.forEach(b=>{
+      b.disabled=true;
+      const btnVal=b.textContent.trim().startsWith('V');
+      if(btnVal===correct)b.classList.add('reveal-correct');
+      else if(b.classList.contains('chosen'))b.classList.add('reveal-wrong');
+    });
+    exp.style.display='block';
+    exp.className='q-exp '+(isCorrect?'ok':'ko');
+    exp.innerHTML=(isCorrect?'&#x2705; ':'&#x274C; ')+EXPLANATIONS[i][isCorrect?0:1];
+  });
+  document.getElementById('scoreText').textContent=score+' acertos';
+  const rc=document.getElementById('resultCard');
+  rc.style.display='block';
+  document.getElementById('resultScore').textContent=score;
+  const msgs=['Vamos revisar o material! &#x1F4DA;','Bom come&ccedil;o, continue estudando! &#x1F4AA;','Indo bem! Revise os erros. &#x1F44D;','&Oacute;timo desempenho! &#x1F31F;','Excelente! Domin&oacute;u o conte&uacute;do! &#x1F3C6;'];
+  document.getElementById('resultMsg').innerHTML=msgs[Math.min(Math.floor(score/2.5),4)];
+  document.getElementById('submitBtn').disabled=true;
+  rc.scrollIntoView({behavior:'smooth',block:'center'});
+}
+</script>
+</body>
+</html>

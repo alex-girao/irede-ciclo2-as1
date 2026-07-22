@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Implementa&ccedil;&atilde;o &mdash; Branches na Pr&aacute;tica</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#f5f3f0;--surface:#ffffff;--border:#e5ddd8;--accent:#f05033;--accent2:#f9a825;--text:#1a150e;--muted:#8a7f76;--green:#155e35;--green-bg:#d6f5e5;--green-border:#6edaa8;--red:#7a1f1f;--red-bg:#fde8e8;--red-border:#f0a0a0;--radius:10px;--grad:linear-gradient(270deg,#f05033 40%,#f9a825 95%);--surface2:#fff8f5;--danger:#d63030;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;padding:0 0 80px;background-image:radial-gradient(ellipse 70% 40% at 50% -10%,rgba(240,80,51,0.07) 0%,transparent 70%),radial-gradient(ellipse 50% 30% at 80% 110%,rgba(249,168,37,0.06) 0%,transparent 70%);}
+header{text-align:center;padding:32px 20px 24px;border-bottom:1px solid var(--border);position:relative;background:var(--surface);box-shadow:0 2px 16px rgba(240,80,51,0.07);}
+header::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:120px;height:2px;background:linear-gradient(90deg,transparent,#f05033,transparent);}
+.header-logo{height:42px;margin-bottom:12px;display:block;margin-left:auto;margin-right:auto;}
+.logo{font-family:'JetBrains Mono',monospace;font-size:clamp(1.2rem,3vw,1.8rem);font-weight:700;letter-spacing:-0.5px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.logo span{opacity:0.6;}
+.subtitle{color:var(--muted);font-size:.82rem;margin-top:5px;letter-spacing:0.06em;text-transform:uppercase;}
+.header-badge{display:inline-block;margin-top:10px;padding:4px 14px;border-radius:99px;font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;background:linear-gradient(270deg,rgba(240,80,51,.15),rgba(249,168,37,.1));border:1px solid rgba(240,80,51,.3);color:var(--accent);letter-spacing:.06em;}
+.wrap{max-width:820px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.info-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:1.5rem;box-shadow:0 2px 8px rgba(240,80,51,0.06);position:relative;overflow:hidden;}
+.info-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad);}
+.info-title{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.info-sub{font-size:13px;color:var(--muted);margin-bottom:14px;}
+.info-meta{display:flex;gap:10px;flex-wrap:wrap;}
+.meta-tag{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:99px;font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;}
+.meta-green{background:rgba(0,200,150,.12);border:1px solid rgba(0,200,150,.3);color:#0a7a5a;}
+.meta-orange{background:rgba(240,80,51,.12);border:1px solid rgba(240,80,51,.3);color:var(--accent);}
+.meta-amber{background:rgba(249,168,37,.15);border:1px solid rgba(249,168,37,.3);color:#8a6000;}
+.progress-area{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 18px;margin-bottom:1.5rem;display:flex;align-items:center;gap:14px;box-shadow:0 2px 8px rgba(240,80,51,0.05);}
+.progress-label{font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--muted);white-space:nowrap;}
+.progress-track{flex:1;height:7px;background:#ede8e4;border-radius:99px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--grad);border-radius:99px;width:0%;transition:width .4s cubic-bezier(.4,0,.2,1);}
+.ex-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:1.25rem;overflow:hidden;box-shadow:0 2px 8px rgba(240,80,51,0.06);}
+.ex-header{padding:1.1rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;}
+.ex-num{min-width:36px;height:36px;border-radius:10px;background:var(--surface2);border:1px solid rgba(240,80,51,.3);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--accent);flex-shrink:0;}
+.ex-title{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--text);flex:1;min-width:160px;line-height:1.4;}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;margin-left:4px;}
+.pill-git{background:rgba(240,80,51,.12);border:1px solid rgba(240,80,51,.3);color:var(--accent);}
+.pill-green{background:rgba(0,200,150,.12);border:1px solid rgba(0,200,150,.3);color:#0a7a5a;}
+.pill-amber{background:rgba(249,168,37,.15);border:1px solid rgba(249,168,37,.3);color:#8a6000;}
+.diff-bar{display:flex;gap:3px;align-items:center;margin-left:auto;flex-shrink:0;}
+.diff-dot{width:8px;height:8px;border-radius:50%;background:#ede8e4;}
+.diff-dot.on-green{background:#0a7a5a;}.diff-dot.on-amber{background:#f9a825;}.diff-dot.on-red{background:var(--danger);}
+.ex-body{padding:1.25rem 1.4rem;}
+.enunciado{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:14px;}
+.enunciado strong{color:var(--text);}
+.enunciado code{background:rgba(240,80,51,.1);color:#a02010;padding:1px 6px;border-radius:4px;font-size:12px;font-family:'JetBrains Mono',monospace;font-weight:600;}
+.requisitos{margin-bottom:16px;}
+.req-title{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.06em;font-weight:600;margin-bottom:8px;text-transform:uppercase;}
+.req-list{display:flex;flex-direction:column;gap:5px;}
+.req-item{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--muted);}
+.req-item::before{content:'›';color:var(--accent);font-weight:700;flex-shrink:0;margin-top:1px;}
+.reveal-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 20px;border-radius:8px;border:1.5px solid rgba(240,80,51,.35);background:rgba(240,80,51,.06);color:var(--accent);cursor:pointer;font-size:13px;font-family:'JetBrains Mono',monospace;font-weight:700;transition:all .15s;letter-spacing:.02em;}
+.reveal-btn:hover{background:rgba(240,80,51,.12);border-color:var(--accent);}
+.reveal-btn.revealed{background:rgba(0,200,150,.08);border-color:var(--green-border);color:#0a7a5a;}
+.solution-area{display:none;margin-top:16px;padding-top:16px;border-top:1px dashed var(--border);}
+.solution-area.show{display:block;}
+.code-label{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.06em;font-weight:600;margin-bottom:6px;text-transform:uppercase;}
+.code-block{background:#1a1510;color:#d4cfc9;font-family:'JetBrains Mono',monospace;font-size:12.5px;padding:14px 16px;border-radius:var(--radius);overflow-x:auto;white-space:pre;line-height:1.65;margin-bottom:12px;}
+.gpmt{color:#f05033;font-weight:700;}.gcmd{color:#f9a825;font-weight:600;}.gopt{color:#89b4fa;}.garg{color:#a8d8ea;}.gout{color:#a6e3a1;}.gbr{color:#cba6f7;font-weight:600;}.ghsh{color:#fab387;}.gcmt{color:#6c7086;font-style:italic;}
+.exp-block{background:var(--surface2);border:1px solid rgba(240,80,51,.2);border-radius:var(--radius);padding:12px 16px;font-size:13px;color:var(--muted);line-height:1.65;margin-top:8px;}
+.exp-block strong{color:var(--text);}
+.exp-block code{background:rgba(240,80,51,.1);color:#a02010;padding:1px 5px;border-radius:4px;font-size:12px;font-family:'JetBrains Mono',monospace;font-weight:600;}
+.back-link{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--muted);font-size:13px;font-family:'JetBrains Mono',monospace;font-weight:600;margin-bottom:1.5rem;transition:color .15s;}
+.back-link:hover{color:var(--accent);}
+footer{text-align:center;margin-top:3rem;font-size:11px;color:var(--muted);letter-spacing:.04em;}
+footer span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:700;}
+</style>
+</head>
+<body>
+<header>
+  <img class="header-logo" src="https://capacitabrasil.irede.org.br/assets/capacitaLogo-Ct3BEyem.png" alt="Capacita Brasil"/>
+  <div class="logo">&#x1F9F0; <span>//</span> Git</div>
+  <div class="subtitle">Controle de Vers&atilde;o &mdash; Exerc&iacute;cios de Implementa&ccedil;&atilde;o</div>
+  <div class="header-badge">Aula 02 | Branches e Fus&atilde;o</div>
+</header>
+<div class="wrap">
+  <a class="back-link" href="index.html">&#x2190; Voltar para a Aula 02</a>
+  <div class="info-card">
+    <div class="info-title">&#x1F4BB; Implementa&ccedil;&atilde;o &mdash; Branches na Pr&aacute;tica</div>
+    <div class="info-sub">Aula 02 &mdash; Branches e Fus&atilde;o &nbsp;&#xB7;&nbsp; 10 exerc&iacute;cios de workflow com branches</div>
+    <div class="info-meta">
+      <span class="meta-tag meta-orange">&#x1F333; branch</span>
+      <span class="meta-tag meta-green">&#x2194;&#xFE0F; merge</span>
+      <span class="meta-tag meta-amber">&#x1F500; rebase</span>
+    </div>
+  </div>
+  <div class="progress-area">
+    <span class="progress-label" id="revealedCount">0 / 10 revelados</span>
+    <div class="progress-track"><div class="progress-fill" id="progressBar"></div></div>
+  </div>
+
+  <!-- 01 -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-num">01</div>
+      <div class="ex-title">CriarFeatureBranch <span class="pill pill-git">git checkout -b</span></div>
+      <div class="diff-bar"><div class="diff-dot on-green"></div><div class="diff-dot"></div><div class="diff-dot"></div></div>
+    </div>
+    <div class="ex-body">
+      <div class="enunciado">Voc&ecirc; est&aacute; na branch <code>main</code> e precisa iniciar o desenvolvimento de uma nova funcionalidade de cadastro de usu&aacute;rios. <strong>Crie uma branch</strong> chamada <code>feature/cadastro-usuario</code> e j&aacute; troque para ela.</div>
+      <div class="requisitos">
+        <div class="req-title">O que fazer</div>
+        <div class="req-list">
+          <div class="req-item">Criar e trocar para a nova branch em um comando</div>
+          <div class="req-item">Confirmar em qual branch voc&ecirc; est&aacute;</div>
+        </div>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(1,this)">&#x1F441;&#xFE0F; Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol1">
+        <div class="code-label">Comandos</div>
+        <div class="code-block"><span class="gcmt"># Opção clássica</span>
+<span class="gpmt">$</span> <span class="gcmd">git checkout</span> <span class="gopt">-b</span> <span class="gbr">feature/cadastro-usuario</span>
+<span class="gout">Switched to a new branch 'feature/cadastro-usuario'</span>
+
+<span class="gcmt"># Opção moderna (Git 2.23+)</span>
+<span class="gpmt">$</span> <span class="gcmd">git switch</span> <span class="gopt">-c</span> <span class="gbr">feature/cadastro-usuario</span>
+
+<span class="gcmt"># Confirmar branch atual</span>
+<span class="gpmt">$</span> <span class="gcmd">git branch</span>
+<span class="gout">* feature/cadastro-usuario</span>
+<span class="gout">  main</span></div>
+        <div class="exp-block">O asterisco (<code>*</code>) no <strong>git branch</strong> indica a branch ativa. O flag <code>-b</code> (checkout) ou <code>-c</code> (switch) combina criar e trocar em um s&oacute; comando.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-num">02</div>
+      <div class="ex-title">ListarBranches <span class="pill pill-git">git branch</span></div>
+      <div class="diff-bar"><div class="diff-dot on-green"></div><div class="diff-dot"></div><div class="diff-dot"></div></div>
+    </div>
+    <div class="ex-body">
+      <div class="enunciado">Voc&ecirc; quer ver todas as branches do projeto: as <strong>locais</strong>, as <strong>remotas</strong> e um <strong>resumo de ambas</strong>. Liste-as de tr&ecirc;s formas diferentes.</div>
+      <div class="requisitos">
+        <div class="req-title">O que fazer</div>
+        <div class="req-list">
+          <div class="req-item">Listar apenas branches locais</div>
+          <div class="req-item">Listar apenas branches remotas</div>
+          <div class="req-item">Listar locais e remotas juntas</div>
+        </div>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(2,this)">&#x1F441;&#xFE0F; Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol2">
+        <div class="code-label">Comandos</div>
+        <div class="code-block"><span class="gcmt"># Branches locais</span>
+<span class="gpmt">$</span> <span class="gcmd">git branch</span>
+<span class="gout">* main</span>
+<span class="gout">  feature/login</span>
+
+<span class="gcmt"># Branches remotas</span>
+<span class="gpmt">$</span> <span class="gcmd">git branch</span> <span class="gopt">-r</span>
+<span class="gout">  origin/main</span>
+<span class="gout">  origin/feature/login</span>
+
+<span class="gcmt"># Todas (locais + remotas)</span>
+<span class="gpmt">$</span> <span class="gcmd">git branch</span> <span class="gopt">-a</span>
+<span class="gout">* main</span>
+<span class="gout">  feature/login</span>
+<span class="gout">  remotes/origin/main</span>
+<span class="gout">  remotes/origin/feature/login</span></div>
+        <div class="exp-block"><code>-r</code> = remote, <code>-a</code> = all. As branches remotas aparecem com o prefixo <code>remotes/origin/</code> para diferenciar das locais.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-num">03</div>
+      <div class="ex-title">MergeFeature <span class="pill pill-green">git merge</span></div>
+      <div class="diff-bar"><div class="diff-dot on-green"></div><div class="diff-dot on-amber"></div><div class="diff-dot"></div></div>
+    </div>
+    <div class="ex-body">
+      <div class="enunciado">A feature <code>feature/relatorio-pdf</code> foi conclu&iacute;da e revisada. Agora voc&ecirc; precisa integr&aacute;-la &agrave; branch <code>main</code>. <strong>Fa&ccedil;a o merge</strong> e depois delete a branch de feature.</div>
+      <div class="requisitos">
+        <div class="req-title">O que fazer</div>
+        <div class="req-list">
+          <div class="req-item">Trocar para a branch main</div>
+          <div class="req-item">Fazer o merge da feature</div>
+          <div class="req-item">Deletar a branch de feature (j&aacute; mergeada)</div>
+        </div>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(3,this)">&#x1F441;&#xFE0F; Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol3">
+        <div class="code-label">Comandos</div>
+        <div class="code-block"><span class="gcmt"># Ir para main</span>
+<span class="gpmt">$</span> <span class="gcmd">git switch</span> <span class="gbr">main</span>
+
+<span class="gcmt"># Mergear a feature</span>
+<span class="gpmt">$</span> <span class="gcmd">git merge</span> <span class="gbr">feature/relatorio-pdf</span>
+<span class="gout">Updating a3f8c12..d9e2b47</span>
+<span class="gout">Fast-forward</span>
+<span class="gout"> relatorio/PdfService.java | 87 ++++++++++++</span>
+
+<span class="gcmt"># Deletar branch já mergeada</span>
+<span class="gpmt">$</span> <span class="gcmd">git branch</span> <span class="gopt">-d</span> <span class="gbr">feature/relatorio-pdf</span>
+<span class="gout">Deleted branch feature/relatorio-pdf (was d9e2b47).</span></div>
+        <div class="exp-block">Sempre fa&ccedil;a merge a partir da branch de destino (main). O <code>-d</code> s&oacute; deleta branches j&aacute; mergeadas &mdash; use <code>-D</code> para for&ccedil;ar dele&ccedil;&atilde;o (com cuidado!).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-num">04</div>
+      <div class="ex-title">ResolverConflito <span class="pill pill-amber">merge conflict</span></div>
+      <div class="diff-bar"><div class="diff-dot on-green"></div><div class="diff-dot on-amber"></div><div class="diff-dot on-amber"></div></div>
+    </div>
+    <div class="ex-body">
+      <div class="enunciado">Ao mergear <code>feature/pagamento</code> em <code>main</code>, o Git reporta um conflito em <code>src/Checkout.java</code>. Ambas as branches editaram as mesmas linhas. <strong>Descreva o fluxo completo</strong> de resolu&ccedil;&atilde;o.</div>
+      <div class="requisitos">
+        <div class="req-title">O que fazer</div>
+        <div class="req-list">
+          <div class="req-item">Identificar os arquivos em conflito</div>
+          <div class="req-item">Editar e resolver o conflito manualmente</div>
+          <div class="req-item">Adicionar ao staging e finalizar o merge</div>
+        </div>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(4,this)">&#x1F441;&#xFE0F; Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol4">
+        <div class="code-label">Fluxo de resolu&ccedil;&atilde;o</div>
+        <div class="code-block"><span class="gpmt">$</span> <span class="gcmd">git merge</span> <span class="gbr">feature/pagamento</span>
+<span class="gout">CONFLICT (content): Merge conflict in src/Checkout.java</span>
+<span class="gout">Automatic merge failed; fix conflicts and then commit the result.</span>
+
+<span class="gcmt"># Ver quais arquivos têm conflito</span>
+<span class="gpmt">$</span> <span class="gcmd">git status</span>
+<span class="gout">both modified:   src/Checkout.java</span>
+
+<span class="gcmt"># O arquivo terá marcadores como:</span>
+<span class="gcmt"># &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</span>
+<span class="gcmt"># código da main</span>
+<span class="gcmt"># =======</span>
+<span class="gcmt"># código da feature</span>
+<span class="gcmt"># &gt;&gt;&gt;&gt;&gt;&gt;&gt; feature/pagamento</span>
+
+<span class="gcmt"># Após editar e resolver o conflito:</span>
+<span class="gpmt">$</span> <span class="gcmd">git add</span> <span class="garg">src/Checkout.java</span>
+<span class="gpmt">$</span> <span class="gcmd">git commit</span>
+<span class="gout">[main e4a1b23] Merge branch 'feature/pagamento'</span></div>
+        <div class="exp-block">Os marcadores <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code>, <code>=======</code>, <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code> delimitam o conflito. Edite o arquivo mantendo o c&oacute;digo correto e removendo todos os marcadores antes do <code>git add</code>. IDEs modernas facilitam isso com painéis visuais.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-num">05</div>
+      <div class="ex-title">RebaseLocal <span class="pill pill-git">git rebase</span></div>
+      <div class="diff-bar"><div class="diff-dot on-green"></div><div class="diff-dot on-amber"></div><div class="diff-dot"></div></div>
+    </div>
+    <div class="ex-body">
+      <div class="enunciado">Voc&ecirc; est&aacute; na branch <code>feature/login</code> e enquanto trabalhava, a <code>main</code> recebeu novos commits. Antes de abrir o PR, voc&ecirc; quer que sua branch <strong>parta dos commits mais recentes da main</strong> (hist&oacute;rico linear).</div>
+      <div class="requisitos">
+        <div class="req-title">O que fazer</div>
+        <div class="req-list">
+          <div class="req-item">Atualizar a main local</div>
+          <div class="req-item">Fazer rebase da feature em cima da main atualizada</div>
+        </div>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(5,this)">&#x1F441;&#xFE0F; Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol5">
+        <div class="code-label">Comandos</div>
+        <div class="code-block"><span class="gcmt"># Atualizar main sem sair da feature branch</span>
+<span class="gpmt">$</span> <span class="gcmd">git fetch</span> <span class="garg">origin</span>
+
+<span class="gcmt"># Fazer rebase da feature em cima da main atualizada</span>
+<span class="gpmt">$</span> <span class="gcmd">git rebase</span> <span class="gbr">origin/main</span>
+<span class="gout">Successfully rebased and updated refs/heads/feature/login.</span>
+
+<span class="gcmt"># Se houver conflitos durante o rebase:</span>
+<span class="gcmt"># 1. Resolver o conflito no arquivo</span>
+<span class="gcmt"># 2. git add &lt;arquivo&gt;</span>
+<span class="gcmt"># 3. git rebase --continue</span>
+<span class="gcmt"># Para cancelar: git rebase --abort</span></div>
+        <div class="exp-block">Use <strong>git fetch origin</strong> antes para ter o estado mais recente do remoto. O rebase &eacute; adequado aqui pois a branch &eacute; local e privada &mdash; n&atilde;o foi publicada ainda. O resultado &eacute; um hist&oacute;rico linear mais f&aacute;cil de ler.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 06 -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-num">06</div>
+      <div class="ex-title">HotfixEmergencial <span class="pill pill-amber">hotfix</span></div>
+      <div class="diff-bar"><div class="diff-dot on-green"></div><div class="diff-dot on-amber"></div><div class="diff-dot on-amber"></div></div>
+    </div>
+    <div class="ex-body">
+      <div class="enunciado">Produ&ccedil;&atilde;o caiu! H&aacute; um bug cr&iacute;tico em <code>main</code>. Voc&ecirc; est&aacute; no meio de uma feature em <code>feature/login</code>. <strong>Fa&ccedil;a o hotfix</strong> sem perder seu trabalho atual.</div>
+      <div class="requisitos">
+        <div class="req-title">O que fazer</div>
+        <div class="req-list">
+          <div class="req-item">Salvar o trabalho atual sem commitar</div>
+          <div class="req-item">Criar branch de hotfix a partir de main</div>
+          <div class="req-item">Corrigir, commitar e mergear em main</div>
+          <div class="req-item">Voltar para a feature e recuperar o trabalho</div>
+        </div>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(6,this)">&#x1F441;&#xFE0F; Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol6">
+        <div class="code-label">Fluxo de hotfix</div>
+        <div class="code-block"><span class="gcmt"># Salvar trabalho atual sem commitar</span>
+<span class="gpmt">$</span> <span class="gcmd">git stash</span>
+<span class="gout">Saved working directory and index state WIP on feature/login</span>
+
+<span class="gcmt"># Criar hotfix a partir de main</span>
+<span class="gpmt">$</span> <span class="gcmd">git switch</span> <span class="gbr">main</span>
+<span class="gpmt">$</span> <span class="gcmd">git switch</span> <span class="gopt">-c</span> <span class="gbr">hotfix/crash-checkout</span>
+
+<span class="gcmt"># Corrigir o bug, commitar</span>
+<span class="gpmt">$</span> <span class="gcmd">git add</span> <span class="garg">.</span>
+<span class="gpmt">$</span> <span class="gcmd">git commit</span> <span class="gopt">-m</span> <span class="garg">"fix: corrige crash no checkout"</span>
+
+<span class="gcmt"># Mergear em main</span>
+<span class="gpmt">$</span> <span class="gcmd">git switch</span> <span class="gbr">main</span>
+<span class="gpmt">$</span> <span class="gcmd">git merge</span> <span class="gbr">hotfix/crash-checkout</span>
+<span class="gpmt">$</span> <span class="gcmd">git branch</span> <span class="gopt">-d</span> <span class="gbr">hotfix/crash-checkout</span>
+
+<span class="gcmt"># Voltar para a feature e recuperar o trabalho</span>
+<span class="gpmt">$</span> <span class="gcmd">git switch</span> <span class="gbr">feature/login</span>
+<span class="gpmt">$</span> <span class="gcmd">git stash pop</span></div>
+        <div class="exp-block"><strong>git stash</strong> guarda o trabalho em andamento. <strong>git stash pop</strong> recupera. O fluxo hotfix &eacute; cl&aacute;ssico: branch de main &rarr; corrige &rarr; merge em main &rarr; merge em develop (para n&atilde;o perder o fix na pr&oacute;xima release).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-num">07</div>
+      <div class="ex-title">MergeNoFastForward <span class="pill pill-git">--no-ff</span></div>
+      <div class="diff-bar"><div class="diff-dot on-green"></div><div class="diff-dot on-amber"></div><div class="diff-dot"></div></div>
+    </div>
+    <div class="ex-body">
+      <div class="enunciado">Ao mergear uma feature branch, voc&ecirc; quer <strong>sempre criar um merge commit</strong>, mesmo que seja poss&iacute;vel um fast-forward. Isso preserva o contexto de qual conjunto de commits veio de qual feature.</div>
+      <div class="requisitos">
+        <div class="req-title">O que fazer</div>
+        <div class="req-list">
+          <div class="req-item">Mergear feature em main for&ccedil;ando a cria&ccedil;&atilde;o de merge commit</div>
+        </div>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(7,this)">&#x1F441;&#xFE0F; Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol7">
+        <div class="code-label">Comandos</div>
+        <div class="code-block"><span class="gpmt">$</span> <span class="gcmd">git switch</span> <span class="gbr">main</span>
+
+<span class="gcmt"># --no-ff força criação de merge commit mesmo em fast-forward</span>
+<span class="gpmt">$</span> <span class="gcmd">git merge</span> <span class="gopt">--no-ff</span> <span class="gbr">feature/dashboard</span> <span class="gopt">-m</span> <span class="garg">"Merge feature/dashboard: adiciona painel de controle"</span>
+<span class="gout">Merge made by the 'recursive' strategy.</span>
+
+<span class="gcmt"># git log mostrará claramente o merge commit</span>
+<span class="gpmt">$</span> <span class="gcmd">git log</span> <span class="gopt">--oneline --graph</span>
+<span class="ghsh">*</span>   <span class="gbr">(HEAD -> main)</span> <span class="gout">Merge feature/dashboard: adiciona painel de controle</span>
+<span class="ghsh">|\\</span>
+<span class="ghsh">| *</span> <span class="gout">Adiciona gr&aacute;ficos ao dashboard</span>
+<span class="ghsh">| *</span> <span class="gout">Cria estrutura do dashboard</span>
+<span class="ghsh">|/</span>
+<span class="ghsh">*</span>   <span class="gout">Commit anterior</span></div>
+        <div class="exp-block"><strong>--no-ff</strong> (no fast-forward) garante que sempre haverá um merge commit. Isso é preferido em muitos projetos para preservar a rastreabilidade de qual feature veio de onde no histórico.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 08 -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-num">08</div>
+      <div class="ex-title">DeletarBranchRemota <span class="pill pill-git">git push --delete</span></div>
+      <div class="diff-bar"><div class="diff-dot on-green"></div><div class="diff-dot on-amber"></div><div class="diff-dot"></div></div>
+    </div>
+    <div class="ex-body">
+      <div class="enunciado">Ap&oacute;s o merge e review do PR, voc&ecirc; precisa deletar a branch <code>feature/relatorio</code> <strong>tanto localmente quanto no reposit&oacute;rio remoto</strong>.</div>
+      <div class="requisitos">
+        <div class="req-title">O que fazer</div>
+        <div class="req-list">
+          <div class="req-item">Deletar a branch local</div>
+          <div class="req-item">Deletar a branch remota</div>
+        </div>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(8,this)">&#x1F441;&#xFE0F; Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol8">
+        <div class="code-label">Comandos</div>
+        <div class="code-block"><span class="gcmt"># Deletar branch local</span>
+<span class="gpmt">$</span> <span class="gcmd">git branch</span> <span class="gopt">-d</span> <span class="gbr">feature/relatorio</span>
+<span class="gout">Deleted branch feature/relatorio (was d9e2b47).</span>
+
+<span class="gcmt"># Deletar branch remota (duas sintaxes equivalentes)</span>
+<span class="gpmt">$</span> <span class="gcmd">git push</span> <span class="garg">origin</span> <span class="gopt">--delete</span> <span class="gbr">feature/relatorio</span>
+<span class="gcmt"># ou:</span>
+<span class="gpmt">$</span> <span class="gcmd">git push</span> <span class="garg">origin</span> <span class="garg">:feature/relatorio</span>
+<span class="gout">To https://github.com/empresa/projeto.git</span>
+<span class="gout"> - [deleted]         feature/relatorio</span></div>
+        <div class="exp-block">A sintaxe <code>git push origin --delete &lt;branch&gt;</code> &eacute; mais leg&iacute;vel. A sintaxe <code>:branch</code> (dois pontos + nome) &eacute; a forma antiga, equivalente. No GitHub/GitLab, voc&ecirc; tamb&eacute;m pode deletar pelo bot&atilde;o na interface do PR.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 09 -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-num">09</div>
+      <div class="ex-title">SquashCommits <span class="pill pill-amber">merge --squash</span></div>
+      <div class="diff-bar"><div class="diff-dot on-green"></div><div class="diff-dot on-amber"></div><div class="diff-dot on-amber"></div></div>
+    </div>
+    <div class="ex-body">
+      <div class="enunciado">A branch <code>feature/importacao-csv</code> tem 8 commits de "WIP" e rascunhos. Ao mergear, voc&ecirc; quer <strong>condensar tudo em um &uacute;nico commit limpo</strong> na main.</div>
+      <div class="requisitos">
+        <div class="req-title">O que fazer</div>
+        <div class="req-list">
+          <div class="req-item">Mergear usando squash para combinar todos os commits</div>
+          <div class="req-item">Criar o commit final com mensagem descritiva</div>
+        </div>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(9,this)">&#x1F441;&#xFE0F; Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol9">
+        <div class="code-label">Comandos</div>
+        <div class="code-block"><span class="gpmt">$</span> <span class="gcmd">git switch</span> <span class="gbr">main</span>
+
+<span class="gcmt"># Squash: combina os commits da feature em staged changes</span>
+<span class="gpmt">$</span> <span class="gcmd">git merge</span> <span class="gopt">--squash</span> <span class="gbr">feature/importacao-csv</span>
+<span class="gout">Squash commit -- not updating HEAD</span>
+<span class="gout">Automatic merge went well; stopped before committing as requested</span>
+
+<span class="gcmt"># Criar o commit final com mensagem limpa</span>
+<span class="gpmt">$</span> <span class="gcmd">git commit</span> <span class="gopt">-m</span> <span class="garg">"feat: adiciona importação de dados via CSV"</span>
+<span class="gout">[main f3c2e11] feat: adiciona importação de dados via CSV</span></div>
+        <div class="exp-block"><strong>--squash</strong> coloca todas as mudan&ccedil;as da feature branch no staging, sem criar o merge commit. Voc&ecirc; ent&atilde;o cria um &uacute;nico commit com a mensagem que deseja. Cuidado: a branch original n&atilde;o &eacute; marcada como mergeada, ent&atilde;o use <code>-D</code> para deletar depois.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10 -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-num">10</div>
+      <div class="ex-title">WorkflowCompleto <span class="pill pill-git">feature flow</span></div>
+      <div class="diff-bar"><div class="diff-dot on-green"></div><div class="diff-dot on-amber"></div><div class="diff-dot on-amber"></div></div>
+    </div>
+    <div class="ex-body">
+      <div class="enunciado">Simule o <strong>ciclo completo de uma feature</strong>: criar branch a partir de main, desenvolver, integrar atualiza&ccedil;&otilde;es de main, mergear e fazer limpeza.</div>
+      <div class="requisitos">
+        <div class="req-title">Passo a passo</div>
+        <div class="req-list">
+          <div class="req-item">Criar branch feature a partir de main</div>
+          <div class="req-item">Fazer commits de desenvolvimento</div>
+          <div class="req-item">Buscar atualiza&ccedil;&otilde;es de main (sem merge autom&aacute;tico)</div>
+          <div class="req-item">Fazer rebase sobre main atualizada</div>
+          <div class="req-item">Mergear em main com merge commit expl&iacute;cito</div>
+          <div class="req-item">Deletar a branch local e remota</div>
+        </div>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(10,this)">&#x1F441;&#xFE0F; Ver solu&ccedil;&atilde;o</button>
+      <div class="solution-area" id="sol10">
+        <div class="code-label">Ciclo completo de feature</div>
+        <div class="code-block"><span class="gcmt"># 1. Criar feature branch</span>
+<span class="gpmt">$</span> <span class="gcmd">git switch</span> <span class="gbr">main</span>
+<span class="gpmt">$</span> <span class="gcmd">git switch</span> <span class="gopt">-c</span> <span class="gbr">feature/notificacoes</span>
+
+<span class="gcmt"># 2. Desenvolver e commitar</span>
+<span class="gpmt">$</span> <span class="gcmd">git add</span> <span class="garg">.</span> <span class="gcmt">&amp;&amp;</span> <span class="gcmd">git commit</span> <span class="gopt">-m</span> <span class="garg">"feat: cria serviço de notificações"</span>
+<span class="gpmt">$</span> <span class="gcmd">git add</span> <span class="garg">.</span> <span class="gcmt">&amp;&amp;</span> <span class="gcmd">git commit</span> <span class="gopt">-m</span> <span class="garg">"feat: adiciona templates de email"</span>
+
+<span class="gcmt"># 3. Buscar atualizações de main sem mesclar</span>
+<span class="gpmt">$</span> <span class="gcmd">git fetch</span> <span class="garg">origin</span>
+
+<span class="gcmt"># 4. Rebase sobre main atualizada</span>
+<span class="gpmt">$</span> <span class="gcmd">git rebase</span> <span class="gbr">origin/main</span>
+
+<span class="gcmt"># 5. Mergear em main com merge commit</span>
+<span class="gpmt">$</span> <span class="gcmd">git switch</span> <span class="gbr">main</span>
+<span class="gpmt">$</span> <span class="gcmd">git pull</span>  <span class="gcmt"># garantir main local atualizada</span>
+<span class="gpmt">$</span> <span class="gcmd">git merge</span> <span class="gopt">--no-ff</span> <span class="gbr">feature/notificacoes</span> <span class="gopt">-m</span> <span class="garg">"Merge feat/notificacoes"</span>
+<span class="gpmt">$</span> <span class="gcmd">git push</span>
+
+<span class="gcmt"># 6. Limpar branches</span>
+<span class="gpmt">$</span> <span class="gcmd">git branch</span> <span class="gopt">-d</span> <span class="gbr">feature/notificacoes</span>
+<span class="gpmt">$</span> <span class="gcmd">git push</span> <span class="garg">origin</span> <span class="gopt">--delete</span> <span class="gbr">feature/notificacoes</span></div>
+        <div class="exp-block">Este &eacute; o fluxo padr&atilde;o adotado por equipes profissionais. O rebase antes do merge garante hist&oacute;rico linear e o <code>--no-ff</code> preserva o contexto da feature. Sempre fa&ccedil;a <code>git pull</code> antes de mergear para evitar conflitos desnecess&aacute;rios.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<footer><p>&#x1F9F0; <span>Git &mdash; Controle de Vers&atilde;o</span> &bull; Capacita Brasil</p></footer>
+<script>
+let revealed=0;
+function toggleSolution(num,btn){
+  const sol=document.getElementById('sol'+num);
+  const isShowing=sol.classList.contains('show');
+  if(!isShowing){
+    sol.classList.add('show');btn.classList.add('revealed');
+    btn.innerHTML='&#x2705; Solu&ccedil;&atilde;o revelada';
+    if(!btn.dataset.counted){btn.dataset.counted='1';revealed++;document.getElementById('revealedCount').textContent=revealed+' / 10 revelados';document.getElementById('progressBar').style.width=(revealed/10*100)+'%';}
+  }else{sol.classList.remove('show');btn.classList.remove('revealed');btn.innerHTML='&#x1F441;&#xFE0F; Ver solu&ccedil;&atilde;o';}
+}
+</script>
+</body>
+</html>
