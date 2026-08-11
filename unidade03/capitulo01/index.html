@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Java &mdash; Cap&iacute;tulo 01 &mdash; Introdu&ccedil;&atilde;o ao Generics</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:          #f0f0f5;
+  --surface:     #ffffff;
+  --border:      #d8d5e8;
+  --accent:      #8d62ff;
+  --accent2:     #00c896;
+  --text:        #1a1730;
+  --muted:       #7a748f;
+  --green:       #155e35;
+  --green-bg:    #d6f5e5;
+  --green-border:#6edaa8;
+  --red:         #7a1f1f;
+  --red-bg:      #fde8e8;
+  --red-border:  #f0a0a0;
+  --radius:      10px;
+  --glow:        0 0 18px rgba(141,98,255,0.15);
+  --grad:        linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
+  --surface2:    #f7f5ff;
+  --mint:        #00c896;
+  --danger:      #d63030;
+  --warn:        #d48a00;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  padding: 0 0 60px;
+  background-image:
+    radial-gradient(ellipse 70% 40% at 50% -10%, rgba(141,98,255,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 30% at 80% 110%, rgba(0,200,150,0.06) 0%, transparent 70%);
+}
+header {
+  text-align: center;
+  padding: 36px 20px 28px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  background: var(--surface);
+  box-shadow: 0 2px 16px rgba(141,98,255,0.07);
+}
+header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 2px;
+  background: linear-gradient(90deg, transparent, #8d62ff, transparent);
+}
+.header-logo { height: 48px; margin-bottom: 14px; display: block; margin-left: auto; margin-right: auto; }
+.logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.logo span { opacity: 0.6; }
+.subtitle { color: var(--muted); font-size: .85rem; margin-top: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
+.header-badge {
+  display: inline-block; margin-top: 12px; padding: 4px 16px; border-radius: 99px;
+  font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace;
+  background: linear-gradient(270deg, rgba(141,98,255,.15), rgba(0,255,188,.1));
+  border: 1px solid rgba(141,98,255,.3); color: var(--accent); letter-spacing: .06em;
+}
+.wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+/* ── AULA TABS ── */
+.aula-bar {
+  display: flex; gap: 4px; margin-bottom: 1.5rem;
+  background: var(--text); border-radius: 14px; padding: 6px;
+  box-shadow: 0 4px 20px rgba(26,23,48,0.18);
+}
+.aula-tab {
+  flex: 1; padding: 12px 20px; border-radius: 10px; border: none;
+  background: transparent; color: rgba(255,255,255,0.45); cursor: pointer;
+  font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+  transition: all .2s; letter-spacing: .02em;
+}
+.aula-tab.active { background: var(--grad); color: #fff; box-shadow: 0 2px 14px rgba(141,98,255,.45); }
+.aula-section { display: none; }
+.aula-section.active { display: block; }
+
+/* ── INNER TABS ── */
+.tab-bar {
+  display: flex; gap: 6px; margin-bottom: 1.5rem; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 14px; padding: 6px;
+  flex-wrap: wrap; box-shadow: 0 2px 10px rgba(141,98,255,0.06);
+}
+.tab {
+  flex: 1; min-width: 120px; padding: 9px 16px; border-radius: var(--radius);
+  border: none; background: transparent; color: var(--muted); cursor: pointer;
+  font-size: 13px; font-weight: 500; font-family: 'Space Grotesk', sans-serif; transition: all .2s;
+}
+.tab:hover:not(.active) { background: rgba(141,98,255,.08); color: var(--text); }
+.tab.active { background: var(--grad); color: #fff; font-weight: 700; box-shadow: 0 2px 12px rgba(141,98,255,.3); }
+.section { display: none; }
+.section.active { display: block; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.5rem; margin-bottom: 1.25rem; position: relative; overflow: hidden;
+  box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(141,98,255,.35), transparent);
+}
+.card-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700;
+  margin-bottom: 1rem; display: flex; align-items: center; gap: 10px; color: var(--text); flex-wrap: wrap;
+}
+.card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+/* ── PILLS ── */
+.pill { display: inline-block; padding: 3px 11px; border-radius: 99px; font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+.pill-grad  { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.3);  color: var(--accent); }
+.pill-green { background: rgba(0,200,150,.12);  border: 1px solid rgba(0,200,150,.3);   color: #0a7a5a; }
+.pill-red   { background: rgba(214,48,48,.1);   border: 1px solid rgba(214,48,48,.25);  color: var(--danger); }
+.pill-amber { background: rgba(212,138,0,.1);   border: 1px solid rgba(212,138,0,.25);  color: var(--warn); }
+.pill-blue  { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.25); color: #5a30cc; }
+.pill-java  { background: rgba(248,152,32,.12); border: 1px solid rgba(248,152,32,.35); color: #9a5000; }
+
+/* ── TABLE ── */
+table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 12px 0; }
+th {
+  background: rgba(141,98,255,.1); padding: 10px 14px; text-align: center;
+  font-weight: 700; font-size: 12px; color: var(--accent);
+  font-family: 'JetBrains Mono', monospace; letter-spacing: .05em; border-bottom: 1px solid var(--border);
+}
+td { padding: 10px 14px; text-align: center; border-bottom: 1px solid rgba(141,98,255,.08); font-size: 13px; font-family: 'JetBrains Mono', monospace; }
+td.left { text-align: left; font-family: 'Space Grotesk', sans-serif; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(141,98,255,.04); }
+
+/* ── CODE BLOCK ── */
+.code-block {
+  background: #1e1e2e; border: 1px solid #3a3a5c; border-radius: 10px;
+  padding: 16px 18px; margin: 12px 0; font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; line-height: 1.8; color: #cdd6f4; overflow-x: auto; white-space: pre;
+}
+.code-block .kw  { color: #cba6f7; }
+.code-block .typ { color: #89b4fa; }
+.code-block .str { color: #a6e3a1; }
+.code-block .num { color: #fab387; }
+.code-block .cmt { color: #6c7086; font-style: italic; }
+.code-block .cls { color: #f5c2e7; }
+.code-block .mtd { color: #89dceb; }
+
+/* ── SCORE BAR ── */
+.score-bar-area {
+  display: flex; align-items: center; gap: 16px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px 18px; margin-bottom: 1.25rem; box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.score-val {
+  font-size: 28px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+  background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.score-label { font-size: 11px; color: var(--muted); }
+.score-track { flex: 1; background: #e5e2f0; border-radius: 99px; height: 8px; overflow: hidden; }
+.score-fill { height: 100%; border-radius: 99px; background: var(--grad); width: 0%; transition: width .4s cubic-bezier(.4,0,.2,1); }
+
+/* ── EXERCISES ── */
+.ex-block {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem; margin-bottom: 1rem; border-left: 3px solid var(--accent);
+  transition: border-left-color .2s; box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.ex-block.done { border-left-color: var(--accent2); }
+.ex-q { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text); line-height: 1.55; }
+.ex-scenario { font-size: 13px; color: var(--muted); margin-bottom: 14px; line-height: 1.55; }
+.choices { display: flex; gap: 8px; flex-wrap: wrap; }
+.choice {
+  padding: 9px 20px; border-radius: 7px; border: 1.5px solid var(--border);
+  background: transparent; color: var(--text); cursor: pointer;
+  font-size: 13px; font-family: 'JetBrains Mono', monospace; font-weight: 600; transition: all .15s;
+}
+.choice:hover:not(:disabled) { background: rgba(141,98,255,.08); border-color: var(--accent); }
+.choice:disabled { cursor: default; }
+.choice.correct { background: var(--green-bg); color: #0a7a5a; border-color: var(--green-border); }
+.choice.wrong   { background: var(--red-bg);   color: var(--danger); border-color: var(--red-border); }
+.feedback { font-size: 13px; margin-top: 12px; padding: 10px 14px; border-radius: var(--radius); display: none; line-height: 1.6; }
+.feedback.show { display: block; }
+.feedback.ok { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.feedback.ko { background: var(--red-bg);   color: var(--red);   border: 1px solid var(--red-border); }
+
+/* ── CURIOSIDADES ── */
+.curi-item { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid rgba(141,98,255,.1); }
+.curi-item:last-of-type { border-bottom: none; }
+.curi-icon {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+  background: linear-gradient(270deg, rgba(141,98,255,.15), rgba(0,200,150,.1));
+  border: 1px solid rgba(141,98,255,.25);
+}
+.curi-title { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-bottom: 4px; color: var(--text); }
+.curi-body { font-size: 13px; color: var(--muted); line-height: 1.65; }
+.curi-body code { background: rgba(141,98,255,.12); color: #5a30cc; padding: 1px 6px; border-radius: 4px; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+
+/* ── LINKS ── */
+.link-item {
+  color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  text-decoration: none; word-break: break-all; transition: color .15s;
+}
+.link-item:hover { color: var(--mint); text-decoration: underline; }
+
+/* ── GRAD BTN ── */
+.grad-btn {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 14px;
+  padding: 10px 22px; border-radius: 8px; background: var(--grad); color: #fff;
+  border: none; cursor: pointer; font-size: 13px; font-weight: 700;
+  font-family: 'JetBrains Mono', monospace; text-decoration: none;
+  transition: opacity .2s, transform .15s; box-shadow: 0 3px 14px rgba(141,98,255,.3);
+}
+.grad-btn:hover { opacity: .88; transform: translateY(-1px); }
+
+/* ── INLINE CODE ── */
+.ic { background: rgba(141,98,255,.12); color: #5a30cc; padding: 1px 7px; border-radius: 4px; font-size: 12px; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+/* ── TYPE PICKER (SIMULADOR) ── */
+.type-btns { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0 14px; }
+.type-btn {
+  padding: 8px 16px; border-radius: 99px; border: 1.5px solid var(--border);
+  background: transparent; font-size: 12px; font-weight: 700; cursor: pointer;
+  font-family: 'JetBrains Mono', monospace; color: var(--muted); transition: all .15s;
+}
+.type-btn:hover { border-color: var(--accent); color: var(--text); }
+.type-btn.active { background: var(--grad); color: #fff; border-color: transparent; box-shadow: 0 2px 10px rgba(141,98,255,.3); }
+
+.output-block {
+  background: #12121e; border: 1px solid #2a2a40; border-radius: 8px;
+  padding: 14px 18px; margin-top: 10px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.8;
+  color: #a6e3a1; overflow-x: auto; white-space: pre;
+}
+.warn-block {
+  background: rgba(212,138,0,.08); border: 1px solid rgba(212,138,0,.25); border-radius: 8px;
+  padding: 10px 14px; margin-top: 10px; font-size: 12px; color: var(--warn); line-height: 1.6;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+footer { text-align: center; margin-top: 3rem; font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+footer span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700; }
+
+@media (max-width: 600px) {
+  .tab { min-width: 80px; font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img class="header-logo" src="https://capacitabrasil.irede.org.br/assets/capacitaLogo-Ct3BEyem.png" alt="Capacita Brasil"/>
+  <div class="logo">&#x2615; <span>//</span> Java</div>
+  <div class="subtitle">Desenvolvimento Java &mdash; Aula Interativa</div>
+  <div class="header-badge">Unidade 03 &mdash; Cap&iacute;tulo 01 &mdash; Introdu&ccedil;&atilde;o ao Generics</div>
+</header>
+
+<div class="wrap">
+
+  <div class="aula-bar">
+    <button class="aula-tab active">&#x1F9EC; Cap&iacute;tulo 01 &mdash; Introdu&ccedil;&atilde;o ao Generics</button>
+  </div>
+
+  <div id="aula01" class="aula-section active">
+
+  <div class="tab-bar">
+    <button class="tab active"  onclick="showTab('resumo1',this)">&#x1F4D8; Resumo</button>
+    <button class="tab"         onclick="showTab('simulador1',this)">&#x26A1; Simulador</button>
+    <button class="tab"         onclick="showTab('exercicios1',this)">&#x1F3AF; Exercícios</button>
+    <button class="tab"         onclick="showTab('questionarios1',this)">&#x1F4DD; Questionários</button>
+    <button class="tab"         onclick="showTab('curiosidades1',this)">&#x1F680; Curiosidades</button>
+    <button class="tab"         onclick="showTab('links1',this)">&#x1F517; Links</button>
+  </div>
+
+  <!-- ═══ RESUMO ═══ -->
+  <div id="resumo1" class="section active">
+
+    <!-- Card 1: Introdução -->
+    <div class="card">
+      <div class="card-title">O que são Generics? <span class="pill pill-java">Tipos Parametrizados</span></div>
+      <p>Até agora, usamos classes e métodos que operam com <strong style="color:var(--text)">tipos específicos</strong> ou com o tipo <code class="ic">Object</code>.</p>
+      <p style="margin-top:10px"><strong style="color:var(--text)">Problema sem Generics:</strong> erros por conversões erradas de tipo (cast) e código menos seguro e menos reutilizável.</p>
+      <p style="margin-top:8px"><strong style="color:var(--text)">Solução com Generics:</strong> código mais seguro — sem necessidade de cast — e reutilizável, já que uma mesma classe ou método pode funcionar para qualquer tipo.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+        <span class="pill pill-grad">Tipo Parametrizado &lt;T&gt;</span>
+        <span class="pill pill-green">Segurança de Tipo</span>
+        <span class="pill pill-blue">Reutilização</span>
+        <span class="pill pill-java">Sem Cast</span>
+      </div>
+    </div>
+
+    <!-- Card 2: Motivação -->
+    <div class="card">
+      <div class="card-title">Motivação &mdash; Sem Generics vs. Com Generics <span class="pill pill-grad">Comparação</span></div>
+      <p>Um <code class="ic">ArrayList</code> sem tipo definido aceita <strong style="color:var(--text)">qualquer tipo de objeto</strong>. Para recuperar um valor, é preciso fazer um <em>cast</em> — e se o cast estiver errado, o programa quebra em <strong style="color:var(--text)">tempo de execução</strong>.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">
+        <div>
+          <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:6px;letter-spacing:.06em">SEM GENERICS &mdash; RISCO DE ERRO</div>
+          <div class="code-block" style="font-size:12px"><span class="typ">ArrayList</span> lista =
+    <span class="kw">new</span> <span class="typ">ArrayList</span>();
+lista.<span class="mtd">add</span>(<span class="str">"Texto"</span>);
+
+<span class="cmt">// precisamos fazer cast</span>
+<span class="typ">String</span> s = (<span class="typ">String</span>)
+    lista.<span class="mtd">get</span>(<span class="num">0</span>);
+System.out.<span class="mtd">println</span>(s);</div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:6px;letter-spacing:.06em">COM GENERICS &mdash; SEGURO</div>
+          <div class="code-block" style="font-size:12px"><span class="typ">ArrayList</span>&lt;<span class="typ">String</span>&gt; lista =
+    <span class="kw">new</span> <span class="typ">ArrayList</span>&lt;&gt;();
+lista.<span class="mtd">add</span>(<span class="str">"Texto"</span>);
+
+<span class="cmt">// sem necessidade de cast!</span>
+<span class="typ">String</span> s = lista.<span class="mtd">get</span>(<span class="num">0</span>);
+System.out.<span class="mtd">println</span>(s);</div>
+        </div>
+      </div>
+      <p style="margin-top:10px"><strong style="color:var(--text)">Vantagens dos Generics:</strong> evita conversões desnecessárias · garante que apenas o tipo correto seja armazenado · deixa o código mais limpo e fácil de manter.</p>
+    </div>
+
+    <!-- Card 3: Classes Genéricas -->
+    <div class="card">
+      <div class="card-title">Criação de Classes Genéricas <span class="pill pill-blue">class Caixa&lt;T&gt;</span></div>
+      <p>Uma classe genérica declara um <strong style="color:var(--text)">parâmetro de tipo</strong> — por convenção chamado <code class="ic">T</code> — que só é definido na hora de <strong style="color:var(--text)">criar o objeto</strong>.</p>
+      <div class="code-block" style="margin-top:14px"><span class="kw">public class</span> <span class="cls">Caixa</span>&lt;T&gt; { <span class="cmt">// classe genérica com parâmetro de tipo &lt;T&gt;</span>
+    <span class="kw">private</span> T item;
+
+    <span class="kw">public void</span> <span class="mtd">guardar</span>(T item) {
+        <span class="kw">this</span>.item = item;
+    }
+
+    <span class="kw">public</span> T <span class="mtd">abrir</span>() {
+        <span class="kw">return</span> item;
+    }
+}</div>
+      <p style="margin-top:10px"><strong style="color:var(--text)">Usando <code class="ic">Caixa&lt;T&gt;</code>:</strong></p>
+      <div class="code-block"><span class="cls">Caixa</span>&lt;<span class="typ">String</span>&gt; caixa1 = <span class="kw">new</span> <span class="cls">Caixa</span>&lt;&gt;();
+caixa1.<span class="mtd">guardar</span>(<span class="str">"Livro"</span>);
+System.out.<span class="mtd">println</span>(<span class="str">"Item guardado: "</span> + caixa1.<span class="mtd">abrir</span>());
+
+<span class="cls">Caixa</span>&lt;<span class="typ">Integer</span>&gt; caixa2 = <span class="kw">new</span> <span class="cls">Caixa</span>&lt;&gt;();
+caixa2.<span class="mtd">guardar</span>(<span class="num">123</span>);
+System.out.<span class="mtd">println</span>(<span class="str">"Item guardado: "</span> + caixa2.<span class="mtd">abrir</span>());</div>
+      <p style="margin-top:8px"><strong style="color:var(--text)">Código reutilizável:</strong> <code class="ic">Caixa</code> funciona para qualquer tipo. <strong style="color:var(--text)">Segurança de tipo:</strong> <code class="ic">caixa1</code> só aceita <code class="ic">String</code> e <code class="ic">caixa2</code> só aceita <code class="ic">Integer</code>.</p>
+    </div>
+
+    <!-- Card 4: Métodos Genéricos -->
+    <div class="card">
+      <div class="card-title">Métodos Genéricos <span class="pill pill-green">Reutilização</span></div>
+      <p>Podemos criar <strong style="color:var(--text)">métodos genéricos</strong> dentro de classes normais (não genéricas) para realizar operações comuns em qualquer tipo de dado.</p>
+      <div class="code-block" style="margin-top:14px"><span class="kw">public class</span> <span class="cls">Util</span> {
+    <span class="kw">public static</span> &lt;T&gt; <span class="typ">void</span> <span class="mtd">imprimir</span>(T valor) {
+        System.out.<span class="mtd">println</span>(valor);
+    }
+}</div>
+      <p style="margin-top:10px"><strong style="color:var(--text)">Chamando o método:</strong></p>
+      <div class="code-block">Util.<span class="mtd">imprimir</span>(<span class="str">"Olá, mundo!"</span>); <span class="cmt">// String</span>
+Util.<span class="mtd">imprimir</span>(<span class="num">100</span>);           <span class="cmt">// Integer</span>
+Util.<span class="mtd">imprimir</span>(<span class="num">3.14</span>);          <span class="cmt">// Double</span></div>
+      <p style="margin-top:8px"><strong style="color:var(--text)">Vantagens:</strong> são reutilizáveis — aceitam diferentes tipos — e reduzem a duplicação de código.</p>
+    </div>
+
+    <!-- Card 5: Interfaces Genéricas -->
+    <div class="card">
+      <div class="card-title">Interfaces Genéricas <span class="pill pill-java">Contrato Reutilizável</span></div>
+      <p>Interfaces genéricas permitem que diferentes classes sigam um <strong style="color:var(--text)">modelo padrão</strong>, mas para <strong style="color:var(--text)">tipos diferentes</strong>. Um exemplo clássico é um repositório de CRUD (Create, Read, Update, Delete):</p>
+      <div class="code-block" style="margin-top:14px"><span class="kw">public interface</span> <span class="cls">Repositorio</span>&lt;T&gt; { <span class="cmt">// Interface Genérica &lt;T&gt;</span>
+    <span class="typ">void</span> <span class="mtd">salvar</span>(T entidade);          <span class="cmt">// Criar ou salvar uma entidade</span>
+    T <span class="mtd">buscarPorId</span>(<span class="typ">int</span> id);         <span class="cmt">// Buscar por ID</span>
+    <span class="typ">void</span> <span class="mtd">atualizar</span>(T entidade);       <span class="cmt">// Atualizar dados</span>
+    <span class="typ">void</span> <span class="mtd">deletar</span>(<span class="typ">int</span> id);            <span class="cmt">// Remover entidade</span>
+    <span class="typ">List</span>&lt;T&gt; <span class="mtd">listarTodos</span>();       <span class="cmt">// Retornar lista de todas as entidades</span>
+}</div>
+      <p style="margin-top:10px"><strong style="color:var(--text)">Implementação para <code class="ic">Produto</code>:</strong></p>
+      <div class="code-block"><span class="kw">public class</span> <span class="cls">RepositorioDeProdutos</span> <span class="kw">implements</span> <span class="cls">Repositorio</span>&lt;<span class="cls">Produto</span>&gt; {
+    <span class="kw">private</span> <span class="typ">List</span>&lt;<span class="cls">Produto</span>&gt; produtos = <span class="kw">new</span> <span class="typ">ArrayList</span>&lt;&gt;();
+
+    <span class="cmt">@Override</span>
+    <span class="kw">public void</span> <span class="mtd">salvar</span>(<span class="cls">Produto</span> produto) {
+        produtos.<span class="mtd">add</span>(produto);
+    }
+
+    <span class="cmt">@Override</span>
+    <span class="kw">public</span> <span class="cls">Produto</span> <span class="mtd">buscarPorId</span>(<span class="typ">int</span> id) {
+        <span class="kw">return</span> produtos.<span class="mtd">get</span>(id);
+    }
+    <span class="cmt">// ... atualizar(), deletar() e listarTodos() seguem o mesmo princípio</span>
+}</div>
+    </div>
+
+  </div><!-- /resumo1 -->
+
+  <!-- ═══ SIMULADOR ═══ -->
+  <div id="simulador1" class="section">
+
+    <!-- Part 1: Caixa<T> Explorer -->
+    <div class="card">
+      <div class="card-title">&#x1F4E6; Caixa&lt;T&gt; Interativa <span class="pill pill-grad">Explorador de Tipos</span></div>
+      <p style="margin-bottom:4px">Escolha o tipo <code class="ic">T</code> para instanciar a <code class="ic">Caixa&lt;T&gt;</code> e veja o código gerado e a saída no console:</p>
+      <div class="type-btns">
+        <button class="type-btn active" onclick="selectBoxType('String',this)">String</button>
+        <button class="type-btn" onclick="selectBoxType('Integer',this)">Integer</button>
+        <button class="type-btn" onclick="selectBoxType('Double',this)">Double</button>
+      </div>
+      <div class="code-block" id="boxCode" style="min-height:96px"></div>
+      <div class="output-label" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin:12px 0 4px">Saída no console</div>
+      <div class="output-block" id="boxOutput"></div>
+      <div class="warn-block" id="boxWarn"></div>
+    </div>
+
+    <!-- Part 2: Util.imprimir tester -->
+    <div class="card">
+      <div class="card-title">&#x1F6E0; Testador do Método Gen&eacute;rico &mdash; Util.imprimir(T) <span class="pill pill-green">Console Simulado</span></div>
+      <p style="margin-bottom:4px">Clique nos botões para chamar <code class="ic">Util.imprimir(valor)</code> com diferentes tipos e acompanhe a saída se acumulando no console:</p>
+      <div class="type-btns">
+        <button class="type-btn" onclick="testUtilImprimir('String',this)">imprimir("Olá, mundo!")</button>
+        <button class="type-btn" onclick="testUtilImprimir('Integer',this)">imprimir(100)</button>
+        <button class="type-btn" onclick="testUtilImprimir('Double',this)">imprimir(3.14)</button>
+        <button class="type-btn" onclick="testUtilImprimir('Boolean',this)">imprimir(true)</button>
+        <button class="type-btn" onclick="clearUtilOutput()" style="border-style:dashed">&#x1F5D1; Limpar</button>
+      </div>
+      <div class="output-block" id="utilOutput" style="min-height:60px"><span style="color:#6c7086;font-style:italic">// console vazio — clique em um botão acima</span></div>
+    </div>
+
+  </div><!-- /simulador1 -->
+
+  <!-- ═══ EXERCÍCIOS ═══ -->
+  <div id="exercicios1" class="section">
+
+    <div class="score-bar-area">
+      <div>
+        <div class="score-val"><span id="scoreVal1">0</span>/5</div>
+        <div class="score-label">acertos</div>
+      </div>
+      <div style="flex:1">
+        <div class="score-track"><div class="score-fill" id="scoreBar1"></div></div>
+      </div>
+    </div>
+
+    <!-- Ex 1 -->
+    <div class="ex-block" id="ex1-0">
+      <div class="ex-q">Questão 1 &mdash; Generics permitem escrever código que funciona com qualquer tipo, mantendo a segurança de tipos verificada em <strong>tempo de compilação</strong>.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(0,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(0,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-0"></div>
+    </div>
+
+    <!-- Ex 2 -->
+    <div class="ex-block" id="ex1-1">
+      <div class="ex-q">Questão 2 &mdash; Em um <code class="ic">ArrayList</code> <strong>sem</strong> Generics, é possível adicionar qualquer tipo de objeto na mesma lista, sem restrição.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(1,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(1,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-1"></div>
+    </div>
+
+    <!-- Ex 3 -->
+    <div class="ex-block" id="ex1-2">
+      <div class="ex-q">Questão 3 &mdash; Ao usar <code class="ic">ArrayList&lt;String&gt;</code>, não é mais necessário fazer <em>cast</em> ao recuperar um elemento com <code class="ic">get()</code>.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(2,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(2,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-2"></div>
+    </div>
+
+    <!-- Ex 4 -->
+    <div class="ex-block" id="ex1-3">
+      <div class="ex-q">Questão 4 &mdash; Uma classe declarada como <code class="ic">class Caixa&lt;T&gt;</code> só pode ser instanciada usando o tipo <code class="ic">String</code>.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(3,this,false)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(3,this,true)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-3"></div>
+    </div>
+
+    <!-- Ex 5 -->
+    <div class="ex-block" id="ex1-4">
+      <div class="ex-q">Questão 5 &mdash; Em <code class="ic">public static &lt;T&gt; void imprimir(T valor)</code>, o método declara seu <strong>próprio</strong> parâmetro de tipo, mesmo estando dentro de uma classe não genérica.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(4,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(4,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-4"></div>
+    </div>
+
+  </div><!-- /exercicios1 -->
+
+  <!-- ═══ QUESTIONÁRIOS ═══ -->
+  <div id="questionarios1" class="section">
+
+    <div class="card">
+      <div class="card-title">&#x1F4DD; Questionários</div>
+      <p style="margin-bottom:1rem">Teste seu conhecimento com os questionários abaixo. Cada arquivo contém questões de verdadeiro ou falso e exercícios práticos de implementação.</p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a class="grad-btn" href="questionario-u3c1-01.html">&#x1F4CB; Quiz 01 &mdash; Motivação e Fundamentos de Generics</a>
+        <a class="grad-btn" href="questionario-u3c1-02.html" style="background:linear-gradient(270deg,#00c896 0%,#00a0cc 100%)">&#x1F4CB; Quiz 02 &mdash; Classes, Métodos e Interfaces Genéricas</a>
+        <a class="grad-btn" href="questionario-u3c1-03.html" style="background:linear-gradient(270deg,#cba6f7 0%,#8d62ff 100%)">&#x1F6E0; Implementação &mdash; Generics na Prática</a>
+      </div>
+    </div>
+
+  </div><!-- /questionarios1 -->
+
+  <!-- ═══ CURIOSIDADES ═══ -->
+  <div id="curiosidades1" class="section">
+
+    <div class="card">
+      <div class="card-title">&#x1F680; Curiosidades sobre Generics</div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F4C5;</div>
+        <div>
+          <div class="curi-title">Generics chegaram no Java 5 (2004)</div>
+          <div class="curi-body">Antes disso, todo o Java Collections Framework (<code>ArrayList</code>, <code>HashMap</code>, etc.) trabalhava apenas com <code>Object</code>, exigindo cast manual em todo lugar.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F48E;</div>
+        <div>
+          <div class="curi-title">O Diamond Operator <code>&lt;&gt;</code></div>
+          <div class="curi-body">Até o Java 6, era preciso repetir o tipo dos dois lados: <code>ArrayList&lt;String&gt; lista = new ArrayList&lt;String&gt;();</code>. Desde o Java 7 (2011), o compilador infere o tipo: <code>new ArrayList&lt;&gt;();</code></div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F47B;</div>
+        <div>
+          <div class="curi-title">Type Erasure &mdash; os tipos "somem" em tempo de execução</div>
+          <div class="curi-body">O compilador usa a informação de <code>&lt;T&gt;</code> só para checar tipos na compilação, e depois a apaga. Em tempo de execução, <code>Caixa&lt;String&gt;</code> e <code>Caixa&lt;Integer&gt;</code> são exatamente a mesma classe <code>Caixa</code>.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F6AB;</div>
+        <div>
+          <div class="curi-title">Generics não aceitam tipos primitivos</div>
+          <div class="curi-body">Não existe <code>Caixa&lt;int&gt;</code>. É preciso usar o wrapper <code>Caixa&lt;Integer&gt;</code> — o Java converte automaticamente entre <code>int</code> e <code>Integer</code> pelo <em>autoboxing</em>.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x26D4;</div>
+        <div>
+          <div class="curi-title">Não dá para fazer <code>new T()</code></div>
+          <div class="curi-body">Por causa do type erasure, o compilador não sabe qual construtor chamar em tempo de execução — por isso <code>new T()</code> dentro de uma classe genérica é proibido.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F9E9;</div>
+        <div>
+          <div class="curi-title">PECS &mdash; Producer Extends, Consumer Super</div>
+          <div class="curi-body">Regra mnemônica avançada para os wildcards <code>? extends T</code> e <code>? super T</code>, muito usada dentro do próprio Java Collections Framework. Veremos isso em capítulos futuros!</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div><!-- /curiosidades1 -->
+
+  <!-- ═══ LINKS ═══ -->
+  <div id="links1" class="section">
+
+    <div class="card">
+      <div class="card-title">&#x1F517; Links Úteis</div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;margin-top:4px">
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x23EA; Módulo Anterior</div>
+          <a class="link-item" href="../../unidade02/capitulo06/index.html">Unidade 02 &mdash; Capítulo 06 &mdash; Pacotes e Organização</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4D6; Oracle — Generics (Tutorial Oficial)</div>
+          <a class="link-item" href="https://docs.oracle.com/javase/tutorial/java/generics/index.html" target="_blank">https://docs.oracle.com/javase/tutorial/java/generics/index.html</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F9EC; Oracle — Generic Types</div>
+          <a class="link-item" href="https://docs.oracle.com/javase/tutorial/java/generics/types.html" target="_blank">https://docs.oracle.com/javase/tutorial/java/generics/types.html</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x2699; Oracle — Generic Methods</div>
+          <a class="link-item" href="https://docs.oracle.com/javase/tutorial/java/generics/methods.html" target="_blank">https://docs.oracle.com/javase/tutorial/java/generics/methods.html</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F9EA; JDoodle — Compilador Java Online</div>
+          <a class="link-item" href="https://www.jdoodle.com/online-java-compiler/" target="_blank">https://www.jdoodle.com/online-java-compiler/</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4BB; Apache NetBeans IDE</div>
+          <a class="link-item" href="https://netbeans.apache.org/" target="_blank">https://netbeans.apache.org/</a>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /links1 -->
+
+  </div><!-- /aula01 -->
+
+</div><!-- /wrap -->
+
+<footer>
+  Capacita Brasil &mdash; <span>iRede</span> &mdash; Material Interativo de Java
+</footer>
+
+<script>
+function showTab(t, btn) {
+  document.querySelectorAll('#aula01 .section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('#aula01 .tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(t).classList.add('active');
+  btn.classList.add('active');
+}
+
+const BOX_DATA = {
+  String:  { code: '<span class="cls">Caixa</span>&lt;<span class="typ">String</span>&gt; caixa = <span class="kw">new</span> <span class="cls">Caixa</span>&lt;&gt;();\ncaixa.<span class="mtd">guardar</span>(<span class="str">"Livro"</span>);\nSystem.out.<span class="mtd">println</span>(<span class="str">"Item guardado: "</span> + caixa.<span class="mtd">abrir</span>());',
+             output: 'Item guardado: Livro',
+             warn: '&#x26A0; Tentar caixa.guardar(123) aqui geraria erro de compilação: incompatible types: int cannot be converted to String' },
+  Integer: { code: '<span class="cls">Caixa</span>&lt;<span class="typ">Integer</span>&gt; caixa = <span class="kw">new</span> <span class="cls">Caixa</span>&lt;&gt;();\ncaixa.<span class="mtd">guardar</span>(<span class="num">123</span>);\nSystem.out.<span class="mtd">println</span>(<span class="str">"Item guardado: "</span> + caixa.<span class="mtd">abrir</span>());',
+             output: 'Item guardado: 123',
+             warn: '&#x26A0; Tentar caixa.guardar("Livro") aqui geraria erro de compilação: incompatible types: String cannot be converted to Integer' },
+  Double:  { code: '<span class="cls">Caixa</span>&lt;<span class="typ">Double</span>&gt; caixa = <span class="kw">new</span> <span class="cls">Caixa</span>&lt;&gt;();\ncaixa.<span class="mtd">guardar</span>(<span class="num">3.14</span>);\nSystem.out.<span class="mtd">println</span>(<span class="str">"Item guardado: "</span> + caixa.<span class="mtd">abrir</span>());',
+             output: 'Item guardado: 3.14',
+             warn: '&#x26A0; Não existe Caixa&lt;double&gt; — o wrapper Double é obrigatório para tipos genéricos.' }
+};
+
+function selectBoxType(type, btn) {
+  document.querySelectorAll('#simulador1 .type-btns .type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const data = BOX_DATA[type];
+  document.getElementById('boxCode').innerHTML = data.code;
+  document.getElementById('boxOutput').textContent = data.output;
+  document.getElementById('boxWarn').innerHTML = data.warn;
+}
+
+const UTIL_DATA = {
+  String:  'Olá, mundo!',
+  Integer: '100',
+  Double:  '3.14',
+  Boolean: 'true'
+};
+let utilLines = 0;
+
+function testUtilImprimir(type, btn) {
+  const out = document.getElementById('utilOutput');
+  if (utilLines === 0) out.textContent = '';
+  out.textContent += (utilLines > 0 ? '\n' : '') + UTIL_DATA[type];
+  utilLines++;
+}
+
+function clearUtilOutput() {
+  utilLines = 0;
+  document.getElementById('utilOutput').innerHTML = '<span style="color:#6c7086;font-style:italic">// console vazio — clique em um botão acima</span>';
+}
+
+function answer1(i, btn, isCorrect) {
+  const block = document.getElementById('ex1-' + i);
+  const fb = document.getElementById('fb1-' + i);
+  block.querySelectorAll('.choice').forEach(b => b.disabled = true);
+  if (isCorrect) {
+    btn.classList.add('correct');
+    block.classList.add('done');
+    fb.className = 'feedback show ok';
+    fb.textContent = '✓ Correto!';
+    window.score1 = (window.score1 || 0) + 1;
+  } else {
+    btn.classList.add('wrong');
+    fb.className = 'feedback show ko';
+    fb.textContent = '✗ Incorreto. Revise o resumo desta aula.';
+  }
+  document.getElementById('scoreVal1').textContent = window.score1 || 0;
+  document.getElementById('scoreBar1').style.width = ((window.score1 || 0) / 5 * 100) + '%';
+}
+</script>
+
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+  selectBoxType('String', document.querySelector('#simulador1 .type-btn.active'));
+});
+</script>
+</body>
+</html>

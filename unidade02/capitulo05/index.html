@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Java &mdash; Cap&iacute;tulo 05 &mdash; Tratamento de Exce&ccedil;&otilde;es</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:          #f0f0f5;
+  --surface:     #ffffff;
+  --border:      #d8d5e8;
+  --accent:      #8d62ff;
+  --accent2:     #00c896;
+  --text:        #1a1730;
+  --muted:       #7a748f;
+  --green:       #155e35;
+  --green-bg:    #d6f5e5;
+  --green-border:#6edaa8;
+  --red:         #7a1f1f;
+  --red-bg:      #fde8e8;
+  --red-border:  #f0a0a0;
+  --radius:      10px;
+  --glow:        0 0 18px rgba(141,98,255,0.15);
+  --grad:        linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
+  --surface2:    #f7f5ff;
+  --mint:        #00c896;
+  --danger:      #d63030;
+  --warn:        #d48a00;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  padding: 0 0 60px;
+  background-image:
+    radial-gradient(ellipse 70% 40% at 50% -10%, rgba(141,98,255,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 30% at 80% 110%, rgba(0,200,150,0.06) 0%, transparent 70%);
+}
+header {
+  text-align: center;
+  padding: 36px 20px 28px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  background: var(--surface);
+  box-shadow: 0 2px 16px rgba(141,98,255,0.07);
+}
+header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 2px;
+  background: linear-gradient(90deg, transparent, #8d62ff, transparent);
+}
+.header-logo { height: 48px; margin-bottom: 14px; display: block; margin-left: auto; margin-right: auto; }
+.logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.logo span { opacity: 0.6; }
+.subtitle { color: var(--muted); font-size: .85rem; margin-top: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
+.header-badge {
+  display: inline-block; margin-top: 12px; padding: 4px 16px; border-radius: 99px;
+  font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace;
+  background: linear-gradient(270deg, rgba(141,98,255,.15), rgba(0,255,188,.1));
+  border: 1px solid rgba(141,98,255,.3); color: var(--accent); letter-spacing: .06em;
+}
+.wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+/* ── AULA TABS ── */
+.aula-bar {
+  display: flex; gap: 4px; margin-bottom: 1.5rem;
+  background: var(--text); border-radius: 14px; padding: 6px;
+  box-shadow: 0 4px 20px rgba(26,23,48,0.18);
+}
+.aula-tab {
+  flex: 1; padding: 12px 20px; border-radius: 10px; border: none;
+  background: transparent; color: rgba(255,255,255,0.45); cursor: pointer;
+  font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+  transition: all .2s; letter-spacing: .02em;
+}
+.aula-tab.active { background: var(--grad); color: #fff; box-shadow: 0 2px 14px rgba(141,98,255,.45); }
+.aula-section { display: none; }
+.aula-section.active { display: block; }
+
+/* ── INNER TABS ── */
+.tab-bar {
+  display: flex; gap: 6px; margin-bottom: 1.5rem; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 14px; padding: 6px;
+  flex-wrap: wrap; box-shadow: 0 2px 10px rgba(141,98,255,0.06);
+}
+.tab {
+  flex: 1; min-width: 120px; padding: 9px 16px; border-radius: var(--radius);
+  border: none; background: transparent; color: var(--muted); cursor: pointer;
+  font-size: 13px; font-weight: 500; font-family: 'Space Grotesk', sans-serif; transition: all .2s;
+}
+.tab:hover:not(.active) { background: rgba(141,98,255,.08); color: var(--text); }
+.tab.active { background: var(--grad); color: #fff; font-weight: 700; box-shadow: 0 2px 12px rgba(141,98,255,.3); }
+.section { display: none; }
+.section.active { display: block; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.5rem; margin-bottom: 1.25rem; position: relative; overflow: hidden;
+  box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(141,98,255,.35), transparent);
+}
+.card-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700;
+  margin-bottom: 1rem; display: flex; align-items: center; gap: 10px; color: var(--text); flex-wrap: wrap;
+}
+.card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+/* ── PILLS ── */
+.pill { display: inline-block; padding: 3px 11px; border-radius: 99px; font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+.pill-grad  { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.3);  color: var(--accent); }
+.pill-green { background: rgba(0,200,150,.12);  border: 1px solid rgba(0,200,150,.3);   color: #0a7a5a; }
+.pill-red   { background: rgba(214,48,48,.1);   border: 1px solid rgba(214,48,48,.25);  color: var(--danger); }
+.pill-amber { background: rgba(212,138,0,.1);   border: 1px solid rgba(212,138,0,.25);  color: var(--warn); }
+.pill-blue  { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.25); color: #5a30cc; }
+.pill-java  { background: rgba(248,152,32,.12); border: 1px solid rgba(248,152,32,.35); color: #9a5000; }
+
+/* ── TABLE ── */
+table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 12px 0; }
+th {
+  background: rgba(141,98,255,.1); padding: 10px 14px; text-align: center;
+  font-weight: 700; font-size: 12px; color: var(--accent);
+  font-family: 'JetBrains Mono', monospace; letter-spacing: .05em; border-bottom: 1px solid var(--border);
+}
+td { padding: 10px 14px; text-align: center; border-bottom: 1px solid rgba(141,98,255,.08); font-size: 13px; font-family: 'JetBrains Mono', monospace; }
+td.left { text-align: left; font-family: 'Space Grotesk', sans-serif; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(141,98,255,.04); }
+
+/* ── CODE BLOCK ── */
+.code-block {
+  background: #1e1e2e; border: 1px solid #3a3a5c; border-radius: 10px;
+  padding: 16px 18px; margin: 12px 0; font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; line-height: 1.8; color: #cdd6f4; overflow-x: auto; white-space: pre;
+}
+.code-block .kw  { color: #cba6f7; }
+.code-block .typ { color: #89b4fa; }
+.code-block .str { color: #a6e3a1; }
+.code-block .num { color: #fab387; }
+.code-block .cmt { color: #6c7086; font-style: italic; }
+.code-block .cls { color: #f5c2e7; }
+.code-block .mtd { color: #89dceb; }
+
+/* ── SCORE BAR ── */
+.score-bar-area {
+  display: flex; align-items: center; gap: 16px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px 18px; margin-bottom: 1.25rem; box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.score-val {
+  font-size: 28px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+  background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.score-label { font-size: 11px; color: var(--muted); }
+.score-track { flex: 1; background: #e5e2f0; border-radius: 99px; height: 8px; overflow: hidden; }
+.score-fill { height: 100%; border-radius: 99px; background: var(--grad); width: 0%; transition: width .4s cubic-bezier(.4,0,.2,1); }
+
+/* ── EXERCISES ── */
+.ex-block {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem; margin-bottom: 1rem; border-left: 3px solid var(--accent);
+  transition: border-left-color .2s; box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.ex-block.done { border-left-color: var(--accent2); }
+.ex-q { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text); line-height: 1.55; }
+.ex-scenario { font-size: 13px; color: var(--muted); margin-bottom: 14px; line-height: 1.55; }
+.choices { display: flex; gap: 8px; flex-wrap: wrap; }
+.choice {
+  padding: 9px 20px; border-radius: 7px; border: 1.5px solid var(--border);
+  background: transparent; color: var(--text); cursor: pointer;
+  font-size: 13px; font-family: 'JetBrains Mono', monospace; font-weight: 600; transition: all .15s;
+}
+.choice:hover:not(:disabled) { background: rgba(141,98,255,.08); border-color: var(--accent); }
+.choice:disabled { cursor: default; }
+.choice.correct { background: var(--green-bg); color: #0a7a5a; border-color: var(--green-border); }
+.choice.wrong   { background: var(--red-bg);   color: var(--danger); border-color: var(--red-border); }
+.feedback { font-size: 13px; margin-top: 12px; padding: 10px 14px; border-radius: var(--radius); display: none; line-height: 1.6; }
+.feedback.show { display: block; }
+.feedback.ok { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.feedback.ko { background: var(--red-bg);   color: var(--red);   border: 1px solid var(--red-border); }
+
+/* ── CURIOSIDADES ── */
+.curi-item { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid rgba(141,98,255,.1); }
+.curi-item:last-of-type { border-bottom: none; }
+.curi-icon {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+  background: linear-gradient(270deg, rgba(141,98,255,.15), rgba(0,200,150,.1));
+  border: 1px solid rgba(141,98,255,.25);
+}
+.curi-title { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-bottom: 4px; color: var(--text); }
+.curi-body { font-size: 13px; color: var(--muted); line-height: 1.65; }
+.curi-body code { background: rgba(141,98,255,.12); color: #5a30cc; padding: 1px 6px; border-radius: 4px; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+
+/* ── LINKS ── */
+.link-item {
+  color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  text-decoration: none; word-break: break-all; transition: color .15s;
+}
+.link-item:hover { color: var(--mint); text-decoration: underline; }
+
+/* ── GRAD BTN ── */
+.grad-btn {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 14px;
+  padding: 10px 22px; border-radius: 8px; background: var(--grad); color: #fff;
+  border: none; cursor: pointer; font-size: 13px; font-weight: 700;
+  font-family: 'JetBrains Mono', monospace; text-decoration: none;
+  transition: opacity .2s, transform .15s; box-shadow: 0 3px 14px rgba(141,98,255,.3);
+}
+.grad-btn:hover { opacity: .88; transform: translateY(-1px); }
+
+/* ── INLINE CODE ── */
+.ic { background: rgba(141,98,255,.12); color: #5a30cc; padding: 1px 7px; border-radius: 4px; font-size: 12px; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+/* ── CLASS BOX (SIMULADOR) ── */
+.cls-box {
+  background: var(--surface); border: 2px solid var(--accent); border-radius: 12px;
+  overflow: hidden; max-width: 320px;
+}
+.cls-box-header {
+  background: var(--grad); color: #fff; padding: 12px 16px;
+  font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; text-align: center;
+}
+.cls-box-section { border-top: 1px solid var(--border); }
+.cls-box-label {
+  font-size: 10px; color: var(--muted); font-family: 'JetBrains Mono', monospace;
+  letter-spacing: .1em; padding: 8px 14px 4px; text-transform: uppercase;
+}
+.cls-member {
+  display: flex; align-items: center; gap: 10px; padding: 8px 14px; cursor: pointer;
+  transition: background .15s; font-family: 'JetBrains Mono', monospace; font-size: 13px;
+}
+.cls-member:hover { background: rgba(141,98,255,.06); }
+.cls-member.selected { background: rgba(141,98,255,.12); }
+.cls-box-header.selected { box-shadow: inset 0 0 0 3px rgba(255,255,255,.6); }
+.cls-vis {
+  width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0;
+}
+.vis-pub  { background: rgba(0,200,150,.2);   color: #0a7a5a; }
+.vis-priv { background: rgba(214,48,48,.15);  color: var(--danger); }
+.cls-member-name { color: var(--text); flex: 1; }
+.cls-member-type { color: var(--muted); font-size: 11px; }
+
+/* ── CONSTRUCTOR BUTTONS ── */
+.ctor-btns { display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0; }
+.ctor-btn {
+  padding: 10px 16px; border-radius: 8px; border: 1.5px solid var(--border);
+  background: transparent; color: var(--text); cursor: pointer;
+  font-size: 12px; font-family: 'JetBrains Mono', monospace; font-weight: 600;
+  transition: all .15s; text-align: left; line-height: 1.5;
+}
+.ctor-btn:hover { border-color: var(--accent); background: rgba(141,98,255,.06); }
+.ctor-btn.active { background: rgba(141,98,255,.12); border-color: var(--accent); color: var(--accent); }
+
+/* ── DETAIL BOX ── */
+.detail-box {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 12px;
+  padding: 1.25rem; min-height: 120px;
+}
+
+footer { text-align: center; margin-top: 3rem; font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+footer span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700; }
+
+@media (max-width: 600px) {
+  .tab { min-width: 80px; font-size: 12px; }
+  .sim-grid { grid-template-columns: 1fr !important; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img class="header-logo" src="https://capacitabrasil.irede.org.br/assets/capacitaLogo-Ct3BEyem.png" alt="Capacita Brasil"/>
+  <div class="logo">&#x2615; <span>//</span> Java</div>
+  <div class="subtitle">Desenvolvimento Java &mdash; Aula Interativa</div>
+  <div class="header-badge">Unidade 02 &mdash; Cap&iacute;tulo 05 &mdash; Tratamento de Exce&ccedil;&otilde;es</div>
+</header>
+
+<div class="wrap">
+
+
+  <div class="aula-bar">
+    <button class="aula-tab active">&#x26A0;&#xFE0F; Cap&iacute;tulo 05 &mdash; Tratamento de Exce&ccedil;&otilde;es</button>
+  </div>
+
+  <div id="aula05" class="aula-section">
+
+  <div class="tab-bar">
+    <button class="tab active"  onclick="showTab('resumo5',this)">&#x1F4D8; Resumo</button>
+    <button class="tab"         onclick="showTab('simulador5',this)">&#x26A1; Simulador</button>
+    <button class="tab"         onclick="showTab('exercicios5',this)">&#x1F3AF; Exerc&iacute;cios</button>
+    <button class="tab"         onclick="showTab('questionarios5',this)">&#x1F4DD; Question&aacute;rios</button>
+    <button class="tab"         onclick="showTab('curiosidades5',this)">&#x1F680; Curiosidades</button>
+    <button class="tab"         onclick="showTab('links5',this)">&#x1F517; Links</button>
+  </div>
+
+  <!-- ═══ RESUMO 5 ═══ -->
+  <div id="resumo5" class="section active">
+
+    <!-- Card 1: O que é uma Exceção -->
+    <div class="card">
+      <div class="card-title">O que &eacute; uma Exce&ccedil;&atilde;o? <span class="pill pill-red">Throwable</span></div>
+      <p>Uma <strong style="color:var(--text)">exce&ccedil;&atilde;o</strong> &eacute; um evento inesperado que ocorre durante a execu&ccedil;&atilde;o do programa e que pode comprometer seu funcionamento normal. Em vez de o programa travar abruptamente, Java permite <strong style="color:var(--text)">capturar e tratar</strong> esses eventos de forma controlada.</p>
+      <div style="margin:14px 0;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted)">
+          <span style="color:var(--danger);font-weight:700;min-width:20px">&#x2717;</span>
+          <span><code class="ic">ArithmeticException</code> &mdash; divis&atilde;o por zero.</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted)">
+          <span style="color:var(--danger);font-weight:700;min-width:20px">&#x2717;</span>
+          <span><code class="ic">ArrayIndexOutOfBoundsException</code> &mdash; acesso a um &iacute;ndice inv&aacute;lido em um array.</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted)">
+          <span style="color:var(--danger);font-weight:700;min-width:20px">&#x2717;</span>
+          <span><code class="ic">NullPointerException</code> &mdash; uso de uma vari&aacute;vel n&atilde;o inicializada (<code class="ic">null</code>).</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted)">
+          <span style="color:var(--danger);font-weight:700;min-width:20px">&#x2717;</span>
+          <span><code class="ic">IOException</code> &mdash; erro na leitura de arquivos.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: Hierarquia -->
+    <div class="card">
+      <div class="card-title">Hierarquia de Exce&ccedil;&otilde;es em Java <span class="pill pill-blue">Throwable</span></div>
+      <p>Em Java, todas as exce&ccedil;&otilde;es s&atilde;o objetos da classe <strong style="color:var(--text)">Throwable</strong>, que possui duas subclasses principais.</p>
+      <div class="code-block" style="margin-top:14px;font-size:13px"><span class="cls">Throwable</span>
+ &#x251C;&#x2500; <span class="cls">Error</span>            <span class="cmt">// grave, geralmente irrecuper&aacute;vel (ex: OutOfMemoryError)</span>
+ &#x2514;&#x2500; <span class="cls">Exception</span>        <span class="cmt">// condi&ccedil;&otilde;es que o programa PODE tratar</span>
+     &#x251C;&#x2500; <span class="cls">RuntimeException</span>  <span class="cmt">// unchecked &mdash; ex: NullPointerException</span>
+     &#x2514;&#x2500; <span class="cls">Other Exception</span>  <span class="cmt">// checked &mdash; ex: IOException, SQLException</span></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+        <span class="pill pill-red">Error &mdash; n&atilde;o trat&aacute;vel</span>
+        <span class="pill pill-green">Exception &mdash; trat&aacute;vel</span>
+      </div>
+      <p style="margin-top:10px;font-size:13px"><a class="link-item" href="https://www.linkedin.com/pulse/tratamento-de-exceptions-java-douglas-dias?originalSubdomain=pt" target="_blank">Refer&ecirc;ncia: linkedin.com/pulse/tratamento-de-exceptions-java-douglas-dias</a></p>
+    </div>
+
+    <!-- Card 3: Checked vs Unchecked -->
+    <div class="card">
+      <div class="card-title">Checked vs Unchecked Exceptions <span class="pill pill-amber">Compara&ccedil;&atilde;o</span></div>
+      <p>As exce&ccedil;&otilde;es se dividem em dois grandes grupos quanto ao momento de verifica&ccedil;&atilde;o.</p>
+      <table style="margin-top:14px">
+        <tr><th>Caracter&iacute;stica</th><th>Checked (Verificada)</th><th>Unchecked (N&atilde;o Verificada)</th></tr>
+        <tr><td class="left" style="font-weight:700;color:var(--text)">Verifica&ccedil;&atilde;o</td><td>Tempo de compila&ccedil;&atilde;o</td><td>Tempo de execu&ccedil;&atilde;o</td></tr>
+        <tr><td class="left" style="font-weight:700;color:var(--text)">Tratamento</td><td><span class="pill pill-red">Obrigat&oacute;rio</span> (try-catch ou throws)</td><td><span class="pill pill-green">Opcional</span> (recomend&aacute;vel)</td></tr>
+        <tr><td class="left" style="font-weight:700;color:var(--text)">Superclasse</td><td>Exception (exceto RuntimeException)</td><td>RuntimeException</td></tr>
+        <tr><td class="left" style="font-weight:700;color:var(--text)">Exemplos</td><td><code class="ic">IOException</code>, <code class="ic">SQLException</code></td><td><code class="ic">NullPointerException</code>, <code class="ic">ArithmeticException</code>, <code class="ic">ArrayIndexOutOfBoundsException</code></td></tr>
+      </table>
+    </div>
+
+    <!-- Card 4: try-catch -->
+    <div class="card">
+      <div class="card-title">Bloco try-catch <span class="pill pill-java">tentar / pegar</span></div>
+      <p>O bloco <strong style="color:var(--text)">try-catch</strong> captura a exce&ccedil;&atilde;o e executa um c&oacute;digo alternativo, evitando que o programa trave.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">
+        <div>
+          <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:6px;letter-spacing:.06em">TRATANDO UMA IOException</div>
+          <div class="code-block" style="font-size:12px"><span class="kw">try</span> {
+  <span class="typ">FileReader</span> arquivo =
+    <span class="kw">new</span> <span class="cls">FileReader</span>(<span class="str">"dados.txt"</span>);
+} <span class="kw">catch</span> (<span class="typ">IOException</span> e) {
+  <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(
+    <span class="str">"Erro ao ler o arquivo: "</span> +
+    e.<span class="mtd">getMessage</span>());
+}</div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:6px;letter-spacing:.06em">TRATANDO UMA ArithmeticException</div>
+          <div class="code-block" style="font-size:12px"><span class="kw">try</span> {
+  <span class="kw">int</span> resultado = <span class="num">10</span> / <span class="num">0</span>;
+} <span class="kw">catch</span> (<span class="typ">ArithmeticException</span> e) {
+  <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(
+    <span class="str">"Erro: divis&atilde;o por zero."</span>);
+}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 5: throw e throws -->
+    <div class="card">
+      <div class="card-title">Palavras-chave throw e throws <span class="pill pill-grad">lan&ccedil;ar</span></div>
+      <p><code class="ic">throw</code> lan&ccedil;a manualmente uma exce&ccedil;&atilde;o. <code class="ic">throws</code> indica, na assinatura do m&eacute;todo, que ele pode gerar exce&ccedil;&otilde;es &mdash; obrigando quem o chama a tratar essa possibilidade.</p>
+      <div class="code-block" style="margin-top:14px"><span class="kw">public static void</span> <span class="mtd">verificarIdade</span>(<span class="kw">int</span> idade) <span class="kw">throws</span> <span class="typ">Exception</span> {
+  <span class="kw">if</span> (idade &lt; <span class="num">18</span>) {
+    <span class="kw">throw new</span> <span class="cls">Exception</span>(<span class="str">"Idade inv&aacute;lida! Deve ser maior que 18."</span>);
+  }
+}
+
+<span class="cmt">// Quem chama o m&eacute;todo precisa tratar a exce&ccedil;&atilde;o</span>
+<span class="kw">try</span> {
+  <span class="mtd">verificarIdade</span>(<span class="num">15</span>);
+} <span class="kw">catch</span> (<span class="typ">Exception</span> e) {
+  <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(<span class="str">"Erro: "</span> + e.<span class="mtd">getMessage</span>());
+}
+<span class="cmt">// Sa&iacute;da: Erro: Idade inv&aacute;lida! Deve ser maior que 18.</span></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+        <span class="pill pill-red">throw &mdash; lan&ccedil;a</span>
+        <span class="pill pill-blue">throws &mdash; declara</span>
+      </div>
+    </div>
+
+    <!-- Card 6: Exceção Personalizada -->
+    <div class="card">
+      <div class="card-title">Exce&ccedil;&atilde;o Personalizada <span class="pill pill-green">extends Exception</span></div>
+      <p>Podemos criar nossas pr&oacute;prias exce&ccedil;&otilde;es para tratar erros espec&iacute;ficos do sistema, estendendo <code class="ic">Exception</code> e repassando a mensagem ao construtor da superclasse com <code class="ic">super(mensagem)</code>.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">
+        <div>
+          <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:6px;letter-spacing:.06em">MinhaExcecao.java</div>
+          <div class="code-block" style="font-size:12px"><span class="kw">public class</span> <span class="cls">MinhaExcecao</span>
+    <span class="kw">extends</span> <span class="cls">Exception</span> {
+
+  <span class="kw">public</span> <span class="cls">MinhaExcecao</span>(
+      <span class="typ">String</span> mensagem) {
+    <span class="kw">super</span>(mensagem);
+  }
+}</div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:6px;letter-spacing:.06em">USO &mdash; validarNota</div>
+          <div class="code-block" style="font-size:12px"><span class="kw">static void</span> <span class="mtd">validarNota</span>(<span class="kw">int</span> n)
+    <span class="kw">throws</span> <span class="cls">MinhaExcecao</span> {
+  <span class="kw">if</span> (n &lt; <span class="num">0</span> || n &gt; <span class="num">10</span>)
+    <span class="kw">throw new</span> <span class="cls">MinhaExcecao</span>(
+      <span class="str">"Nota inv&aacute;lida!"</span>);
+}
+
+<span class="kw">try</span> { <span class="mtd">validarNota</span>(<span class="num">15</span>); }
+<span class="kw">catch</span> (<span class="typ">MinhaExcecao</span> e) {
+  <span class="cls">System</span>.<span class="mtd">out</span>.<span class="mtd">println</span>(
+    <span class="str">"Erro: "</span> + e.<span class="mtd">getMessage</span>());
+}</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /resumo5 -->
+
+  <!-- ═══ SIMULADOR 5 ═══ -->
+  <div id="simulador5" class="section">
+
+    <!-- Part 1: Tipos de Exceção -->
+    <div class="card">
+      <div class="card-title">&#x26A1; Tratando Exce&ccedil;&otilde;es em C&oacute;digo</div>
+      <p style="margin-bottom:14px">Selecione um cen&aacute;rio para ver como a exce&ccedil;&atilde;o &eacute; tratada em Java.</p>
+      <div class="ctor-btns">
+        <button class="ctor-btn" id="exc-checked" onclick="showExc('checked')">
+          &#x1F4C4; Checked<br>
+          <span style="font-size:10px;color:var(--muted)">IOException &mdash; verificada em compila&ccedil;&atilde;o</span>
+        </button>
+        <button class="ctor-btn" id="exc-unchecked" onclick="showExc('unchecked')">
+          &#x26A1; Unchecked<br>
+          <span style="font-size:10px;color:var(--muted)">ArithmeticException &mdash; verificada em execu&ccedil;&atilde;o</span>
+        </button>
+        <button class="ctor-btn" id="exc-personalizada" onclick="showExc('personalizada')">
+          &#x1F6E0; Personalizada<br>
+          <span style="font-size:10px;color:var(--muted)">MinhaExcecao &mdash; extends Exception</span>
+        </button>
+      </div>
+      <div id="excOutput" class="code-block" style="min-height:140px"><span style="color:#6c7086;font-style:italic">// Selecione um cen&aacute;rio acima...</span></div>
+    </div>
+
+    <!-- Part 2: Hierarchy Explorer -->
+    <div class="card">
+      <div class="card-title">&#x1F9F1; Explorador &mdash; Hierarquia <span class="ic">Throwable</span></div>
+      <p style="margin-bottom:16px">Clique em uma classe da hierarquia para ver seus detalhes.</p>
+      <div class="sim-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="cls-box" style="max-width:none">
+            <div class="cls-box-header" style="background:linear-gradient(270deg,#d63030,#8d62ff);cursor:pointer" onclick="selectExc5('throwable5',this)">&#x2B55; Throwable</div>
+          </div>
+          <div style="text-align:center;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.08em">&#x25BD; subclasses</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="cls-box" style="max-width:none">
+              <div class="cls-box-header" style="background:linear-gradient(270deg,#7a1f1f,#d63030);font-size:13px;cursor:pointer" onclick="selectExc5('error5',this)">&#x25EF; Error</div>
+            </div>
+            <div class="cls-box" style="max-width:none">
+              <div class="cls-box-header" style="background:linear-gradient(270deg,#00c896,#0088cc);font-size:13px;cursor:pointer" onclick="selectExc5('exception5',this)">&#x25EF; Exception</div>
+            </div>
+          </div>
+          <div style="text-align:center;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.08em">&#x25BD; subclasses de Exception</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="cls-box" style="max-width:none">
+              <div class="cls-box-header" style="background:linear-gradient(270deg,#cba6f7,#8d62ff);font-size:12px;cursor:pointer" onclick="selectExc5('runtime5',this)">&#x25AD; RuntimeException</div>
+            </div>
+            <div class="cls-box" style="max-width:none">
+              <div class="cls-box-header" style="background:linear-gradient(270deg,#d48a00,#cba6f7);font-size:12px;cursor:pointer" onclick="selectExc5('checked5',this)">&#x25AD; Other Exception</div>
+            </div>
+          </div>
+        </div>
+        <div id="excDetail5" class="detail-box">
+          <p style="color:var(--muted);font-size:13px">&#x1F449; Clique em uma classe para ver os detalhes.</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /simulador5 -->
+
+  <!-- ═══ EXERCÍCIOS 5 ═══ -->
+  <div id="exercicios5" class="section">
+
+    <div class="score-bar-area">
+      <div>
+        <div class="score-val"><span id="scoreVal5">0</span>/5</div>
+        <div class="score-label">acertos</div>
+      </div>
+      <div style="flex:1">
+        <div class="score-track"><div class="score-fill" id="scoreBar5"></div></div>
+      </div>
+    </div>
+
+    <div class="ex-block" id="ex5-0">
+      <div class="ex-q">Quest&atilde;o 1 &mdash; Exce&ccedil;&otilde;es <strong>checked</strong> (verificadas) s&atilde;o checadas em tempo de compila&ccedil;&atilde;o e o c&oacute;digo &eacute; obrigado a trat&aacute;-las com <code class="ic">try-catch</code> ou declar&aacute;-las com <code class="ic">throws</code>.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer5(0,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer5(0,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb5-0"></div>
+    </div>
+
+    <div class="ex-block" id="ex5-1">
+      <div class="ex-q">Quest&atilde;o 2 &mdash; <code class="ic">RuntimeException</code> &eacute; uma exce&ccedil;&atilde;o <strong>checked</strong>, ou seja, deve obrigatoriamente ser tratada com <code class="ic">try-catch</code>.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer5(1,this,false)">Verdadeiro</button>
+        <button class="choice" onclick="answer5(1,this,true)">Falso</button>
+      </div>
+      <div class="feedback" id="fb5-1"></div>
+    </div>
+
+    <div class="ex-block" id="ex5-2">
+      <div class="ex-q">Quest&atilde;o 3 &mdash; A palavra-chave <code class="ic">throw</code> lan&ccedil;a manualmente uma exce&ccedil;&atilde;o, enquanto <code class="ic">throws</code> apenas indica, na assinatura do m&eacute;todo, que ele pode lan&ccedil;ar exce&ccedil;&otilde;es.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer5(2,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer5(2,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb5-2"></div>
+    </div>
+
+    <div class="ex-block" id="ex5-3">
+      <div class="ex-q">Quest&atilde;o 4 &mdash; <code class="ic">Error</code> representa problemas leves que o pr&oacute;prio programa deve sempre conseguir tratar e recuperar normalmente.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer5(3,this,false)">Verdadeiro</button>
+        <button class="choice" onclick="answer5(3,this,true)">Falso</button>
+      </div>
+      <div class="feedback" id="fb5-3"></div>
+    </div>
+
+    <div class="ex-block" id="ex5-4">
+      <div class="ex-q">Quest&atilde;o 5 &mdash; Para criar uma exce&ccedil;&atilde;o personalizada, basta estender <code class="ic">Exception</code> e chamar <code class="ic">super(mensagem)</code> no construtor.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer5(4,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer5(4,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb5-4"></div>
+    </div>
+
+  </div><!-- /exercicios5 -->
+
+  <!-- ═══ QUESTIONÁRIOS 5 ═══ -->
+  <div id="questionarios5" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F4DD; Question&aacute;rios</div>
+      <p style="margin-bottom:1rem">Teste seu conhecimento sobre Tratamento de Exce&ccedil;&otilde;es e Exce&ccedil;&otilde;es Personalizadas com os question&aacute;rios abaixo.</p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a class="grad-btn" href="questionario-u2c5-01.html">&#x1F4CB; Quiz 01 &mdash; Tratamento de Exce&ccedil;&otilde;es e Hierarquia</a>
+        <a class="grad-btn" href="questionario-u2c5-02.html" style="background:linear-gradient(270deg,#00c896 0%,#00a0cc 100%)">&#x1F4CB; Quiz 02 &mdash; throw, throws e Exce&ccedil;&otilde;es Personalizadas</a>
+        <a class="grad-btn" href="questionario-u2c5-03.html" style="background:linear-gradient(270deg,#cba6f7 0%,#8d62ff 100%)">&#x1F6E0; Implementa&ccedil;&atilde;o &mdash; Tratamento de Exce&ccedil;&otilde;es na Pr&aacute;tica</a>
+      </div>
+    </div>
+  </div><!-- /questionarios5 -->
+
+  <!-- ═══ CURIOSIDADES 5 ═══ -->
+  <div id="curiosidades5" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F680; Curiosidades sobre Exce&ccedil;&otilde;es</div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F4A3;</div>
+        <div>
+          <div class="curi-title">Por que n&atilde;o capturar Error?</div>
+          <div class="curi-body">Embora seja tecnicamente poss&iacute;vel fazer <code>catch (Error e)</code>, isso &eacute; considerado m&aacute; pr&aacute;tica. Erros como <code>OutOfMemoryError</code> e <code>StackOverflowError</code> indicam que a JVM est&aacute; em um estado inst&aacute;vel &mdash; tentar continuar a execu&ccedil;&atilde;o normalmente pode causar mais danos do que deixar o programa encerrar.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F9F9;</div>
+        <div>
+          <div class="curi-title">O bloco finally sempre executa</div>
+          <div class="curi-body">Al&eacute;m de <code>try-catch</code>, Java oferece o bloco <code>finally</code>, que executa <strong>sempre</strong> &mdash; com ou sem exce&ccedil;&atilde;o, e at&eacute; mesmo se houver um <code>return</code> dentro do try. &Eacute; o lugar ideal para fechar recursos como arquivos e conex&otilde;es de banco de dados.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F50C;</div>
+        <div>
+          <div class="curi-title">try-with-resources</div>
+          <div class="curi-body">Desde o Java 7, recursos que implementam <code>AutoCloseable</code> (como <code>FileReader</code>) podem ser declarados dentro dos par&ecirc;nteses do <code>try</code> &mdash; o Java fecha o recurso automaticamente ao final do bloco, sem precisar de <code>finally</code>: <code>try (FileReader f = new FileReader("a.txt")) { ... }</code>.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x26D3;</div>
+        <div>
+          <div class="curi-title">Exception chaining (causa raiz)</div>
+          <div class="curi-body">&Eacute; poss&iacute;vel encadear exce&ccedil;&otilde;es passando a exce&ccedil;&atilde;o original como causa: <code>throw new MinhaExcecao("Falha", causaOriginal)</code>. Isso preserva o stack trace completo, essencial para depurar erros em sistemas com m&uacute;ltiplas camadas.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F4B8;</div>
+        <div>
+          <div class="curi-title">Exce&ccedil;&otilde;es t&ecirc;m custo de performance</div>
+          <div class="curi-body">Criar uma exce&ccedil;&atilde;o em Java captura o stack trace inteiro, o que tem custo computacional. Por isso, exce&ccedil;&otilde;es n&atilde;o devem ser usadas para controle de fluxo normal (como substituir um <code>if</code>) &mdash; apenas para situa&ccedil;&otilde;es realmente excepcionais.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F3DB;</div>
+        <div>
+          <div class="curi-title">Checked exceptions s&atilde;o pol&ecirc;micas</div>
+          <div class="curi-body">Linguagens modernas como Kotlin e C# n&atilde;o possuem exce&ccedil;&otilde;es checked &mdash; todas s&atilde;o tratadas como unchecked. A obrigatoriedade do Java em declarar <code>throws</code> &eacute; vista por muitos desenvolvedores como verbosa, embora ajude a documentar contratos de m&eacute;todos.</div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /curiosidades5 -->
+
+  <!-- ═══ LINKS 5 ═══ -->
+  <div id="links5" class="section">
+    <div class="card">
+      <div class="card-title">&#x1F517; Links &Uacute;teis</div>
+      <div style="display:flex;flex-direction:column;gap:14px;margin-top:4px">
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x23EA; M&oacute;dulo Anterior</div>
+          <a class="link-item" href="../capitulo04/index.html">Cap&iacute;tulo 04 &mdash; Abstratas, Composi&ccedil;&atilde;o e Associa&ccedil;&otilde;es</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x23E9; Pr&oacute;ximo M&oacute;dulo</div>
+          <a class="link-item" href="../capitulo06/index.html">Cap&iacute;tulo 06 &mdash; Pacotes e Organiza&ccedil;&atilde;o</a>
+        </div>
+
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4D6; Oracle &mdash; Tutorial Oficial de Exceptions</div>
+          <a class="link-item" href="https://docs.oracle.com/javase/tutorial/essential/exceptions/index.html" target="_blank">https://docs.oracle.com/javase/tutorial/essential/exceptions/index.html</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4DA; Oracle &mdash; Classe Throwable (Javadoc)</div>
+          <a class="link-item" href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html" target="_blank">https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4DD; Tratamento de Exceptions em Java &mdash; LinkedIn</div>
+          <a class="link-item" href="https://www.linkedin.com/pulse/tratamento-de-exceptions-java-douglas-dias?originalSubdomain=pt" target="_blank">https://www.linkedin.com/pulse/tratamento-de-exceptions-java-douglas-dias</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F9EA; JDoodle &mdash; Compilador Java Online</div>
+          <a class="link-item" href="https://www.jdoodle.com/online-java-compiler/" target="_blank">https://www.jdoodle.com/online-java-compiler/</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4BB; Apache NetBeans IDE</div>
+          <a class="link-item" href="https://netbeans.apache.org/" target="_blank">https://netbeans.apache.org/</a>
+        </div>
+
+      </div>
+    </div>
+  </div><!-- /links5 -->
+
+  </div><!-- /aula05 -->
+
+</div><!-- /wrap -->
+
+</div><!-- /wrap -->
+
+<footer>
+  Capacita Brasil &mdash; <span>iRede</span> &mdash; Material Interativo de Java
+</footer>
+
+<script>
+function showTab(t, btn) {
+  const section = document.getElementById(t);
+  const aula = section.closest('.aula-section');
+  aula.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  aula.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  section.classList.add('active');
+  btn.classList.add('active');
+}
+
+function answer5(i, btn, isCorrect) {
+  const block = document.getElementById('ex5-' + i);
+  block.querySelectorAll('.choice').forEach(c => c.disabled = true);
+  const fb = document.getElementById('fb5-' + i);
+  if (isCorrect) {
+    btn.classList.add('correct');
+    fb.classList.add('show', 'ok');
+    fb.innerHTML = '&#x2705; ' + feedbacksOk5[i];
+    block.classList.add('done');
+    score5++;
+    document.getElementById('scoreVal5').textContent = score5;
+    document.getElementById('scoreBar5').style.width = (score5 / 5 * 100) + '%';
+  } else {
+    btn.classList.add('wrong');
+    fb.classList.add('show', 'ko');
+    fb.innerHTML = '&#x274C; ' + feedbacksErr5[i];
+  }
+}
+
+function selectExc5(name, btn) {
+  document.querySelectorAll('#simulador5 .cls-box-header').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const d = excData5[name];
+  if (!d) return;
+  let tipoClass = 'pill-java';
+  if (d.tipo === 'n&atilde;o trat&aacute;vel') tipoClass = 'pill-red';
+  if (d.tipo === 'trat&aacute;vel')  tipoClass = 'pill-green';
+  if (d.tipo === 'unchecked')       tipoClass = 'pill-amber';
+  if (d.tipo === 'checked')         tipoClass = 'pill-blue';
+  document.getElementById('excDetail5').innerHTML =
+    '<div style="font-family:\'JetBrains Mono\',monospace;font-size:15px;font-weight:700;color:var(--text);margin-bottom:10px">' + d.name + '</div>' +
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">' +
+      '<span class="pill ' + tipoClass + '">' + d.tipo + '</span>' +
+    '</div>' +
+    '<p style="font-size:13px;color:var(--muted);line-height:1.65">' + d.desc + '</p>';
+}
+
+function showExc(type) {
+  document.querySelectorAll('#simulador5 .ctor-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('exc-' + type).classList.add('active');
+  document.getElementById('excOutput').textContent = excOutputs[type];
+}
+
+</script>
+</body>
+</html>

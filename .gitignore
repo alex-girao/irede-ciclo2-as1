@@ -1,1 +1,5 @@
 base/*
+.claude
+material
+orientacoes*.txt
+.DS_Store
