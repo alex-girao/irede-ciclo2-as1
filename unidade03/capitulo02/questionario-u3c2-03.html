@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Implementação — Wildcards na Prática</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:          #f0f0f5;
+  --surface:     #ffffff;
+  --border:      #d8d5e8;
+  --accent:      #8d62ff;
+  --accent2:     #00c896;
+  --text:        #1a1730;
+  --muted:       #7a748f;
+  --green:       #155e35;
+  --green-bg:    #d6f5e5;
+  --green-border:#6edaa8;
+  --radius:      10px;
+  --glow:        0 0 18px rgba(141,98,255,0.15);
+  --grad:        linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
+  --surface2:    #f7f5ff;
+  --danger:      #d63030;
+  --warn:        #d48a00;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  padding: 0 0 60px;
+  background-image:
+    radial-gradient(ellipse 70% 40% at 50% -10%, rgba(141,98,255,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 30% at 80% 110%, rgba(0,200,150,0.06) 0%, transparent 70%);
+}
+
+header {
+  text-align: center;
+  padding: 36px 20px 28px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  background: var(--surface);
+  box-shadow: 0 2px 16px rgba(141,98,255,0.07);
+}
+header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 2px;
+  background: linear-gradient(90deg, transparent, #8d62ff, transparent);
+}
+.header-logo { height: 48px; margin-bottom: 14px; display: block; margin-left: auto; margin-right: auto; }
+.logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+  font-weight: 700; letter-spacing: -0.5px;
+  background: var(--grad);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.logo span { opacity: 0.6; }
+.subtitle { color: var(--muted); font-size: .85rem; margin-top: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
+.header-badge {
+  display: inline-block; margin-top: 12px; padding: 4px 16px; border-radius: 99px;
+  font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace;
+  background: linear-gradient(270deg, rgba(141,98,255,.15), rgba(0,255,188,.1));
+  border: 1px solid rgba(141,98,255,.3); color: var(--accent); letter-spacing: .06em;
+}
+
+.wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+.back-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--muted); font-size: 13px; text-decoration: none;
+  font-family: 'JetBrains Mono', monospace; margin-bottom: 1.5rem;
+  transition: color .15s;
+}
+.back-link:hover { color: var(--accent); }
+
+.info-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem 1.5rem; margin-bottom: 1.75rem;
+  box-shadow: 0 2px 8px rgba(141,98,255,0.06); position: relative; overflow: hidden;
+}
+.info-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(141,98,255,.35), transparent);
+}
+.info-card-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700;
+  margin-bottom: .6rem; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.info-card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+.pill { display: inline-block; padding: 3px 11px; border-radius: 99px; font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+.pill-grad  { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.3);  color: var(--accent); }
+.pill-green { background: rgba(0,200,150,.12);  border: 1px solid rgba(0,200,150,.3);   color: #0a7a5a; }
+.pill-amber { background: rgba(212,138,0,.1);   border: 1px solid rgba(212,138,0,.25);  color: var(--warn); }
+.pill-red   { background: rgba(214,48,48,.1);   border: 1px solid rgba(214,48,48,.25);  color: var(--danger); }
+.pill-blue  { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.25); color: #5a30cc; }
+
+.ex-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  margin-bottom: 1.5rem; overflow: hidden;
+  box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.ex-header {
+  padding: 1.1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  background: var(--surface2);
+}
+.ex-number {
+  font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700;
+  background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  min-width: 36px;
+}
+.ex-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700; color: var(--text); flex: 1;
+}
+.ex-body { padding: 1.25rem 1.5rem; }
+.ex-enunciado {
+  font-size: 14px; color: var(--text); line-height: 1.75; margin-bottom: 1rem;
+}
+.ex-enunciado strong { color: var(--accent); }
+.ex-requisitos {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 14px 16px; margin-bottom: 1.25rem;
+}
+.ex-requisitos-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  color: var(--muted); letter-spacing: .07em; text-transform: uppercase; margin-bottom: 10px;
+}
+.ex-requisitos ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.ex-requisitos li {
+  font-size: 13px; color: var(--muted); display: flex; align-items: flex-start; gap: 8px; line-height: 1.55;
+}
+.ex-requisitos li::before {
+  content: '›'; color: var(--accent); font-weight: 700; font-size: 16px;
+  line-height: 1; flex-shrink: 0; margin-top: 1px;
+}
+.ic { background: rgba(141,98,255,.12); color: #5a30cc; padding: 1px 6px; border-radius: 4px; font-size: 12px; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+.reveal-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 22px; border-radius: 8px; border: 1.5px solid var(--accent);
+  background: transparent; color: var(--accent);
+  cursor: pointer; font-size: 13px; font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  transition: all .2s; margin-bottom: 0;
+}
+.reveal-btn:hover { background: rgba(141,98,255,.1); transform: translateY(-1px); box-shadow: var(--glow); }
+.reveal-btn.revealed {
+  background: var(--grad); color: #fff; border-color: transparent;
+  box-shadow: 0 3px 14px rgba(141,98,255,.3);
+}
+.reveal-btn svg { transition: transform .3s; }
+.reveal-btn.revealed svg { transform: rotate(180deg); }
+
+.solution-area { margin-top: 1rem; display: none; }
+.solution-area.visible { display: block; }
+.solution-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  color: var(--muted); letter-spacing: .07em; text-transform: uppercase;
+  margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+}
+.solution-label::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); }
+
+.code-block {
+  background: #1e1e2e; border: 1px solid #3a3a5c; border-radius: 10px;
+  padding: 18px 20px; font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; line-height: 1.85; color: #cdd6f4; overflow-x: auto; white-space: pre;
+}
+.code-block .kw  { color: #cba6f7; }
+.code-block .typ { color: #89b4fa; }
+.code-block .str { color: #a6e3a1; }
+.code-block .num { color: #fab387; }
+.code-block .cmt { color: #6c7086; font-style: italic; }
+.code-block .cls { color: #f5c2e7; }
+.code-block .mtd { color: #89dceb; }
+
+.output-block {
+  background: #12121e; border: 1px solid #2a2a40; border-radius: 8px;
+  padding: 14px 18px; margin-top: 10px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.8;
+  color: #a6e3a1; overflow-x: auto; white-space: pre;
+}
+.output-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  color: var(--muted); letter-spacing: .07em; text-transform: uppercase;
+  margin: 12px 0 6px; display: flex; align-items: center; gap: 6px;
+}
+.output-label::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #a6e3a1; }
+
+.diff-bar { display: flex; gap: 4px; align-items: center; }
+.diff-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); }
+.diff-dot.filled-easy   { background: #00c896; }
+.diff-dot.filled-medium { background: #d48a00; }
+
+.progress-area {
+  display: flex; align-items: center; gap: 16px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px 18px; margin-bottom: 1.75rem; box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.progress-val {
+  font-size: 28px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+  background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  min-width: 60px;
+}
+.progress-label { font-size: 11px; color: var(--muted); }
+.progress-track { flex: 1; background: #e5e2f0; border-radius: 99px; height: 8px; overflow: hidden; }
+.progress-fill  { height: 100%; border-radius: 99px; background: var(--grad); width: 0%; transition: width .4s cubic-bezier(.4,0,.2,1); }
+
+.tip-box {
+  margin-top: 12px; padding: 12px 14px;
+  background: rgba(141,98,255,.08); border: 1px solid rgba(141,98,255,.2);
+  border-radius: 8px; font-size: 13px; color: var(--muted); line-height: 1.65;
+}
+
+footer { text-align: center; margin-top: 3rem; font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+footer span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700; }
+
+@media (max-width: 540px) {
+  .ex-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .code-block { font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img class="header-logo" src="https://capacitabrasil.irede.org.br/assets/capacitaLogo-Ct3BEyem.png" alt="Capacita Brasil"/>
+  <div class="logo">&#x2615; <span>//</span> Java</div>
+  <div class="subtitle">Desenvolvimento Java &mdash; Unidade 03 | Cap. 02</div>
+  <div class="header-badge">Questões de Implementação</div>
+</header>
+
+<div class="wrap">
+
+  <a class="back-link" href="index.html">&#x2190; Voltar para a Aula</a>
+
+  <div class="info-card">
+    <div class="info-card-title">
+      Implementação em Java
+      <span class="pill pill-grad">5 questões</span>
+      <span class="pill pill-green">Nível Básico</span>
+    </div>
+    <p>Pratique escrevendo código Java real. Cada questão apresenta um problema a ser resolvido com os conceitos deste capítulo: <strong style="color:var(--text)">wildcards, ? extends T e ? super T</strong>. Leia o enunciado, tente resolver por conta própria e depois revele a solução para conferir.</p>
+  </div>
+
+  <div class="progress-area">
+    <div>
+      <div class="progress-val" id="progressVal">0/5</div>
+      <div class="progress-label">reveladas</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <!-- ═══════════ QUESTÃO 1 ═══════════ -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-number">1)</div>
+      <div class="ex-title">Wildcard Simples com List&lt;?&gt;</div>
+      <span class="pill pill-green">Básico</span>
+      <div class="diff-bar" title="Dificuldade: Básico">
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot"></div>
+        <div class="diff-dot"></div>
+        <div class="diff-dot"></div>
+        <div class="diff-dot"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="ex-enunciado">
+        Crie um método estático <strong>imprimirLista</strong> que recebe uma <span class="ic">List&lt;?&gt;</span> e imprime cada elemento. Teste-o com uma lista de <span class="ic">String</span> e uma de <span class="ic">Integer</span>.
+      </div>
+      <div class="ex-requisitos">
+        <div class="ex-requisitos-title">Requisitos</div>
+        <ul>
+          <li>Declare <span class="ic">public static void imprimirLista(List&lt;?&gt; lista)</span> numa classe <span class="ic">Util</span></li>
+          <li>Percorra a lista tratando cada item como <span class="ic">Object</span></li>
+          <li>Crie <span class="ic">List&lt;String&gt;</span> e <span class="ic">List&lt;Integer&gt;</span> com <span class="ic">Arrays.asList()</span> e chame o método para ambas</li>
+        </ul>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(1, this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Ver solução
+      </button>
+      <div class="solution-area" id="sol1">
+        <div class="solution-label">Solução</div>
+        <div class="code-block"><span class="kw">import</span> java.util.Arrays;
+<span class="kw">import</span> java.util.List;
+
+<span class="kw">public class</span> <span class="cls">Util</span> {
+    <span class="kw">public static</span> <span class="typ">void</span> <span class="mtd">imprimirLista</span>(<span class="typ">List</span>&lt;?&gt; lista) {
+        <span class="kw">for</span> (<span class="typ">Object</span> item : lista) {
+            System.out.<span class="mtd">println</span>(item);
+        }
+    }
+}
+
+<span class="kw">public class</span> <span class="cls">Ex01Wildcard</span> {
+
+    <span class="kw">public static void</span> <span class="mtd">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">List</span>&lt;<span class="typ">String</span>&gt; listaStrings = Arrays.<span class="mtd">asList</span>(<span class="str">"Java"</span>, <span class="str">"Generics"</span>, <span class="str">"Wildcard"</span>);
+        <span class="typ">List</span>&lt;<span class="typ">Integer</span>&gt; listaInteiros = Arrays.<span class="mtd">asList</span>(<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>);
+
+        <span class="cls">Util</span>.<span class="mtd">imprimirLista</span>(listaStrings);
+        <span class="cls">Util</span>.<span class="mtd">imprimirLista</span>(listaInteiros);
+    }
+
+}</div>
+        <div class="output-label">Saída esperada no console</div>
+        <div class="output-block">Java
+Generics
+Wildcard
+10
+20
+30</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ QUESTÃO 2 ═══════════ -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-number">2)</div>
+      <div class="ex-title">Leitura Segura com ? extends T</div>
+      <span class="pill pill-green">Básico</span>
+      <div class="diff-bar" title="Dificuldade: Básico">
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot"></div>
+        <div class="diff-dot"></div>
+        <div class="diff-dot"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="ex-enunciado">
+        Crie as classes <strong>Pessoa</strong> e <strong>Funcionario</strong> (que herda de <span class="ic">Pessoa</span>), e um método <strong>mostrarNomes</strong> que aceita uma <span class="ic">List&lt;? extends Pessoa&gt;</span>. Teste com uma lista de cada tipo.
+      </div>
+      <div class="ex-requisitos">
+        <div class="ex-requisitos-title">Requisitos</div>
+        <ul>
+          <li><span class="ic">Pessoa</span> com <span class="ic">String nome</span>, construtor e <span class="ic">getNome()</span></li>
+          <li><span class="ic">Funcionario extends Pessoa</span>, chamando <span class="ic">super(nome)</span> no construtor</li>
+          <li><span class="ic">public static void mostrarNomes(List&lt;? extends Pessoa&gt; pessoas)</span></li>
+          <li>Chame com uma <span class="ic">List&lt;Pessoa&gt;</span> e uma <span class="ic">List&lt;Funcionario&gt;</span></li>
+        </ul>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(2, this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Ver solução
+      </button>
+      <div class="solution-area" id="sol2">
+        <div class="solution-label">Solução</div>
+        <div class="code-block"><span class="kw">public class</span> <span class="cls">Pessoa</span> {
+    <span class="kw">private</span> <span class="typ">String</span> nome;
+
+    <span class="kw">public</span> <span class="cls">Pessoa</span>(<span class="typ">String</span> nome) { <span class="kw">this</span>.nome = nome; }
+
+    <span class="kw">public</span> <span class="typ">String</span> <span class="mtd">getNome</span>() { <span class="kw">return</span> nome; }
+}
+
+<span class="kw">public class</span> <span class="cls">Funcionario</span> <span class="kw">extends</span> <span class="cls">Pessoa</span> {
+    <span class="kw">public</span> <span class="cls">Funcionario</span>(<span class="typ">String</span> nome) {
+        <span class="kw">super</span>(nome);
+    }
+}
+
+<span class="kw">import</span> java.util.Arrays;
+<span class="kw">import</span> java.util.List;
+
+<span class="kw">public class</span> <span class="cls">Util</span> {
+    <span class="kw">public static</span> <span class="typ">void</span> <span class="mtd">mostrarNomes</span>(<span class="typ">List</span>&lt;? <span class="kw">extends</span> <span class="cls">Pessoa</span>&gt; pessoas) {
+        <span class="kw">for</span> (<span class="cls">Pessoa</span> p : pessoas) {
+            System.out.<span class="mtd">println</span>(p.<span class="mtd">getNome</span>());
+        }
+    }
+}
+
+<span class="kw">public class</span> <span class="cls">Ex02ExtendsT</span> {
+
+    <span class="kw">public static void</span> <span class="mtd">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">List</span>&lt;<span class="cls">Pessoa</span>&gt; pessoas = Arrays.<span class="mtd">asList</span>(<span class="kw">new</span> <span class="cls">Pessoa</span>(<span class="str">"Ana"</span>));
+        <span class="typ">List</span>&lt;<span class="cls">Funcionario</span>&gt; funcionarios = Arrays.<span class="mtd">asList</span>(<span class="kw">new</span> <span class="cls">Funcionario</span>(<span class="str">"Carlos"</span>));
+
+        <span class="cls">Util</span>.<span class="mtd">mostrarNomes</span>(pessoas);
+        <span class="cls">Util</span>.<span class="mtd">mostrarNomes</span>(funcionarios);
+    }
+
+}</div>
+        <div class="output-label">Saída esperada no console</div>
+        <div class="output-block">Ana
+Carlos</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ QUESTÃO 3 ═══════════ -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-number">3)</div>
+      <div class="ex-title">Escrita Segura com ? super T</div>
+      <span class="pill pill-amber">Intermediário</span>
+      <div class="diff-bar" title="Dificuldade: Intermediário">
+        <div class="diff-dot filled-medium"></div>
+        <div class="diff-dot filled-medium"></div>
+        <div class="diff-dot filled-medium"></div>
+        <div class="diff-dot"></div>
+        <div class="diff-dot"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="ex-enunciado">
+        Usando as mesmas classes <strong>Pessoa</strong> e <strong>Funcionario</strong> do exercício anterior, crie um método <strong>adicionarPessoa</strong> que recebe uma <span class="ic">List&lt;? super Funcionario&gt;</span> e adiciona um novo <span class="ic">Funcionario</span> nela.
+      </div>
+      <div class="ex-requisitos">
+        <div class="ex-requisitos-title">Requisitos</div>
+        <ul>
+          <li><span class="ic">public static void adicionarPessoa(List&lt;? super Funcionario&gt; lista)</span></li>
+          <li>Dentro do método, adicione <span class="ic">new Funcionario("Novo Funcionario")</span> à lista</li>
+          <li>No main, crie uma <span class="ic">List&lt;Pessoa&gt;</span> (com <span class="ic">ArrayList</span>) e passe-a para o método</li>
+          <li>Imprima os nomes de todos os elementos da lista após a chamada</li>
+        </ul>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(3, this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Ver solução
+      </button>
+      <div class="solution-area" id="sol3">
+        <div class="solution-label">Solução</div>
+        <div class="code-block"><span class="kw">import</span> java.util.List;
+
+<span class="kw">public class</span> <span class="cls">Util</span> {
+    <span class="kw">public static</span> <span class="typ">void</span> <span class="mtd">adicionarPessoa</span>(<span class="typ">List</span>&lt;? <span class="kw">super</span> <span class="cls">Funcionario</span>&gt; lista) {
+        lista.<span class="mtd">add</span>(<span class="kw">new</span> <span class="cls">Funcionario</span>(<span class="str">"Novo Funcionario"</span>));
+    }
+}
+
+<span class="kw">import</span> java.util.ArrayList;
+<span class="kw">import</span> java.util.List;
+
+<span class="kw">public class</span> <span class="cls">Ex03SuperT</span> {
+
+    <span class="kw">public static void</span> <span class="mtd">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">List</span>&lt;<span class="cls">Pessoa</span>&gt; listaPessoas = <span class="kw">new</span> ArrayList&lt;&gt;();
+        <span class="cls">Util</span>.<span class="mtd">adicionarPessoa</span>(listaPessoas);
+
+        <span class="kw">for</span> (<span class="cls">Pessoa</span> p : listaPessoas) {
+            System.out.<span class="mtd">println</span>(<span class="str">"Nome: "</span> + p.<span class="mtd">getNome</span>());
+        }
+    }
+
+}</div>
+        <div class="output-label">Saída esperada no console</div>
+        <div class="output-block">Nome: Novo Funcionario</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ QUESTÃO 4 ═══════════ -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-number">4)</div>
+      <div class="ex-title">Soma Genérica com List&lt;? extends Number&gt;</div>
+      <span class="pill pill-amber">Intermediário</span>
+      <div class="diff-bar" title="Dificuldade: Intermediário">
+        <div class="diff-dot filled-medium"></div>
+        <div class="diff-dot filled-medium"></div>
+        <div class="diff-dot filled-medium"></div>
+        <div class="diff-dot"></div>
+        <div class="diff-dot"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="ex-enunciado">
+        Crie uma classe <strong>MathUtil</strong> com um método <strong>calcularSoma</strong> que recebe uma <span class="ic">List&lt;? extends Number&gt;</span> e retorna a soma de todos os valores. Teste com listas de tipos numéricos diferentes.
+      </div>
+      <div class="ex-requisitos">
+        <div class="ex-requisitos-title">Requisitos</div>
+        <ul>
+          <li><span class="ic">public static double calcularSoma(List&lt;? extends Number&gt; numeros)</span></li>
+          <li>Use <span class="ic">n.doubleValue()</span> para converter cada elemento antes de somar</li>
+          <li>Teste com <span class="ic">List&lt;Integer&gt;</span> <span class="ic">[10, 20, 30, 40]</span> e <span class="ic">List&lt;Double&gt;</span> <span class="ic">[1.5, 2.5, 3.5]</span></li>
+        </ul>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(4, this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Ver solução
+      </button>
+      <div class="solution-area" id="sol4">
+        <div class="solution-label">Solução</div>
+        <div class="code-block"><span class="kw">import</span> java.util.List;
+
+<span class="kw">public class</span> <span class="cls">MathUtil</span> {
+    <span class="kw">public static</span> <span class="typ">double</span> <span class="mtd">calcularSoma</span>(<span class="typ">List</span>&lt;? <span class="kw">extends</span> <span class="typ">Number</span>&gt; numeros) {
+        <span class="typ">double</span> soma = <span class="num">0</span>;
+        <span class="kw">for</span> (<span class="typ">Number</span> n : numeros) {
+            soma += n.<span class="mtd">doubleValue</span>();
+        }
+        <span class="kw">return</span> soma;
+    }
+}
+
+<span class="kw">import</span> java.util.Arrays;
+<span class="kw">import</span> java.util.List;
+
+<span class="kw">public class</span> <span class="cls">Ex04MathUtil</span> {
+
+    <span class="kw">public static void</span> <span class="mtd">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">List</span>&lt;<span class="typ">Integer</span>&gt; listaInteiros = Arrays.<span class="mtd">asList</span>(<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>);
+        <span class="typ">List</span>&lt;<span class="typ">Double</span>&gt; listaDoubles = Arrays.<span class="mtd">asList</span>(<span class="num">1.5</span>, <span class="num">2.5</span>, <span class="num">3.5</span>);
+
+        System.out.<span class="mtd">println</span>(<span class="str">"Soma de Inteiros: "</span> + <span class="cls">MathUtil</span>.<span class="mtd">calcularSoma</span>(listaInteiros));
+        System.out.<span class="mtd">println</span>(<span class="str">"Soma de Doubles: "</span> + <span class="cls">MathUtil</span>.<span class="mtd">calcularSoma</span>(listaDoubles));
+    }
+
+}</div>
+        <div class="output-label">Saída esperada no console</div>
+        <div class="output-block">Soma de Inteiros: 100.0
+Soma de Doubles: 7.5</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ QUESTÃO 5 ═══════════ -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-number">5)</div>
+      <div class="ex-title">Combinando extends e super (PECS)</div>
+      <span class="pill pill-red">Avançado</span>
+      <div class="diff-bar" title="Dificuldade: Avançado">
+        <div class="diff-dot filled-medium"></div>
+        <div class="diff-dot filled-medium"></div>
+        <div class="diff-dot filled-medium"></div>
+        <div class="diff-dot filled-medium"></div>
+        <div class="diff-dot filled-medium"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="ex-enunciado">
+        Crie um método <strong>copiar</strong> que recebe uma lista de <strong>origem</strong> (<span class="ic">? extends T</span>, só leitura) e uma lista de <strong>destino</strong> (<span class="ic">? super T</span>, só escrita), copiando todos os elementos da origem para o destino — o mesmo princípio usado por <span class="ic">Collections.copy()</span>.
+      </div>
+      <div class="ex-requisitos">
+        <div class="ex-requisitos-title">Requisitos</div>
+        <ul>
+          <li><span class="ic">public static &lt;T&gt; void copiar(List&lt;? extends T&gt; origem, List&lt;? super T&gt; destino)</span></li>
+          <li>Percorra <span class="ic">origem</span> e chame <span class="ic">destino.add(item)</span> para cada elemento</li>
+          <li>Teste copiando uma <span class="ic">List&lt;Funcionario&gt;</span> para uma <span class="ic">List&lt;Pessoa&gt;</span> vazia</li>
+        </ul>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(5, this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Ver solução
+      </button>
+      <div class="solution-area" id="sol5">
+        <div class="solution-label">Solução</div>
+        <div class="code-block"><span class="kw">import</span> java.util.List;
+
+<span class="kw">public class</span> <span class="cls">Util</span> {
+    <span class="kw">public static</span> &lt;T&gt; <span class="typ">void</span> <span class="mtd">copiar</span>(<span class="typ">List</span>&lt;? <span class="kw">extends</span> T&gt; origem, <span class="typ">List</span>&lt;? <span class="kw">super</span> T&gt; destino) {
+        <span class="kw">for</span> (T item : origem) { <span class="cmt">// origem: só produz (lê)</span>
+            destino.<span class="mtd">add</span>(item);      <span class="cmt">// destino: só consome (escreve)</span>
+        }
+    }
+}
+
+<span class="kw">import</span> java.util.ArrayList;
+<span class="kw">import</span> java.util.Arrays;
+<span class="kw">import</span> java.util.List;
+
+<span class="kw">public class</span> <span class="cls">Ex05Pecs</span> {
+
+    <span class="kw">public static void</span> <span class="mtd">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">List</span>&lt;<span class="cls">Funcionario</span>&gt; origem = Arrays.<span class="mtd">asList</span>(<span class="kw">new</span> <span class="cls">Funcionario</span>(<span class="str">"Carlos"</span>), <span class="kw">new</span> <span class="cls">Funcionario</span>(<span class="str">"Ana"</span>));
+        <span class="typ">List</span>&lt;<span class="cls">Pessoa</span>&gt; destino = <span class="kw">new</span> ArrayList&lt;&gt;();
+
+        <span class="cls">Util</span>.&lt;<span class="cls">Funcionario</span>&gt;<span class="mtd">copiar</span>(origem, destino);
+
+        <span class="kw">for</span> (<span class="cls">Pessoa</span> p : destino) {
+            System.out.<span class="mtd">println</span>(p.<span class="mtd">getNome</span>());
+        }
+    }
+
+}</div>
+        <div class="output-label">Saída esperada no console</div>
+        <div class="output-block">Carlos
+Ana</div>
+        <div class="tip-box">&#x1F4A1; PECS: <strong>P</strong>roducer <strong>E</strong>xtends, <strong>C</strong>onsumer <strong>S</strong>uper — <code>origem</code> "produz" itens para leitura (<code>extends</code>), <code>destino</code> "consome" itens que você escreve (<code>super</code>).</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<footer>
+  Capacita Brasil &mdash; <span>iRede</span> &mdash; Material Interativo de Java
+</footer>
+
+<script>
+let revealed = 0;
+
+function toggleSolution(num, btn) {
+  const sol = document.getElementById('sol' + num);
+  const isVisible = sol.classList.contains('visible');
+
+  if (!isVisible) {
+    sol.classList.add('visible');
+    btn.classList.add('revealed');
+    btn.innerHTML =
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transform:rotate(180deg)"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>' +
+      'Ocultar solução';
+    if (!btn.dataset.counted) {
+      btn.dataset.counted = '1';
+      revealed++;
+      updateProgress();
+    }
+  } else {
+    sol.classList.remove('visible');
+    btn.classList.remove('revealed');
+    btn.innerHTML =
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>' +
+      'Ver solução';
+  }
+}
+
+function updateProgress() {
+  document.getElementById('progressVal').textContent  = revealed + '/5';
+  document.getElementById('progressFill').style.width = (revealed / 5 * 100) + '%';
+}
+</script>
+</body>
+</html>
