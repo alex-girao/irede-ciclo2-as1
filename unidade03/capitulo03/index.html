@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Java &mdash; Cap&iacute;tulo 03 &mdash; Introdu&ccedil;&atilde;o ao JavaFX</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:          #f0f0f5;
+  --surface:     #ffffff;
+  --border:      #d8d5e8;
+  --accent:      #8d62ff;
+  --accent2:     #00c896;
+  --text:        #1a1730;
+  --muted:       #7a748f;
+  --green:       #155e35;
+  --green-bg:    #d6f5e5;
+  --green-border:#6edaa8;
+  --red:         #7a1f1f;
+  --red-bg:      #fde8e8;
+  --red-border:  #f0a0a0;
+  --radius:      10px;
+  --glow:        0 0 18px rgba(141,98,255,0.15);
+  --grad:        linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
+  --surface2:    #f7f5ff;
+  --mint:        #00c896;
+  --danger:      #d63030;
+  --warn:        #d48a00;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  padding: 0 0 60px;
+  background-image:
+    radial-gradient(ellipse 70% 40% at 50% -10%, rgba(141,98,255,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 30% at 80% 110%, rgba(0,200,150,0.06) 0%, transparent 70%);
+}
+header {
+  text-align: center;
+  padding: 36px 20px 28px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  background: var(--surface);
+  box-shadow: 0 2px 16px rgba(141,98,255,0.07);
+}
+header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 2px;
+  background: linear-gradient(90deg, transparent, #8d62ff, transparent);
+}
+.header-logo { height: 48px; margin-bottom: 14px; display: block; margin-left: auto; margin-right: auto; }
+.logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.logo span { opacity: 0.6; }
+.subtitle { color: var(--muted); font-size: .85rem; margin-top: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
+.header-badge {
+  display: inline-block; margin-top: 12px; padding: 4px 16px; border-radius: 99px;
+  font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace;
+  background: linear-gradient(270deg, rgba(141,98,255,.15), rgba(0,255,188,.1));
+  border: 1px solid rgba(141,98,255,.3); color: var(--accent); letter-spacing: .06em;
+}
+.wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+/* ── AULA TABS ── */
+.aula-bar {
+  display: flex; gap: 4px; margin-bottom: 1.5rem;
+  background: var(--text); border-radius: 14px; padding: 6px;
+  box-shadow: 0 4px 20px rgba(26,23,48,0.18);
+}
+.aula-tab {
+  flex: 1; padding: 12px 20px; border-radius: 10px; border: none;
+  background: transparent; color: rgba(255,255,255,0.45); cursor: pointer;
+  font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+  transition: all .2s; letter-spacing: .02em;
+}
+.aula-tab.active { background: var(--grad); color: #fff; box-shadow: 0 2px 14px rgba(141,98,255,.45); }
+.aula-section { display: none; }
+.aula-section.active { display: block; }
+
+/* ── INNER TABS ── */
+.tab-bar {
+  display: flex; gap: 6px; margin-bottom: 1.5rem; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 14px; padding: 6px;
+  flex-wrap: wrap; box-shadow: 0 2px 10px rgba(141,98,255,0.06);
+}
+.tab {
+  flex: 1; min-width: 120px; padding: 9px 16px; border-radius: var(--radius);
+  border: none; background: transparent; color: var(--muted); cursor: pointer;
+  font-size: 13px; font-weight: 500; font-family: 'Space Grotesk', sans-serif; transition: all .2s;
+}
+.tab:hover:not(.active) { background: rgba(141,98,255,.08); color: var(--text); }
+.tab.active { background: var(--grad); color: #fff; font-weight: 700; box-shadow: 0 2px 12px rgba(141,98,255,.3); }
+.section { display: none; }
+.section.active { display: block; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.5rem; margin-bottom: 1.25rem; position: relative; overflow: hidden;
+  box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(141,98,255,.35), transparent);
+}
+.card-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700;
+  margin-bottom: 1rem; display: flex; align-items: center; gap: 10px; color: var(--text); flex-wrap: wrap;
+}
+.card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+/* ── PILLS ── */
+.pill { display: inline-block; padding: 3px 11px; border-radius: 99px; font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+.pill-grad  { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.3);  color: var(--accent); }
+.pill-green { background: rgba(0,200,150,.12);  border: 1px solid rgba(0,200,150,.3);   color: #0a7a5a; }
+.pill-red   { background: rgba(214,48,48,.1);   border: 1px solid rgba(214,48,48,.25);  color: var(--danger); }
+.pill-amber { background: rgba(212,138,0,.1);   border: 1px solid rgba(212,138,0,.25);  color: var(--warn); }
+.pill-blue  { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.25); color: #5a30cc; }
+.pill-java  { background: rgba(248,152,32,.12); border: 1px solid rgba(248,152,32,.35); color: #9a5000; }
+
+/* ── TABLE ── */
+table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 12px 0; }
+th {
+  background: rgba(141,98,255,.1); padding: 10px 14px; text-align: center;
+  font-weight: 700; font-size: 12px; color: var(--accent);
+  font-family: 'JetBrains Mono', monospace; letter-spacing: .05em; border-bottom: 1px solid var(--border);
+}
+td { padding: 10px 14px; text-align: center; border-bottom: 1px solid rgba(141,98,255,.08); font-size: 13px; font-family: 'JetBrains Mono', monospace; }
+td.left { text-align: left; font-family: 'Space Grotesk', sans-serif; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(141,98,255,.04); }
+
+/* ── CODE BLOCK ── */
+.code-block {
+  background: #1e1e2e; border: 1px solid #3a3a5c; border-radius: 10px;
+  padding: 16px 18px; margin: 12px 0; font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; line-height: 1.8; color: #cdd6f4; overflow-x: auto; white-space: pre;
+}
+.code-block .kw  { color: #cba6f7; }
+.code-block .typ { color: #89b4fa; }
+.code-block .str { color: #a6e3a1; }
+.code-block .num { color: #fab387; }
+.code-block .cmt { color: #6c7086; font-style: italic; }
+.code-block .cls { color: #f5c2e7; }
+.code-block .mtd { color: #89dceb; }
+
+/* ── SCORE BAR ── */
+.score-bar-area {
+  display: flex; align-items: center; gap: 16px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px 18px; margin-bottom: 1.25rem; box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.score-val {
+  font-size: 28px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+  background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.score-label { font-size: 11px; color: var(--muted); }
+.score-track { flex: 1; background: #e5e2f0; border-radius: 99px; height: 8px; overflow: hidden; }
+.score-fill { height: 100%; border-radius: 99px; background: var(--grad); width: 0%; transition: width .4s cubic-bezier(.4,0,.2,1); }
+
+/* ── EXERCISES ── */
+.ex-block {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem; margin-bottom: 1rem; border-left: 3px solid var(--accent);
+  transition: border-left-color .2s; box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.ex-block.done { border-left-color: var(--accent2); }
+.ex-q { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text); line-height: 1.55; }
+.ex-scenario { font-size: 13px; color: var(--muted); margin-bottom: 14px; line-height: 1.55; }
+.choices { display: flex; gap: 8px; flex-wrap: wrap; }
+.choice {
+  padding: 9px 20px; border-radius: 7px; border: 1.5px solid var(--border);
+  background: transparent; color: var(--text); cursor: pointer;
+  font-size: 13px; font-family: 'JetBrains Mono', monospace; font-weight: 600; transition: all .15s;
+}
+.choice:hover:not(:disabled) { background: rgba(141,98,255,.08); border-color: var(--accent); }
+.choice:disabled { cursor: default; }
+.choice.correct { background: var(--green-bg); color: #0a7a5a; border-color: var(--green-border); }
+.choice.wrong   { background: var(--red-bg);   color: var(--danger); border-color: var(--red-border); }
+.feedback { font-size: 13px; margin-top: 12px; padding: 10px 14px; border-radius: var(--radius); display: none; line-height: 1.6; }
+.feedback.show { display: block; }
+.feedback.ok { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.feedback.ko { background: var(--red-bg);   color: var(--red);   border: 1px solid var(--red-border); }
+
+/* ── CURIOSIDADES ── */
+.curi-item { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid rgba(141,98,255,.1); }
+.curi-item:last-of-type { border-bottom: none; }
+.curi-icon {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+  background: linear-gradient(270deg, rgba(141,98,255,.15), rgba(0,200,150,.1));
+  border: 1px solid rgba(141,98,255,.25);
+}
+.curi-title { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-bottom: 4px; color: var(--text); }
+.curi-body { font-size: 13px; color: var(--muted); line-height: 1.65; }
+.curi-body code { background: rgba(141,98,255,.12); color: #5a30cc; padding: 1px 6px; border-radius: 4px; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+
+/* ── LINKS ── */
+.link-item {
+  color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  text-decoration: none; word-break: break-all; transition: color .15s;
+}
+.link-item:hover { color: var(--mint); text-decoration: underline; }
+
+/* ── GRAD BTN ── */
+.grad-btn {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 14px;
+  padding: 10px 22px; border-radius: 8px; background: var(--grad); color: #fff;
+  border: none; cursor: pointer; font-size: 13px; font-weight: 700;
+  font-family: 'JetBrains Mono', monospace; text-decoration: none;
+  transition: opacity .2s, transform .15s; box-shadow: 0 3px 14px rgba(141,98,255,.3);
+}
+.grad-btn:hover { opacity: .88; transform: translateY(-1px); }
+
+/* ── INLINE CODE ── */
+.ic { background: rgba(141,98,255,.12); color: #5a30cc; padding: 1px 7px; border-radius: 4px; font-size: 12px; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+/* ── STEP LIST ── */
+.step-list { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
+.step-item { display: flex; gap: 14px; align-items: flex-start; }
+.step-num {
+  width: 28px; height: 28px; border-radius: 50%; background: var(--grad); color: #fff;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700;
+}
+.step-text { font-size: 13px; color: var(--muted); line-height: 1.6; padding-top: 4px; }
+.step-text strong { color: var(--text); }
+
+/* ── EVENT FLOW ── */
+.flow-row { display: flex; align-items: stretch; gap: 8px; margin: 14px 0; flex-wrap: wrap; }
+.flow-box {
+  flex: 1; min-width: 140px; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px; font-size: 12px; color: var(--text); text-align: center; line-height: 1.5;
+}
+.flow-arrow { display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 20px; font-weight: 700; }
+
+/* ── TYPE PICKER (SIMULADOR) ── */
+.type-btns { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0 14px; }
+.type-btn {
+  padding: 8px 16px; border-radius: 99px; border: 1.5px solid var(--border);
+  background: transparent; font-size: 12px; font-weight: 700; cursor: pointer;
+  font-family: 'JetBrains Mono', monospace; color: var(--muted); transition: all .15s;
+}
+.type-btn:hover { border-color: var(--accent); color: var(--text); }
+.type-btn.active { background: var(--grad); color: #fff; border-color: transparent; box-shadow: 0 2px 10px rgba(141,98,255,.3); }
+
+.output-block {
+  background: #12121e; border: 1px solid #2a2a40; border-radius: 8px;
+  padding: 14px 18px; margin-top: 10px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.8;
+  color: #a6e3a1; overflow-x: auto; white-space: pre;
+}
+
+/* ── FAKE WINDOW (SIMULADOR) ── */
+.fake-window {
+  border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; max-width: 320px;
+  box-shadow: 0 4px 18px rgba(26,23,48,.12);
+}
+.fake-titlebar {
+  background: var(--surface2); border-bottom: 1px solid var(--border);
+  padding: 8px 12px; font-size: 11px; font-family: 'JetBrains Mono', monospace;
+  color: var(--muted); display: flex; align-items: center; justify-content: space-between;
+}
+.fake-body { background: var(--surface); padding: 40px 20px; display: flex; align-items: center; justify-content: center; }
+.fake-btn {
+  padding: 10px 22px; border-radius: 6px; border: 1.5px solid var(--accent);
+  background: transparent; color: var(--accent); cursor: pointer;
+  font-size: 13px; font-family: 'Space Grotesk', sans-serif; transition: all .15s;
+}
+.fake-btn:hover { background: rgba(141,98,255,.08); }
+.fake-btn:active { transform: scale(.97); }
+
+footer { text-align: center; margin-top: 3rem; font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+footer span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700; }
+
+@media (max-width: 600px) {
+  .tab { min-width: 80px; font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img class="header-logo" src="https://capacitabrasil.irede.org.br/assets/capacitaLogo-Ct3BEyem.png" alt="Capacita Brasil"/>
+  <div class="logo">&#x2615; <span>//</span> Java</div>
+  <div class="subtitle">Desenvolvimento Java &mdash; Aula Interativa</div>
+  <div class="header-badge">Unidade 03 &mdash; Cap&iacute;tulo 03 &mdash; Introdu&ccedil;&atilde;o ao JavaFX</div>
+</header>
+
+<div class="wrap">
+
+  <div class="aula-bar">
+    <button class="aula-tab active">&#x1F5A5; Cap&iacute;tulo 03 &mdash; Introdu&ccedil;&atilde;o ao JavaFX</button>
+  </div>
+
+  <div id="aula01" class="aula-section active">
+
+  <div class="tab-bar">
+    <button class="tab active"  onclick="showTab('resumo1',this)">&#x1F4D8; Resumo</button>
+    <button class="tab"         onclick="showTab('simulador1',this)">&#x26A1; Simulador</button>
+    <button class="tab"         onclick="showTab('exercicios1',this)">&#x1F3AF; Exercícios</button>
+    <button class="tab"         onclick="showTab('questionarios1',this)">&#x1F4DD; Questionários</button>
+    <button class="tab"         onclick="showTab('curiosidades1',this)">&#x1F680; Curiosidades</button>
+    <button class="tab"         onclick="showTab('links1',this)">&#x1F517; Links</button>
+  </div>
+
+  <!-- ═══ RESUMO ═══ -->
+  <div id="resumo1" class="section active">
+
+    <!-- Card 1: O que é uma Interface Gráfica -->
+    <div class="card">
+      <div class="card-title">O que é uma Interface Gráfica? <span class="pill pill-java">GUI</span></div>
+      <p>Interface Gráfica do Usuário (<strong style="color:var(--text)">GUI &mdash; Graphical User Interface</strong>) é uma maneira visual e interativa de um usuário se comunicar com um software.</p>
+      <p style="margin-top:10px"><strong style="color:var(--text)">Principais características:</strong> permite interação com elementos visuais (botões, janelas, menus) · substitui interfaces baseadas em texto (como terminais e consoles) · torna o software mais acessível e intuitivo para usuários comuns.</p>
+      <p style="margin-top:10px"><strong style="color:var(--text)">Exemplos de GUI:</strong> sistemas operacionais (Windows, macOS, Linux) · navegadores (Chrome, Firefox) · softwares de edição (Photoshop, Word).</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+        <span class="pill pill-grad">Interação Visual</span>
+        <span class="pill pill-green">Acessibilidade</span>
+        <span class="pill pill-blue">Botões &middot; Janelas &middot; Menus</span>
+      </div>
+    </div>
+
+    <!-- Card 2: Estrutura -->
+    <div class="card">
+      <div class="card-title">Estrutura de uma Interface Gráfica <span class="pill pill-grad">Elementos</span></div>
+      <p>Uma interface gráfica é composta por elementos visuais, organizados em <strong style="color:var(--text)">layouts</strong> e gerenciados por um <strong style="color:var(--text)">sistema de eventos</strong> que responde às ações do usuário.</p>
+      <p style="margin-top:10px"><strong style="color:var(--text)">Elementos principais:</strong></p>
+      <ul style="margin:10px 0 0 18px;font-size:13px;color:var(--muted);line-height:1.9">
+        <li><strong style="color:var(--text)">Janelas (Frames)</strong> &rarr; área onde os elementos gráficos são exibidos</li>
+        <li><strong style="color:var(--text)">Botões (Buttons)</strong> &rarr; permitem interação, acionando ações</li>
+        <li><strong style="color:var(--text)">Campos de texto (TextFields)</strong> &rarr; entrada de informações pelo usuário</li>
+        <li><strong style="color:var(--text)">Menus e barras de ferramentas</strong> &rarr; facilitam o acesso a funções</li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Como Funciona uma GUI -->
+    <div class="card">
+      <div class="card-title">Como Funciona uma GUI? <span class="pill pill-green">Sistema de Eventos</span></div>
+      <div class="flow-row">
+        <div class="flow-box">&#x1F5B1; Usuário interage com a interface gráfica</div>
+        <div class="flow-arrow">&#x2192;</div>
+        <div class="flow-box">&#x2699; Sistema detecta o evento e aciona um método</div>
+        <div class="flow-arrow">&#x2192;</div>
+        <div class="flow-box">&#x2705; Aplicação responde ao evento</div>
+      </div>
+      <p><strong style="color:var(--text)">Exemplo prático:</strong> quando clicamos em um botão "Salvar", um evento é acionado que grava os dados no banco e exibe uma mensagem de sucesso.</p>
+    </div>
+
+    <!-- Card 4: Swing vs JavaFX -->
+    <div class="card">
+      <div class="card-title">Tipos de Interfaces Gráficas em Java <span class="pill pill-java">Swing vs. JavaFX</span></div>
+      <p>Existem diversas tecnologias para criar GUI. Algumas das principais para Java são:</p>
+      <ul style="margin:10px 0 0 18px;font-size:13px;color:var(--muted);line-height:1.9">
+        <li><strong style="color:var(--text)">Swing</strong> &rarr; biblioteca tradicional do Java para GUI, mas com visual mais antigo</li>
+        <li><strong style="color:var(--text)">JavaFX</strong> &rarr; evolução moderna do Swing, mais flexível e com suporte a gráficos avançados</li>
+      </ul>
+      <div style="overflow-x:auto;margin-top:14px">
+        <table>
+          <tr><th>Característica</th><th>Swing</th><th>JavaFX</th></tr>
+          <tr><td class="left">Estilização</td><td>Limitada</td><td>CSS e FXML</td></tr>
+          <tr><td class="left">Performance / visual</td><td>Mais antigo</td><td>Moderno e performático</td></tr>
+          <tr><td class="left">Situação atual</td><td>Defasado, sistemas legados</td><td>Recomendado</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Card 5: O que é JavaFX -->
+    <div class="card">
+      <div class="card-title">O que é o JavaFX? <span class="pill pill-blue">Biblioteca Gráfica</span></div>
+      <p>O <strong style="color:var(--text)">JavaFX</strong> é uma biblioteca moderna para criação de interfaces gráficas em Java, que substitui o antigo Swing.</p>
+      <p style="margin-top:8px">JavaFX usa <code class="ic">CSS</code> e <code class="ic">FXML</code> para estilização e estrutura, tem melhor performance e suporta gráficos avançados. Se você quer criar interfaces modernas, dinâmicas e responsivas, o JavaFX é a melhor escolha.</p>
+    </div>
+
+    <!-- Card 6: Configurando o Ambiente -->
+    <div class="card">
+      <div class="card-title">Configurando o Ambiente <span class="pill pill-amber">NetBeans + Gluon SDK</span></div>
+      <p style="margin-bottom:10px">Para usar JavaFX em projetos Java "puro" (sem Maven/Gradle), é preciso baixar o SDK e registrá-lo manualmente como biblioteca da IDE:</p>
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-text"><strong>Baixar o JDK JavaFX</strong> &mdash; acesse <code class="ic">gluonhq.com/products/javafx</code> e baixe o SDK correspondente ao seu sistema operacional. <strong>Importante:</strong> se o JDK instalado for a versão 21, baixe o JavaFX 21 (a versão do SDK deve ser compatível com a do JDK).</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-text">No NetBeans, acesse <strong>Tools &rarr; Libraries</strong> e crie uma <strong>New Library</strong> (ex: <code class="ic">JavaFx24</code>).</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-text">Em <strong>Classpath</strong>, clique em <strong>Add JAR/Folder</strong> e selecione todos os arquivos <code class="ic">.jar</code> da pasta <code class="ic">lib</code> do SDK extraído (<code class="ic">javafx.base</code>, <code class="ic">javafx.controls</code>, <code class="ic">javafx.fxml</code>, <code class="ic">javafx.graphics</code>, etc.).</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-text">Crie o projeto como <strong>Java with Ant &rarr; JavaFX</strong>, abra <strong>Properties &rarr; Libraries</strong> e adicione a biblioteca criada tanto em <strong>Compile</strong> quanto em <strong>Run</strong>.</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">5</div>
+          <div class="step-text">Em <strong>Build &rarr; Compiling</strong>, desative a opção <code class="ic">Compile on Save</code>.</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">6</div>
+          <div class="step-text">Em <strong>Run &rarr; VM Options</strong>, adicione: <code class="ic">--module-path "&lt;caminho&gt;\javafx-sdk\lib" --add-modules javafx.controls,javafx.fxml</code>, substituindo o caminho pelo local onde está a biblioteca extraída.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 7: Estrutura básica -->
+    <div class="card">
+      <div class="card-title">Estrutura Básica de uma Aplicação JavaFX <span class="pill pill-grad">4 componentes</span></div>
+      <p>Principais componentes em uma estrutura básica de uma aplicação JavaFX:</p>
+      <ul style="margin:10px 0 0 18px;font-size:13px;color:var(--muted);line-height:1.9">
+        <li><code class="ic">Application</code> &rarr; classe principal que inicializa o JavaFX</li>
+        <li><code class="ic">start(Stage primaryStage)</code> &rarr; método que define a interface gráfica</li>
+        <li><code class="ic">Stage</code> &rarr; a janela principal da aplicação</li>
+        <li><code class="ic">Scene</code> &rarr; define os elementos gráficos dentro da janela</li>
+      </ul>
+    </div>
+
+    <!-- Card 8: Primeira aplicação -->
+    <div class="card">
+      <div class="card-title">Primeira Aplicação JavaFX <span class="pill pill-green">Exemplo completo</span></div>
+      <div class="code-block"><span class="kw">package</span> ex38javafxbasico;
+
+<span class="kw">import</span> javafx.application.Application;
+<span class="kw">import</span> javafx.scene.Scene;
+<span class="kw">import</span> javafx.scene.control.Button;
+<span class="kw">import</span> javafx.scene.layout.StackPane;
+<span class="kw">import</span> javafx.stage.Stage;
+
+<span class="kw">public class</span> <span class="cls">Ex38JavaFxBasico</span> <span class="kw">extends</span> Application {
+
+    <span class="cmt">@Override</span>
+    <span class="kw">public void</span> <span class="mtd">start</span>(Stage primaryStage) {
+        Button botao = <span class="kw">new</span> Button(<span class="str">"Clique aqui!"</span>);
+
+        StackPane layout = <span class="kw">new</span> StackPane();
+        layout.<span class="mtd">getChildren</span>().<span class="mtd">add</span>(botao);
+
+        Scene scene = <span class="kw">new</span> Scene(layout, <span class="num">300</span>, <span class="num">200</span>);
+        primaryStage.<span class="mtd">setTitle</span>(<span class="str">"Minha primeira aplicação JavaFX"</span>);
+        primaryStage.<span class="mtd">setScene</span>(scene);
+        primaryStage.<span class="mtd">show</span>();
+    }
+
+    <span class="kw">public static void</span> <span class="mtd">main</span>(String[] args) {
+        launch(args);
+    }
+}</div>
+      <p style="margin-top:10px">Ao executar, uma janela de <strong style="color:var(--text)">300x200</strong> pixels é exibida, com o título <strong style="color:var(--text)">"Minha primeira aplicação JavaFX"</strong> e um botão <strong style="color:var(--text)">"Clique aqui!"</strong> centralizado.</p>
+    </div>
+
+  </div><!-- /resumo1 -->
+
+  <!-- ═══ SIMULADOR ═══ -->
+  <div id="simulador1" class="section">
+
+    <!-- Part 1: Anatomia JavaFX -->
+    <div class="card">
+      <div class="card-title">&#x1F9E9; Anatomia de uma Aplicação JavaFX <span class="pill pill-grad">Explorador</span></div>
+      <p style="margin-bottom:4px">Clique em um componente para ver sua função e onde ele aparece no código de <code class="ic">Ex38JavaFxBasico</code>:</p>
+      <div class="type-btns">
+        <button class="type-btn active" onclick="selectFxPart('application',this)">Application</button>
+        <button class="type-btn" onclick="selectFxPart('start',this)">start(Stage)</button>
+        <button class="type-btn" onclick="selectFxPart('stage',this)">Stage</button>
+        <button class="type-btn" onclick="selectFxPart('scene',this)">Scene</button>
+      </div>
+      <div class="code-block" id="fxPartCode" style="min-height:60px"></div>
+      <div style="margin-top:10px;font-size:13px;color:var(--muted);line-height:1.6" id="fxPartDesc"></div>
+    </div>
+
+    <!-- Part 2: Simulador de evento -->
+    <div class="card">
+      <div class="card-title">&#x1F5B1; Simulador de Evento de Clique <span class="pill pill-green">Interativo</span></div>
+      <p style="margin-bottom:12px">Clique no botão da janela simulada abaixo e acompanhe, no console, o fluxo de eventos descrito no resumo desta aula:</p>
+      <div class="fake-window">
+        <div class="fake-titlebar">
+          <span>Minha primeira aplicação JavaFX</span>
+          <span>&#x2212;&nbsp;&#x25A1;&nbsp;&#x2715;</span>
+        </div>
+        <div class="fake-body">
+          <button class="fake-btn" onclick="simulateClick()">Clique aqui!</button>
+        </div>
+      </div>
+      <div class="output-block" id="clickOutput" style="min-height:70px;margin-top:14px"><span style="color:#6c7086;font-style:italic">// console vazio — clique no botão acima</span></div>
+      <div class="type-btns" style="margin-top:10px">
+        <button class="type-btn" onclick="clearClickOutput()" style="border-style:dashed">&#x1F5D1; Limpar console</button>
+      </div>
+    </div>
+
+  </div><!-- /simulador1 -->
+
+  <!-- ═══ EXERCÍCIOS ═══ -->
+  <div id="exercicios1" class="section">
+
+    <div class="score-bar-area">
+      <div>
+        <div class="score-val"><span id="scoreVal1">0</span>/5</div>
+        <div class="score-label">acertos</div>
+      </div>
+      <div style="flex:1">
+        <div class="score-track"><div class="score-fill" id="scoreBar1"></div></div>
+      </div>
+    </div>
+
+    <!-- Ex 1 -->
+    <div class="ex-block" id="ex1-0">
+      <div class="ex-q">Questão 1 &mdash; Uma GUI (Graphical User Interface) permite que o usuário interaja com o software por meio de elementos visuais, como botões e janelas.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(0,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(0,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-0"></div>
+    </div>
+
+    <!-- Ex 2 -->
+    <div class="ex-block" id="ex1-1">
+      <div class="ex-q">Questão 2 &mdash; O JavaFX é uma tecnologia mais antiga que o Swing, e por isso tem uma aparência mais moderna.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(1,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(1,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-1"></div>
+    </div>
+
+    <!-- Ex 3 -->
+    <div class="ex-block" id="ex1-2">
+      <div class="ex-q">Questão 3 &mdash; Em uma aplicação JavaFX, a classe principal deve estender <code class="ic">javafx.application.Application</code>.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(2,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(2,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-2"></div>
+    </div>
+
+    <!-- Ex 4 -->
+    <div class="ex-block" id="ex1-3">
+      <div class="ex-q">Questão 4 &mdash; O método <code class="ic">start(Stage primaryStage)</code> é chamado automaticamente <strong>antes</strong> do <code class="ic">main()</code> da aplicação.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(3,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(3,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-3"></div>
+    </div>
+
+    <!-- Ex 5 -->
+    <div class="ex-block" id="ex1-4">
+      <div class="ex-q">Questão 5 &mdash; <code class="ic">Scene</code> define os elementos gráficos exibidos dentro da janela, enquanto <code class="ic">Stage</code> representa a janela em si.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(4,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(4,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-4"></div>
+    </div>
+
+  </div><!-- /exercicios1 -->
+
+  <!-- ═══ QUESTIONÁRIOS ═══ -->
+  <div id="questionarios1" class="section">
+
+    <div class="card">
+      <div class="card-title">&#x1F4DD; Questionários</div>
+      <p style="margin-bottom:1rem">Teste seu conhecimento com os questionários abaixo. Cada arquivo contém questões de verdadeiro ou falso e exercícios práticos de implementação.</p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a class="grad-btn" href="questionario-u3c3-01.html">&#x1F4CB; Quiz 01 &mdash; Interfaces Gráficas e Swing vs. JavaFX</a>
+        <a class="grad-btn" href="questionario-u3c3-02.html" style="background:linear-gradient(270deg,#00c896 0%,#00a0cc 100%)">&#x1F4CB; Quiz 02 &mdash; Configuração do Ambiente e Estrutura JavaFX</a>
+        <a class="grad-btn" href="questionario-u3c3-03.html" style="background:linear-gradient(270deg,#cba6f7 0%,#8d62ff 100%)">&#x1F6E0; Implementação &mdash; JavaFX na Prática</a>
+      </div>
+    </div>
+
+  </div><!-- /questionarios1 -->
+
+  <!-- ═══ CURIOSIDADES ═══ -->
+  <div id="curiosidades1" class="section">
+
+    <div class="card">
+      <div class="card-title">&#x1F680; Curiosidades sobre JavaFX</div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F4C5;</div>
+        <div>
+          <div class="curi-title">JavaFX já foi parte do JDK</div>
+          <div class="curi-body">Até o Java 8, o JavaFX vinha embutido no próprio JDK. A partir do Java 11, ele foi separado em um módulo independente (o SDK da Gluon usado neste capítulo) — por isso hoje é preciso baixá-lo à parte.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F3A8;</div>
+        <div>
+          <div class="curi-title">FXML separa design de lógica</div>
+          <div class="curi-body">Assim como HTML separa estrutura de uma página do seu comportamento em JavaScript, o FXML permite descrever a interface JavaFX em um arquivo XML separado da classe Java — um padrão muito próximo do MVC.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F3AD;</div>
+        <div>
+          <div class="curi-title">CSS de verdade, com seletores próprios</div>
+          <div class="curi-body">O JavaFX usa arquivos <code>.css</code> quase idênticos ao CSS da web, mas com propriedades prefixadas por <code>-fx-</code>, como <code>-fx-background-color</code>.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F5A5;</div>
+        <div>
+          <div class="curi-title">Um Stage pode ter várias Scenes</div>
+          <div class="curi-body">Uma mesma janela (<code>Stage</code>) pode trocar de <code>Scene</code> em tempo de execução — é assim que se implementam trocas de "tela" dentro de uma mesma janela, sem precisar abrir uma nova.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x26A1;</div>
+        <div>
+          <div class="curi-title">Por que desativar "Compile on Save"?</div>
+          <div class="curi-body">Com módulos JavaFX carregados via VM Options (<code>--module-path</code>), recompilar automaticamente a cada salvamento pode gerar conflitos de classpath no NetBeans — por isso o material recomenda desativar essa opção para projetos JavaFX feitos com Ant.</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div><!-- /curiosidades1 -->
+
+  <!-- ═══ LINKS ═══ -->
+  <div id="links1" class="section">
+
+    <div class="card">
+      <div class="card-title">&#x1F517; Links Úteis</div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;margin-top:4px">
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x23EA; Módulo Anterior</div>
+          <a class="link-item" href="../capitulo02/index.html">Unidade 03 &mdash; Capítulo 02 &mdash; Wildcards e Tipos Limitados</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4E5; Gluon &mdash; Download do JavaFX SDK</div>
+          <a class="link-item" href="https://gluonhq.com/products/javafx/" target="_blank">https://gluonhq.com/products/javafx/</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4D6; OpenJFX &mdash; Documentação Oficial</div>
+          <a class="link-item" href="https://openjfx.io/openjfx-docs/" target="_blank">https://openjfx.io/openjfx-docs/</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4DA; Oracle &mdash; JavaFX API (Javadoc)</div>
+          <a class="link-item" href="https://openjfx.io/javadoc/21/" target="_blank">https://openjfx.io/javadoc/21/</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4BB; Apache NetBeans IDE</div>
+          <a class="link-item" href="https://netbeans.apache.org/" target="_blank">https://netbeans.apache.org/</a>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /links1 -->
+
+  </div><!-- /aula01 -->
+
+</div><!-- /wrap -->
+
+<footer>
+  Capacita Brasil &mdash; <span>iRede</span> &mdash; Material Interativo de Java
+</footer>
+
+<script>
+function showTab(t, btn) {
+  document.querySelectorAll('#aula01 .section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('#aula01 .tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(t).classList.add('active');
+  btn.classList.add('active');
+}
+
+const FX_PARTS = {
+  application: {
+    code: '<span class="kw">public class</span> <span class="cls">Ex38JavaFxBasico</span> <span class="kw">extends</span> Application {\n    <span class="cmt">// ...</span>\n}',
+    desc: '<strong style="color:var(--text)">Application</strong> é a classe base que toda aplicação JavaFX deve estender. É ela que gerencia o ciclo de vida da aplicação (init &rarr; start &rarr; stop) e é iniciada pelo método estático <code class="ic">launch()</code>.'
+  },
+  start: {
+    code: '<span class="cmt">@Override</span>\n<span class="kw">public void</span> <span class="mtd">start</span>(Stage primaryStage) {\n    <span class="cmt">// monta a interface aqui</span>\n}',
+    desc: '<strong style="color:var(--text)">start(Stage primaryStage)</strong> é chamado pelo runtime do JavaFX depois de <code class="ic">launch()</code>. É aqui que a interface gráfica é montada: criação de botões, layouts, e a configuração da <code class="ic">Scene</code> e do <code class="ic">Stage</code>.'
+  },
+  stage: {
+    code: 'Stage primaryStage; <span class="cmt">// recebido como parâmetro de start()</span>\n\nprimaryStage.<span class="mtd">setTitle</span>(<span class="str">"Minha primeira aplicação JavaFX"</span>);\nprimaryStage.<span class="mtd">setScene</span>(scene);\nprimaryStage.<span class="mtd">show</span>();',
+    desc: '<strong style="color:var(--text)">Stage</strong> representa a <strong>janela</strong> da aplicação. É nele que se define o título e a <code class="ic">Scene</code> exibida, além de comandar a exibição com <code class="ic">show()</code>.'
+  },
+  scene: {
+    code: 'Scene scene = <span class="kw">new</span> Scene(layout, <span class="num">300</span>, <span class="num">200</span>);\nprimaryStage.<span class="mtd">setScene</span>(scene);',
+    desc: '<strong style="color:var(--text)">Scene</strong> define o <strong>conteúdo gráfico</strong> exibido dentro do <code class="ic">Stage</code> — o layout raiz (aqui, um <code class="ic">StackPane</code>) e as dimensões da área visível (300x200 pixels).'
+  }
+};
+
+function selectFxPart(key, btn) {
+  document.querySelectorAll('#simulador1 .card:first-child .type-btns .type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('fxPartCode').innerHTML = FX_PARTS[key].code;
+  document.getElementById('fxPartDesc').innerHTML = FX_PARTS[key].desc;
+}
+
+const CLICK_STEPS = [
+  '🖱 Usuário clica no botão "Clique aqui!"',
+  '⚙ Sistema detecta o evento (ActionEvent) e aciona o método associado',
+  '✅ Aplicação responde ao evento'
+];
+let clickCount = 0;
+
+function simulateClick() {
+  const out = document.getElementById('clickOutput');
+  if (clickCount === 0) out.textContent = '';
+  clickCount++;
+  const block = '--- clique #' + clickCount + ' ---\n' + CLICK_STEPS.join('\n');
+  out.textContent += (clickCount > 1 ? '\n\n' : '') + block;
+  out.scrollTop = out.scrollHeight;
+}
+
+function clearClickOutput() {
+  clickCount = 0;
+  document.getElementById('clickOutput').innerHTML = '<span style="color:#6c7086;font-style:italic">// console vazio — clique no botão acima</span>';
+}
+
+function answer1(i, btn, isCorrect) {
+  const block = document.getElementById('ex1-' + i);
+  const fb = document.getElementById('fb1-' + i);
+  block.querySelectorAll('.choice').forEach(b => b.disabled = true);
+  if (isCorrect) {
+    btn.classList.add('correct');
+    block.classList.add('done');
+    fb.className = 'feedback show ok';
+    fb.textContent = '✓ Correto!';
+    window.score1 = (window.score1 || 0) + 1;
+  } else {
+    btn.classList.add('wrong');
+    fb.className = 'feedback show ko';
+    fb.textContent = '✗ Incorreto. Revise o resumo desta aula.';
+  }
+  document.getElementById('scoreVal1').textContent = window.score1 || 0;
+  document.getElementById('scoreBar1').style.width = ((window.score1 || 0) / 5 * 100) + '%';
+}
+
+window.addEventListener('DOMContentLoaded', function () {
+  selectFxPart('application', document.querySelector('#simulador1 .type-btn.active'));
+});
+</script>
+</body>
+</html>
