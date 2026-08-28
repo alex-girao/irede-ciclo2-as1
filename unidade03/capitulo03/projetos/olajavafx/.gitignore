@@ -1,0 +1,56 @@
+# =============================================================================
+# Cadastro JavaFX — .gitignore
+# Arquivos gerados automaticamente NÃO devem ir para o Git.
+# Só o código-fonte, o pom.xml e a documentação entram no repositório.
+# =============================================================================
+
+# --- Maven: pasta de compilação (classes .class, JARs, relatórios) ---
+target/
+
+# --- NetBeans ---
+nbproject/private/
+nbbuild/
+nbdist/
+.nb-gradle/
+# Logs e cache interno do IDE
+*.log
+
+# --- Eclipse / VS Code / IntelliJ (caso alguém abra o projeto noutro editor) ---
+.classpath
+.project
+.settings/
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.code-workspace
+
+# --- Java ---
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+replay_pid*
+
+# --- Sistema operacional ---
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+Desktop.ini
+
+# --- Arquivos temporários / backup de editores ---
+*~
+*.bak
+*.swp
+*.swo
+*.tmp
+
+# --- Segredos e ambiente local (nunca versionar senhas ou configs pessoais) ---
+.env
+.env.local
+*.keystore
+*.jks
