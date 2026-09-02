@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Java &mdash; Cap&iacute;tulo 04 &mdash; Controles e Componentes Visuais</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:          #f0f0f5;
+  --surface:     #ffffff;
+  --border:      #d8d5e8;
+  --accent:      #8d62ff;
+  --accent2:     #00c896;
+  --text:        #1a1730;
+  --muted:       #7a748f;
+  --green:       #155e35;
+  --green-bg:    #d6f5e5;
+  --green-border:#6edaa8;
+  --red:         #7a1f1f;
+  --red-bg:      #fde8e8;
+  --red-border:  #f0a0a0;
+  --radius:      10px;
+  --glow:        0 0 18px rgba(141,98,255,0.15);
+  --grad:        linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
+  --surface2:    #f7f5ff;
+  --mint:        #00c896;
+  --danger:      #d63030;
+  --warn:        #d48a00;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  padding: 0 0 60px;
+  background-image:
+    radial-gradient(ellipse 70% 40% at 50% -10%, rgba(141,98,255,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 30% at 80% 110%, rgba(0,200,150,0.06) 0%, transparent 70%);
+}
+header {
+  text-align: center;
+  padding: 36px 20px 28px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  background: var(--surface);
+  box-shadow: 0 2px 16px rgba(141,98,255,0.07);
+}
+header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 2px;
+  background: linear-gradient(90deg, transparent, #8d62ff, transparent);
+}
+.header-logo { height: 48px; margin-bottom: 14px; display: block; margin-left: auto; margin-right: auto; }
+.logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.logo span { opacity: 0.6; }
+.subtitle { color: var(--muted); font-size: .85rem; margin-top: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
+.header-badge {
+  display: inline-block; margin-top: 12px; padding: 4px 16px; border-radius: 99px;
+  font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace;
+  background: linear-gradient(270deg, rgba(141,98,255,.15), rgba(0,255,188,.1));
+  border: 1px solid rgba(141,98,255,.3); color: var(--accent); letter-spacing: .06em;
+}
+.wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+/* ── AULA TABS ── */
+.aula-bar {
+  display: flex; gap: 4px; margin-bottom: 1.5rem;
+  background: var(--text); border-radius: 14px; padding: 6px;
+  box-shadow: 0 4px 20px rgba(26,23,48,0.18);
+}
+.aula-tab {
+  flex: 1; padding: 12px 20px; border-radius: 10px; border: none;
+  background: transparent; color: rgba(255,255,255,0.45); cursor: pointer;
+  font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+  transition: all .2s; letter-spacing: .02em;
+}
+.aula-tab.active { background: var(--grad); color: #fff; box-shadow: 0 2px 14px rgba(141,98,255,.45); }
+.aula-section { display: none; }
+.aula-section.active { display: block; }
+
+/* ── INNER TABS ── */
+.tab-bar {
+  display: flex; gap: 6px; margin-bottom: 1.5rem; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 14px; padding: 6px;
+  flex-wrap: wrap; box-shadow: 0 2px 10px rgba(141,98,255,0.06);
+}
+.tab {
+  flex: 1; min-width: 120px; padding: 9px 16px; border-radius: var(--radius);
+  border: none; background: transparent; color: var(--muted); cursor: pointer;
+  font-size: 13px; font-weight: 500; font-family: 'Space Grotesk', sans-serif; transition: all .2s;
+}
+.tab:hover:not(.active) { background: rgba(141,98,255,.08); color: var(--text); }
+.tab.active { background: var(--grad); color: #fff; font-weight: 700; box-shadow: 0 2px 12px rgba(141,98,255,.3); }
+.section { display: none; }
+.section.active { display: block; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.5rem; margin-bottom: 1.25rem; position: relative; overflow: hidden;
+  box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(141,98,255,.35), transparent);
+}
+.card-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700;
+  margin-bottom: 1rem; display: flex; align-items: center; gap: 10px; color: var(--text); flex-wrap: wrap;
+}
+.card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+/* ── PILLS ── */
+.pill { display: inline-block; padding: 3px 11px; border-radius: 99px; font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+.pill-grad  { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.3);  color: var(--accent); }
+.pill-green { background: rgba(0,200,150,.12);  border: 1px solid rgba(0,200,150,.3);   color: #0a7a5a; }
+.pill-red   { background: rgba(214,48,48,.1);   border: 1px solid rgba(214,48,48,.25);  color: var(--danger); }
+.pill-amber { background: rgba(212,138,0,.1);   border: 1px solid rgba(212,138,0,.25);  color: var(--warn); }
+.pill-blue  { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.25); color: #5a30cc; }
+.pill-java  { background: rgba(248,152,32,.12); border: 1px solid rgba(248,152,32,.35); color: #9a5000; }
+
+/* ── TABLE ── */
+table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 12px 0; }
+th {
+  background: rgba(141,98,255,.1); padding: 10px 14px; text-align: center;
+  font-weight: 700; font-size: 12px; color: var(--accent);
+  font-family: 'JetBrains Mono', monospace; letter-spacing: .05em; border-bottom: 1px solid var(--border);
+}
+td { padding: 10px 14px; text-align: center; border-bottom: 1px solid rgba(141,98,255,.08); font-size: 13px; font-family: 'JetBrains Mono', monospace; }
+td.left { text-align: left; font-family: 'Space Grotesk', sans-serif; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(141,98,255,.04); }
+
+/* ── CODE BLOCK ── */
+.code-block {
+  background: #1e1e2e; border: 1px solid #3a3a5c; border-radius: 10px;
+  padding: 16px 18px; margin: 12px 0; font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; line-height: 1.8; color: #cdd6f4; overflow-x: auto; white-space: pre;
+}
+.code-block .kw  { color: #cba6f7; }
+.code-block .typ { color: #89b4fa; }
+.code-block .str { color: #a6e3a1; }
+.code-block .num { color: #fab387; }
+.code-block .cmt { color: #6c7086; font-style: italic; }
+.code-block .cls { color: #f5c2e7; }
+.code-block .mtd { color: #89dceb; }
+
+/* ── SCORE BAR ── */
+.score-bar-area {
+  display: flex; align-items: center; gap: 16px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px 18px; margin-bottom: 1.25rem; box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.score-val {
+  font-size: 28px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+  background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.score-label { font-size: 11px; color: var(--muted); }
+.score-track { flex: 1; background: #e5e2f0; border-radius: 99px; height: 8px; overflow: hidden; }
+.score-fill { height: 100%; border-radius: 99px; background: var(--grad); width: 0%; transition: width .4s cubic-bezier(.4,0,.2,1); }
+
+/* ── EXERCISES ── */
+.ex-block {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem; margin-bottom: 1rem; border-left: 3px solid var(--accent);
+  transition: border-left-color .2s; box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.ex-block.done { border-left-color: var(--accent2); }
+.ex-q { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text); line-height: 1.55; }
+.ex-scenario { font-size: 13px; color: var(--muted); margin-bottom: 14px; line-height: 1.55; }
+.choices { display: flex; gap: 8px; flex-wrap: wrap; }
+.choice {
+  padding: 9px 20px; border-radius: 7px; border: 1.5px solid var(--border);
+  background: transparent; color: var(--text); cursor: pointer;
+  font-size: 13px; font-family: 'JetBrains Mono', monospace; font-weight: 600; transition: all .15s;
+}
+.choice:hover:not(:disabled) { background: rgba(141,98,255,.08); border-color: var(--accent); }
+.choice:disabled { cursor: default; }
+.choice.correct { background: var(--green-bg); color: #0a7a5a; border-color: var(--green-border); }
+.choice.wrong   { background: var(--red-bg);   color: var(--danger); border-color: var(--red-border); }
+.feedback { font-size: 13px; margin-top: 12px; padding: 10px 14px; border-radius: var(--radius); display: none; line-height: 1.6; }
+.feedback.show { display: block; }
+.feedback.ok { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.feedback.ko { background: var(--red-bg);   color: var(--red);   border: 1px solid var(--red-border); }
+
+/* ── CURIOSIDADES ── */
+.curi-item { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid rgba(141,98,255,.1); }
+.curi-item:last-of-type { border-bottom: none; }
+.curi-icon {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+  background: linear-gradient(270deg, rgba(141,98,255,.15), rgba(0,200,150,.1));
+  border: 1px solid rgba(141,98,255,.25);
+}
+.curi-title { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-bottom: 4px; color: var(--text); }
+.curi-body { font-size: 13px; color: var(--muted); line-height: 1.65; }
+.curi-body code { background: rgba(141,98,255,.12); color: #5a30cc; padding: 1px 6px; border-radius: 4px; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+
+/* ── LINKS ── */
+.link-item {
+  color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  text-decoration: none; word-break: break-all; transition: color .15s;
+}
+.link-item:hover { color: var(--mint); text-decoration: underline; }
+
+/* ── GRAD BTN ── */
+.grad-btn {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 14px;
+  padding: 10px 22px; border-radius: 8px; background: var(--grad); color: #fff;
+  border: none; cursor: pointer; font-size: 13px; font-weight: 700;
+  font-family: 'JetBrains Mono', monospace; text-decoration: none;
+  transition: opacity .2s, transform .15s; box-shadow: 0 3px 14px rgba(141,98,255,.3);
+}
+.grad-btn:hover { opacity: .88; transform: translateY(-1px); }
+
+/* ── INLINE CODE ── */
+.ic { background: rgba(141,98,255,.12); color: #5a30cc; padding: 1px 7px; border-radius: 4px; font-size: 12px; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+/* ── TYPE PICKER (SIMULADOR) ── */
+.type-btns { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0 14px; }
+.type-btn {
+  padding: 8px 16px; border-radius: 99px; border: 1.5px solid var(--border);
+  background: transparent; font-size: 12px; font-weight: 700; cursor: pointer;
+  font-family: 'JetBrains Mono', monospace; color: var(--muted); transition: all .15s;
+}
+.type-btn:hover { border-color: var(--accent); color: var(--text); }
+.type-btn.active { background: var(--grad); color: #fff; border-color: transparent; box-shadow: 0 2px 10px rgba(141,98,255,.3); }
+
+.output-block {
+  background: #12121e; border: 1px solid #2a2a40; border-radius: 8px;
+  padding: 14px 18px; margin-top: 10px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.8;
+  color: #a6e3a1; overflow-x: auto; white-space: pre;
+}
+
+/* ── FAKE WINDOW / FORM SIMULATOR ── */
+.fake-window {
+  border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; max-width: 360px;
+  box-shadow: 0 4px 18px rgba(26,23,48,.12);
+}
+.fake-titlebar {
+  background: var(--surface2); border-bottom: 1px solid var(--border);
+  padding: 8px 12px; font-size: 11px; font-family: 'JetBrains Mono', monospace;
+  color: var(--muted); display: flex; align-items: center; justify-content: space-between;
+}
+.fake-body { background: var(--surface); padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+.sim-label { font-size: 13px; color: var(--text); }
+.sim-input, .sim-select {
+  padding: 8px 10px; border-radius: 6px; border: 1.5px solid var(--border);
+  font-size: 13px; font-family: 'Space Grotesk', sans-serif; color: var(--text); background: #fff;
+  outline: none; transition: border-color .15s;
+}
+.sim-input:focus, .sim-select:focus { border-color: var(--accent); }
+.sim-btn {
+  padding: 8px 18px; border-radius: 6px; border: 1.5px solid var(--accent);
+  background: transparent; color: var(--accent); cursor: pointer;
+  font-size: 13px; font-family: 'Space Grotesk', sans-serif; transition: all .15s; align-self: flex-start;
+}
+.sim-btn:hover { background: rgba(141,98,255,.08); }
+.sim-check-row, .sim-radio-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text); }
+.sim-radio-group { display: flex; flex-direction: column; gap: 6px; }
+
+/* ── LAYOUT EXPLORER ── */
+.layout-demo {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
+  padding: 14px; min-height: 130px; display: flex; gap: 8px;
+}
+.layout-demo.vbox { flex-direction: column; }
+.layout-demo.hbox { flex-direction: row; }
+.layout-demo.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.layout-demo.border { flex-direction: column; justify-content: space-between; }
+.layout-box {
+  background: var(--surface); border: 1.5px solid var(--accent); border-radius: 6px;
+  padding: 10px; font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--accent);
+  text-align: center; flex: 1; display: flex; align-items: center; justify-content: center;
+}
+.layout-box.wide { flex: 0 0 100%; }
+
+footer { text-align: center; margin-top: 3rem; font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+footer span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700; }
+
+@media (max-width: 600px) {
+  .tab { min-width: 80px; font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img class="header-logo" src="https://capacitabrasil.irede.org.br/assets/capacitaLogo-Ct3BEyem.png" alt="Capacita Brasil"/>
+  <div class="logo">&#x2615; <span>//</span> Java</div>
+  <div class="subtitle">Desenvolvimento Java &mdash; Aula Interativa</div>
+  <div class="header-badge">Unidade 03 &mdash; Cap&iacute;tulo 04 &mdash; Controles e Componentes Visuais</div>
+</header>
+
+<div class="wrap">
+
+  <div class="aula-bar">
+    <button class="aula-tab active">&#x1F39B; Cap&iacute;tulo 04 &mdash; Controles e Componentes Visuais</button>
+  </div>
+
+  <div id="aula01" class="aula-section active">
+
+  <div class="tab-bar">
+    <button class="tab active"  onclick="showTab('resumo1',this)">&#x1F4D8; Resumo</button>
+    <button class="tab"         onclick="showTab('simulador1',this)">&#x26A1; Simulador</button>
+    <button class="tab"         onclick="showTab('exercicios1',this)">&#x1F3AF; Exercícios</button>
+    <button class="tab"         onclick="showTab('questionarios1',this)">&#x1F4DD; Questionários</button>
+    <button class="tab"         onclick="showTab('curiosidades1',this)">&#x1F680; Curiosidades</button>
+    <button class="tab"         onclick="showTab('links1',this)">&#x1F517; Links</button>
+  </div>
+
+  <!-- ═══ RESUMO ═══ -->
+  <div id="resumo1" class="section active">
+
+    <!-- Card 1: Introdução -->
+    <div class="card">
+      <div class="card-title">Introdução <span class="pill pill-java">O que dá vida às janelas</span></div>
+      <p>Hoje vamos explorar o que dá vida às nossas janelas:</p>
+      <ul style="margin:10px 0 0 18px;font-size:13px;color:var(--muted);line-height:1.9">
+        <li><strong style="color:var(--text)">Componentes visuais</strong> &rarr; botões, campos de texto, rótulos e caixas de seleção</li>
+        <li><strong style="color:var(--text)">Eventos</strong> &rarr; como capturar cliques e entradas de texto para tornar a interface interativa</li>
+        <li><strong style="color:var(--text)">Layouts</strong> &rarr; como organizar os elementos na tela de maneira profissional</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Componentes visuais -->
+    <div class="card">
+      <div class="card-title">Componentes Visuais no JavaFX <span class="pill pill-grad">Controles</span></div>
+      <div style="overflow-x:auto;margin-top:4px">
+        <table>
+          <tr><th>Componente</th><th>Descrição</th></tr>
+          <tr><td class="left"><code class="ic">Label</code></td><td class="left">Exibe um texto fixo na tela.</td></tr>
+          <tr><td class="left"><code class="ic">TextField</code></td><td class="left">Campo para entrada de texto curto.</td></tr>
+          <tr><td class="left"><code class="ic">TextArea</code></td><td class="left">Campo para entrada de texto longo.</td></tr>
+          <tr><td class="left"><code class="ic">Button</code></td><td class="left">Botão clicável para interações.</td></tr>
+          <tr><td class="left"><code class="ic">CheckBox</code></td><td class="left">Caixa de seleção para múltiplas opções.</td></tr>
+          <tr><td class="left"><code class="ic">RadioButton</code></td><td class="left">Botões de escolha única.</td></tr>
+        </table>
+      </div>
+      <p style="margin-top:10px">Exemplo de criação de um <code class="ic">Label</code>, um <code class="ic">TextField</code> e um <code class="ic">Button</code>:</p>
+      <div class="code-block" style="margin-top:8px"><span class="typ">Label</span> mensagem = <span class="kw">new</span> <span class="typ">Label</span>(<span class="str">"Bem-vindo ao sistema!"</span>);
+
+<span class="typ">TextField</span> nomeField = <span class="kw">new</span> <span class="typ">TextField</span>();
+nomeField.<span class="mtd">setPromptText</span>(<span class="str">"Digite seu nome..."</span>);
+
+<span class="typ">Button</span> enviarButton = <span class="kw">new</span> <span class="typ">Button</span>(<span class="str">"Enviar"</span>);</div>
+    </div>
+
+    <!-- Card 3: CheckBox, RadioButton e Listas -->
+    <div class="card">
+      <div class="card-title">CheckBox, RadioButton e Listas <span class="pill pill-blue">Seleção</span></div>
+      <p><code class="ic">CheckBox</code> permite que o usuário selecione <strong style="color:var(--text)">múltiplas</strong> opções independentes. <code class="ic">RadioButton</code> permite escolher <strong style="color:var(--text)">uma única</strong> opção dentro de um grupo.</p>
+      <div class="code-block" style="margin-top:10px"><span class="cmt">// Criando CheckBoxes</span>
+<span class="typ">CheckBox</span> opcao1 = <span class="kw">new</span> <span class="typ">CheckBox</span>(<span class="str">"Aceito os termos"</span>);
+<span class="typ">CheckBox</span> opcao2 = <span class="kw">new</span> <span class="typ">CheckBox</span>(<span class="str">"Receber notificações"</span>);
+
+<span class="cmt">// Criando RadioButtons para seleção de gênero</span>
+<span class="typ">RadioButton</span> masculino = <span class="kw">new</span> <span class="typ">RadioButton</span>(<span class="str">"Masculino"</span>);
+<span class="typ">RadioButton</span> feminino  = <span class="kw">new</span> <span class="typ">RadioButton</span>(<span class="str">"Feminino"</span>);
+
+<span class="cmt">// Agrupando os RadioButtons para garantir seleção única</span>
+<span class="typ">ToggleGroup</span> grupoSexo = <span class="kw">new</span> <span class="typ">ToggleGroup</span>();
+masculino.<span class="mtd">setToggleGroup</span>(grupoSexo);
+feminino.<span class="mtd">setToggleGroup</span>(grupoSexo);</div>
+      <p style="margin-top:10px"><strong style="color:var(--text)">Listas:</strong> <code class="ic">ListView</code> exibe uma lista completa de itens; <code class="ic">ComboBox</code> exibe um menu suspenso com opções.</p>
+      <div class="code-block" style="margin-top:8px"><span class="typ">ComboBox</span>&lt;<span class="typ">String</span>&gt; opcoes = <span class="kw">new</span> <span class="typ">ComboBox</span>&lt;&gt;();
+opcoes.<span class="mtd">getItems</span>().<span class="mtd">addAll</span>(<span class="str">"Opção 1"</span>, <span class="str">"Opção 2"</span>, <span class="str">"Opção 3"</span>);
+opcoes.<span class="mtd">setPromptText</span>(<span class="str">"Selecione..."</span>);</div>
+    </div>
+
+    <!-- Card 4: Eventos -->
+    <div class="card">
+      <div class="card-title">Capturando Eventos dos Componentes <span class="pill pill-green">Interatividade</span></div>
+      <p><strong style="color:var(--text)">Eventos</strong> são ações do usuário — como clicar em um botão, digitar texto ou selecionar uma opção — que podem ser capturadas e processadas no código para realizar determinadas funções.</p>
+      <p style="margin-top:8px"><strong style="color:var(--text)">Exemplos de interações capturáveis:</strong></p>
+      <ul style="margin:10px 0 0 18px;font-size:13px;color:var(--muted);line-height:1.9">
+        <li>Clique em um botão para exibir uma mensagem</li>
+        <li>Digitação em um campo de texto para validar entrada</li>
+        <li>Seleção em um <code class="ic">ComboBox</code> para atualizar outro elemento</li>
+        <li>Marcação de <code class="ic">CheckBox</code> para ativar/desativar funcionalidades</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: Exemplos de eventos -->
+    <div class="card">
+      <div class="card-title">Exemplos de Captura de Eventos <span class="pill pill-amber">setOnAction &amp; cia.</span></div>
+      <p><strong style="color:var(--text)">Clique em botão:</strong></p>
+      <div class="code-block" style="margin-top:6px"><span class="typ">Button</span> botao = <span class="kw">new</span> <span class="typ">Button</span>(<span class="str">"Clique aqui!"</span>);
+botao.<span class="mtd">setOnAction</span>(e -&gt; {
+    System.out.<span class="mtd">println</span>(<span class="str">"O botao foi pressionado!"</span>);
+});</div>
+      <p style="margin-top:12px"><strong style="color:var(--text)">Texto digitado (após clicar em Enviar):</strong></p>
+      <div class="code-block" style="margin-top:6px">enviarButton.<span class="mtd">setOnAction</span>(e -&gt; {
+    System.out.<span class="mtd">println</span>(<span class="str">"Nome digitado: "</span> + nomeField.<span class="mtd">getText</span>());
+});</div>
+      <p style="margin-top:12px"><strong style="color:var(--text)">Estado de CheckBoxes (após clicar em Confirmar):</strong></p>
+      <div class="code-block" style="margin-top:6px">confirmarButton.<span class="mtd">setOnAction</span>(e -&gt; {
+    System.out.<span class="mtd">println</span>(<span class="str">"Aceitou os termos? "</span> + opcao1.<span class="mtd">isSelected</span>());
+    System.out.<span class="mtd">println</span>(<span class="str">"Quer receber notificacoes? "</span> + opcao2.<span class="mtd">isSelected</span>());
+});</div>
+      <p style="margin-top:12px"><strong style="color:var(--text)">Seleção de RadioButton (dentro do ToggleGroup):</strong></p>
+      <div class="code-block" style="margin-top:6px">selecionarGeneroButton.<span class="mtd">setOnAction</span>(e -&gt; {
+    <span class="typ">RadioButton</span> selecionado = (<span class="typ">RadioButton</span>) grupoSexo.<span class="mtd">getSelectedToggle</span>();
+    <span class="typ">String</span> generoSelecionado = (selecionado != <span class="kw">null</span>) ? selecionado.<span class="mtd">getText</span>() : <span class="str">"Não selecionado"</span>;
+    System.out.<span class="mtd">println</span>(<span class="str">"Genero escolhido: "</span> + generoSelecionado);
+});</div>
+    </div>
+
+    <!-- Card 6: Eventos de teclado -->
+    <div class="card">
+      <div class="card-title">Capturando Eventos de Teclado e Foco <span class="pill pill-blue">Tempo Real</span></div>
+      <p>Podemos capturar quando o usuário digita e exibir o texto dinamicamente, a cada tecla solta:</p>
+      <div class="code-block" style="margin-top:10px"><span class="typ">TextField</span> campoTexto = <span class="kw">new</span> <span class="typ">TextField</span>();
+campoTexto.<span class="mtd">setPromptText</span>(<span class="str">"Digite algo..."</span>);
+campoTexto.<span class="mtd">setOnKeyReleased</span>(e -&gt; {
+    System.out.<span class="mtd">println</span>(<span class="str">"Texto atual: "</span> + campoTexto.<span class="mtd">getText</span>());
+});</div>
+    </div>
+
+    <!-- Card 7: Layouts -->
+    <div class="card">
+      <div class="card-title">Organizando os Componentes com Layouts <span class="pill pill-java">4 tipos principais</span></div>
+      <p>Uma interface bem organizada melhora a experiência do usuário. O JavaFX oferece layouts prontos que ajudam a estruturar elementos automaticamente, sem precisar definir posições manualmente.</p>
+      <div style="overflow-x:auto;margin-top:14px">
+        <table>
+          <tr><th>Layout</th><th>Descrição</th></tr>
+          <tr><td class="left"><code class="ic">VBox</code></td><td class="left">Organiza os elementos verticalmente (um abaixo do outro).</td></tr>
+          <tr><td class="left"><code class="ic">HBox</code></td><td class="left">Organiza os elementos horizontalmente (um ao lado do outro).</td></tr>
+          <tr><td class="left"><code class="ic">GridPane</code></td><td class="left">Organiza os elementos em linhas e colunas, como uma tabela.</td></tr>
+          <tr><td class="left"><code class="ic">BorderPane</code></td><td class="left">Divide a interface em cinco regiões: topo, base, centro, esquerda e direita.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Card 8: Exemplos de layout -->
+    <div class="card">
+      <div class="card-title">Exemplos de Cada Layout <span class="pill pill-grad">Código</span></div>
+      <p style="margin-bottom:4px"><strong style="color:var(--text)">VBox</strong> — ideal para formulários e menus:</p>
+      <div class="code-block" style="margin-top:6px"><span class="typ">VBox</span> vbox = <span class="kw">new</span> <span class="typ">VBox</span>(<span class="num">10</span>); <span class="cmt">// espaçamento de 10px</span>
+vbox.<span class="mtd">getChildren</span>().<span class="mtd">addAll</span>(nomeLabel, nomeField, enviarButton);</div>
+      <p style="margin-top:12px;margin-bottom:4px"><strong style="color:var(--text)">HBox</strong> — útil para posicionar componentes lado a lado:</p>
+      <div class="code-block" style="margin-top:6px"><span class="typ">HBox</span> hbox = <span class="kw">new</span> <span class="typ">HBox</span>(<span class="num">10</span>);
+hbox.<span class="mtd">getChildren</span>().<span class="mtd">addAll</span>(nomeLabel, nomeField);</div>
+      <p style="margin-top:12px;margin-bottom:4px"><strong style="color:var(--text)">GridPane</strong> — organiza como uma tabela, com posições exatas:</p>
+      <div class="code-block" style="margin-top:6px"><span class="typ">GridPane</span> grid = <span class="kw">new</span> <span class="typ">GridPane</span>();
+grid.<span class="mtd">setHgap</span>(<span class="num">10</span>); grid.<span class="mtd">setVgap</span>(<span class="num">10</span>);
+grid.<span class="mtd">add</span>(nomeLabel, <span class="num">0</span>, <span class="num">0</span>); <span class="cmt">// linha 0, coluna 0</span>
+grid.<span class="mtd">add</span>(nomeField, <span class="num">1</span>, <span class="num">0</span>); <span class="cmt">// linha 0, coluna 1</span></div>
+      <p style="margin-top:12px;margin-bottom:4px"><strong style="color:var(--text)">BorderPane</strong> — divide a tela em cinco regiões:</p>
+      <div class="code-block" style="margin-top:6px"><span class="typ">BorderPane</span> borderPane = <span class="kw">new</span> <span class="typ">BorderPane</span>();
+borderPane.<span class="mtd">setTop</span>(<span class="kw">new</span> <span class="typ">Label</span>(<span class="str">"Cabeçalho"</span>));
+borderPane.<span class="mtd">setCenter</span>(<span class="kw">new</span> <span class="typ">Label</span>(<span class="str">"Conteúdo principal"</span>));
+borderPane.<span class="mtd">setBottom</span>(<span class="kw">new</span> <span class="typ">Label</span>(<span class="str">"Rodapé"</span>));</div>
+    </div>
+
+    <!-- Card 9: Como escolher -->
+    <div class="card">
+      <div class="card-title">Como Escolher o Melhor Layout? <span class="pill pill-green">Dicas</span></div>
+      <ul style="margin:6px 0 0 18px;font-size:13px;color:var(--muted);line-height:1.9">
+        <li>Use <code class="ic">VBox</code> quando precisar empilhar elementos verticalmente</li>
+        <li>Use <code class="ic">HBox</code> quando precisar posicionar elementos lado a lado</li>
+        <li>Use <code class="ic">GridPane</code> quando precisar organizar componentes como uma tabela</li>
+        <li>Use <code class="ic">BorderPane</code> quando precisar dividir a tela em seções</li>
+      </ul>
+    </div>
+
+  </div><!-- /resumo1 -->
+
+  <!-- ═══ SIMULADOR ═══ -->
+  <div id="simulador1" class="section">
+
+    <!-- Part 1: Formulário interativo -->
+    <div class="card">
+      <div class="card-title">&#x1F4DD; Formulário JavaFX Interativo <span class="pill pill-grad">100% funcional</span></div>
+      <p style="margin-bottom:12px">Preencha o formulário abaixo (é o mesmo formulário do resumo!) e veja o console reagir exatamente como a saída dos exemplos <code class="ic">Ex39</code>/<code class="ic">Ex40</code>:</p>
+      <div class="fake-window">
+        <div class="fake-titlebar">
+          <span>Principais Componentes JavaFX</span>
+          <span>&#x2212;&nbsp;&#x25A1;&nbsp;&#x2715;</span>
+        </div>
+        <div class="fake-body">
+          <div class="sim-label">Bem-vindo ao sistema!</div>
+          <input class="sim-input" type="text" id="simNome" placeholder="Digite seu nome...">
+          <select class="sim-select" id="simCombo">
+            <option value="" selected disabled>Selecione...</option>
+            <option>Opção 1</option>
+            <option>Opção 2</option>
+            <option>Opção 3</option>
+          </select>
+          <button class="sim-btn" onclick="simEnviar()">Enviar</button>
+
+          <div class="sim-check-row"><input type="checkbox" id="simCheck1"> <label for="simCheck1">Aceito os termos</label></div>
+          <div class="sim-check-row"><input type="checkbox" id="simCheck2"> <label for="simCheck2">Receber notificações</label></div>
+          <button class="sim-btn" onclick="simConfirmar()">Confirmar</button>
+
+          <div class="sim-label">Gênero:</div>
+          <div class="sim-radio-group">
+            <div class="sim-radio-row"><input type="radio" name="simGenero" id="simMasc" value="Masculino"> <label for="simMasc">Masculino</label></div>
+            <div class="sim-radio-row"><input type="radio" name="simGenero" id="simFem" value="Feminino"> <label for="simFem">Feminino</label></div>
+          </div>
+          <button class="sim-btn" onclick="simGenero()">Selecionar Gênero</button>
+
+          <div class="sim-label" style="margin-top:6px">Digite algo (captura em tempo real):</div>
+          <input class="sim-input" type="text" id="simLive" placeholder="Digite algo...">
+        </div>
+      </div>
+      <div class="output-block" id="simOutput" style="min-height:70px;margin-top:14px"><span style="color:#6c7086;font-style:italic">// console vazio — interaja com o formulário acima</span></div>
+      <div class="type-btns" style="margin-top:10px">
+        <button class="type-btn" onclick="simClear()" style="border-style:dashed">&#x1F5D1; Limpar console</button>
+      </div>
+    </div>
+
+    <!-- Part 2: Explorador de layouts -->
+    <div class="card">
+      <div class="card-title">&#x1F4D0; Explorador de Layouts <span class="pill pill-green">Visual + Código</span></div>
+      <p style="margin-bottom:4px">Escolha um layout para ver como ele organiza os mesmos 3 elementos, lado a lado com o código correspondente:</p>
+      <div class="type-btns">
+        <button class="type-btn active" onclick="selectLayout('vbox',this)">VBox</button>
+        <button class="type-btn" onclick="selectLayout('hbox',this)">HBox</button>
+        <button class="type-btn" onclick="selectLayout('grid',this)">GridPane</button>
+        <button class="type-btn" onclick="selectLayout('border',this)">BorderPane</button>
+      </div>
+      <div class="layout-demo vbox" id="layoutDemo">
+        <div class="layout-box">Label</div>
+        <div class="layout-box">TextField</div>
+        <div class="layout-box">Button</div>
+      </div>
+      <div class="code-block" id="layoutCode" style="margin-top:12px"></div>
+    </div>
+
+  </div><!-- /simulador1 -->
+
+  <!-- ═══ EXERCÍCIOS ═══ -->
+  <div id="exercicios1" class="section">
+
+    <div class="score-bar-area">
+      <div>
+        <div class="score-val"><span id="scoreVal1">0</span>/5</div>
+        <div class="score-label">acertos</div>
+      </div>
+      <div style="flex:1">
+        <div class="score-track"><div class="score-fill" id="scoreBar1"></div></div>
+      </div>
+    </div>
+
+    <!-- Ex 1 -->
+    <div class="ex-block" id="ex1-0">
+      <div class="ex-q">Questão 1 &mdash; <code class="ic">TextField</code> é usado para textos curtos, enquanto <code class="ic">TextArea</code> é usado para textos longos.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(0,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(0,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-0"></div>
+    </div>
+
+    <!-- Ex 2 -->
+    <div class="ex-block" id="ex1-1">
+      <div class="ex-q">Questão 2 &mdash; <code class="ic">CheckBox</code> permite que o usuário escolha apenas uma opção dentro de um grupo, assim como <code class="ic">RadioButton</code>.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(1,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(1,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-1"></div>
+    </div>
+
+    <!-- Ex 3 -->
+    <div class="ex-block" id="ex1-2">
+      <div class="ex-q">Questão 3 &mdash; Para capturar o clique em um <code class="ic">Button</code>, usamos o método <code class="ic">setOnAction()</code> com uma expressão lambda.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(2,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(2,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-2"></div>
+    </div>
+
+    <!-- Ex 4 -->
+    <div class="ex-block" id="ex1-3">
+      <div class="ex-q">Questão 4 &mdash; <code class="ic">RadioButtons</code> precisam ser agrupados em um <code class="ic">ToggleGroup</code> para garantir que apenas uma opção seja selecionada por vez.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(3,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(3,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-3"></div>
+    </div>
+
+    <!-- Ex 5 -->
+    <div class="ex-block" id="ex1-4">
+      <div class="ex-q">Questão 5 &mdash; O <code class="ic">HBox</code> organiza os elementos verticalmente, um abaixo do outro.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(4,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(4,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-4"></div>
+    </div>
+
+  </div><!-- /exercicios1 -->
+
+  <!-- ═══ QUESTIONÁRIOS ═══ -->
+  <div id="questionarios1" class="section">
+
+    <div class="card">
+      <div class="card-title">&#x1F4DD; Questionários</div>
+      <p style="margin-bottom:1rem">Teste seu conhecimento com os questionários abaixo. Cada arquivo contém questões de verdadeiro ou falso e exercícios práticos de implementação.</p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a class="grad-btn" href="questionario-u3c4-01.html">&#x1F4CB; Quiz 01 &mdash; Componentes Visuais e Eventos</a>
+        <a class="grad-btn" href="questionario-u3c4-02.html" style="background:linear-gradient(270deg,#00c896 0%,#00a0cc 100%)">&#x1F4CB; Quiz 02 &mdash; Layouts</a>
+        <a class="grad-btn" href="questionario-u3c4-03.html" style="background:linear-gradient(270deg,#cba6f7 0%,#8d62ff 100%)">&#x1F6E0; Implementação &mdash; Formulário JavaFX na Prática</a>
+      </div>
+    </div>
+
+  </div><!-- /questionarios1 -->
+
+  <!-- ═══ CURIOSIDADES ═══ -->
+  <div id="curiosidades1" class="section">
+
+    <div class="card">
+      <div class="card-title">&#x1F680; Curiosidades sobre Controles e Layouts</div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F517;</div>
+        <div>
+          <div class="curi-title">Todo controle herda de <code>Node</code></div>
+          <div class="curi-body">Em JavaFX, <code>Label</code>, <code>Button</code>, <code>TextField</code> e todos os outros controles são subclasses de <code>Node</code> — por isso é possível adicionar qualquer um deles a qualquer layout com o mesmo método <code>getChildren().add()</code>.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F3AF;</div>
+        <div>
+          <div class="curi-title">Lambdas substituíram classes anônimas</div>
+          <div class="curi-body">Antes do Java 8, capturar um clique exigia uma classe anônima <code>new EventHandler&lt;ActionEvent&gt;() { ... }</code>. A expressão lambda <code>e -&gt; { ... }</code> usada em <code>setOnAction</code> é só uma forma mais curta de escrever a mesma coisa.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F9F2;</div>
+        <div>
+          <div class="curi-title"><code>ToggleGroup</code> não é um componente visual</div>
+          <div class="curi-body"><code>ToggleGroup</code> não aparece na tela — ele só existe para "lembrar" qual <code>RadioButton</code> está selecionado no momento, garantindo que marcar um desmarque automaticamente os outros do mesmo grupo.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F4D0;</div>
+        <div>
+          <div class="curi-title">Layouts podem ser aninhados</div>
+          <div class="curi-body">Nada impede colocar um <code>HBox</code> dentro de um <code>VBox</code>, que por sua vez está dentro do centro de um <code>BorderPane</code>. Interfaces reais quase sempre combinam vários layouts aninhados.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x2328;</div>
+        <div>
+          <div class="curi-title"><code>setOnKeyReleased</code> vs. <code>setOnKeyTyped</code></div>
+          <div class="curi-body"><code>setOnKeyReleased</code> dispara quando a tecla é solta (bom para ler o valor já atualizado do campo). Já <code>setOnKeyTyped</code> dispara a cada caractere digitado, incluindo teclas mortas de acentuação.</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div><!-- /curiosidades1 -->
+
+  <!-- ═══ LINKS ═══ -->
+  <div id="links1" class="section">
+
+    <div class="card">
+      <div class="card-title">&#x1F517; Links Úteis</div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;margin-top:4px">
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x23EA; Módulo Anterior</div>
+          <a class="link-item" href="../capitulo03/index.html">Unidade 03 &mdash; Capítulo 03 &mdash; Introdução ao JavaFX</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4D6; OpenJFX &mdash; UI Controls</div>
+          <a class="link-item" href="https://openjfx.io/javadoc/21/javafx.controls/javafx/scene/control/package-summary.html" target="_blank">https://openjfx.io/javadoc/21/javafx.controls/javafx/scene/control/package-summary.html</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4D0; Oracle &mdash; JavaFX Layout Panes</div>
+          <a class="link-item" href="https://docs.oracle.com/javafx/2/layout/builtin_layouts.htm" target="_blank">https://docs.oracle.com/javafx/2/layout/builtin_layouts.htm</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F5B1; Oracle &mdash; Handling JavaFX Events</div>
+          <a class="link-item" href="https://docs.oracle.com/javafx/2/events/jfxpub-events.htm" target="_blank">https://docs.oracle.com/javafx/2/events/jfxpub-events.htm</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4BB; Apache NetBeans IDE</div>
+          <a class="link-item" href="https://netbeans.apache.org/" target="_blank">https://netbeans.apache.org/</a>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /links1 -->
+
+  </div><!-- /aula01 -->
+
+</div><!-- /wrap -->
+
+<footer>
+  Capacita Brasil &mdash; <span>iRede</span> &mdash; Material Interativo de Java
+</footer>
+
+<script>
+function showTab(t, btn) {
+  document.querySelectorAll('#aula01 .section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('#aula01 .tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(t).classList.add('active');
+  btn.classList.add('active');
+}
+
+let simLines = 0;
+function simLog(lines) {
+  const out = document.getElementById('simOutput');
+  if (simLines === 0) out.textContent = '';
+  out.textContent += (simLines > 0 ? '\n' : '') + lines.join('\n');
+  simLines += lines.length;
+  out.scrollTop = out.scrollHeight;
+}
+
+function simEnviar() {
+  const nome = document.getElementById('simNome').value || '';
+  const combo = document.getElementById('simCombo').value || 'Nenhuma opção selecionada';
+  simLog(['Nome digitado: ' + nome, 'Opcao escolhida no ComboBox: ' + combo]);
+}
+
+function simConfirmar() {
+  const c1 = document.getElementById('simCheck1').checked;
+  const c2 = document.getElementById('simCheck2').checked;
+  simLog(['Aceitou os termos? ' + c1, 'Quer receber notificacoes? ' + c2]);
+}
+
+function simGenero() {
+  const sel = document.querySelector('input[name="simGenero"]:checked');
+  simLog(['Genero escolhido: ' + (sel ? sel.value : 'Não selecionado')]);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  const live = document.getElementById('simLive');
+  if (live) {
+    live.addEventListener('keyup', function () {
+      simLog(['Texto atual: ' + live.value]);
+    });
+  }
+});
+
+function simClear() {
+  simLines = 0;
+  document.getElementById('simOutput').innerHTML = '<span style="color:#6c7086;font-style:italic">// console vazio — interaja com o formulário acima</span>';
+}
+
+const LAYOUT_DATA = {
+  vbox: {
+    cls: 'layout-demo vbox',
+    boxes: ['Label', 'TextField', 'Button'],
+    code: '<span class="typ">VBox</span> vbox = <span class="kw">new</span> <span class="typ">VBox</span>(<span class="num">10</span>);\nvbox.<span class="mtd">getChildren</span>().<span class="mtd">addAll</span>(nomeLabel, nomeField, enviarButton);'
+  },
+  hbox: {
+    cls: 'layout-demo hbox',
+    boxes: ['Label', 'TextField', 'Button'],
+    code: '<span class="typ">HBox</span> hbox = <span class="kw">new</span> <span class="typ">HBox</span>(<span class="num">10</span>);\nhbox.<span class="mtd">getChildren</span>().<span class="mtd">addAll</span>(nomeLabel, nomeField, enviarButton);'
+  },
+  grid: {
+    cls: 'layout-demo grid',
+    boxes: ['Label (0,0)', 'TextField (1,0)', 'Button (0,1)'],
+    code: '<span class="typ">GridPane</span> grid = <span class="kw">new</span> <span class="typ">GridPane</span>();\ngrid.<span class="mtd">add</span>(nomeLabel, <span class="num">0</span>, <span class="num">0</span>);\ngrid.<span class="mtd">add</span>(nomeField, <span class="num">1</span>, <span class="num">0</span>);\ngrid.<span class="mtd">add</span>(enviarButton, <span class="num">0</span>, <span class="num">1</span>);'
+  },
+  border: {
+    cls: 'layout-demo border',
+    boxes: ['Label (topo)', 'TextField (centro)', 'Button (base)'],
+    code: '<span class="typ">BorderPane</span> borderPane = <span class="kw">new</span> <span class="typ">BorderPane</span>();\nborderPane.<span class="mtd">setTop</span>(nomeLabel);\nborderPane.<span class="mtd">setCenter</span>(nomeField);\nborderPane.<span class="mtd">setBottom</span>(enviarButton);'
+  }
+};
+
+function selectLayout(key, btn) {
+  document.querySelectorAll('#simulador1 .card:nth-child(2) .type-btns .type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const data = LAYOUT_DATA[key];
+  const demo = document.getElementById('layoutDemo');
+  demo.className = data.cls;
+  demo.innerHTML = data.boxes.map(b => '<div class="layout-box">' + b + '</div>').join('');
+  document.getElementById('layoutCode').innerHTML = data.code;
+}
+
+function answer1(i, btn, isCorrect) {
+  const block = document.getElementById('ex1-' + i);
+  const fb = document.getElementById('fb1-' + i);
+  block.querySelectorAll('.choice').forEach(b => b.disabled = true);
+  if (isCorrect) {
+    btn.classList.add('correct');
+    block.classList.add('done');
+    fb.className = 'feedback show ok';
+    fb.textContent = '✓ Correto!';
+    window.score1 = (window.score1 || 0) + 1;
+  } else {
+    btn.classList.add('wrong');
+    fb.className = 'feedback show ko';
+    fb.textContent = '✗ Incorreto. Revise o resumo desta aula.';
+  }
+  document.getElementById('scoreVal1').textContent = window.score1 || 0;
+  document.getElementById('scoreBar1').style.width = ((window.score1 || 0) / 5 * 100) + '%';
+}
+</script>
+</body>
+</html>
