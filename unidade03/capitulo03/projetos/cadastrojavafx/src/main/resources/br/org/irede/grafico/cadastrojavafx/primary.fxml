@@ -20,8 +20,8 @@
             <HBox spacing="10">
                 <TextField fx:id="txtNome" promptText="Informe o nome" />
                 <Button fx:id="btnAdicionar" text="Adicionar" onAction="#adicionarNome"  />
-                <Button fx:id="btnAtualizar" text="Atualizar" />
-                <Button fx:id="btnRemover" text="Remover" />
+                <Button fx:id="btnAtualizar" text="Atualizar" onAction="#atualizarNome" />
+                <Button fx:id="btnRemover" text="Remover" onAction="#removerNome" />
                 <Button fx:id="btnLimpar" text="Limpar" onAction="#limparCampos"  />
             </HBox> 
         </VBox>
