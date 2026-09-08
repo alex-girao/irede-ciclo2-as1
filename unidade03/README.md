@@ -10,6 +10,7 @@ Material interativo de apoio — Desenvolvimento Java
 | `capitulo02/` | Wildcards e Tipos Limitados |
 | `capitulo03/` | Introdução ao JavaFX e Estrutura de Aplicações |
 | `capitulo04/` | Controles e Componentes Visuais |
+| `capitulo05/` | Estilização com CSS e FXML |
 
 Segue o mesmo padrão de [`../unidade02/`](../unidade02/README.md): cada
 `capituloNN/` tem um `index.html` autocontido (resumo, simulador, exercícios,
@@ -36,6 +37,11 @@ Baseado no material de apoio `Java - U2C1O1S1 - Slide.pdf`.
 Conteúdo: `Label`, `TextField`, `TextArea`, `Button`, `CheckBox`, `RadioButton`, `ListView`, `ComboBox` · Captura de eventos (`setOnAction`, `setOnKeyReleased`, `ToggleGroup`) · Layouts (`VBox`, `HBox`, `GridPane`, `BorderPane`)
 
 Baseado no material de apoio `Java - U2C2O1S1 - Slide.pdf`.
+
+### Capítulo 05 — Estilização com CSS e FXML
+Conteúdo: Separação entre lógica e interface com FXML · `@FXML`, `fx:id`, `fx:controller`, `onAction` · Scene Builder · Estilização com CSS (propriedades `-fx-`) · Benefícios para manutenção e escalabilidade
+
+Baseado no material de apoio `Java - U2C3O1S1 - Slide.pdf`.
 
 ## Navegação
 
