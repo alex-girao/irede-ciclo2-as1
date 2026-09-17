@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Java &mdash; Cap&iacute;tulo 01 &mdash; Banco de Dados Relacional e JDBC</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:          #f0f0f5;
+  --surface:     #ffffff;
+  --border:      #d8d5e8;
+  --accent:      #8d62ff;
+  --accent2:     #00c896;
+  --text:        #1a1730;
+  --muted:       #7a748f;
+  --green:       #155e35;
+  --green-bg:    #d6f5e5;
+  --green-border:#6edaa8;
+  --red:         #7a1f1f;
+  --red-bg:      #fde8e8;
+  --red-border:  #f0a0a0;
+  --radius:      10px;
+  --glow:        0 0 18px rgba(141,98,255,0.15);
+  --grad:        linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
+  --surface2:    #f7f5ff;
+  --mint:        #00c896;
+  --danger:      #d63030;
+  --warn:        #d48a00;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  padding: 0 0 60px;
+  background-image:
+    radial-gradient(ellipse 70% 40% at 50% -10%, rgba(141,98,255,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 30% at 80% 110%, rgba(0,200,150,0.06) 0%, transparent 70%);
+}
+header {
+  text-align: center;
+  padding: 36px 20px 28px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  background: var(--surface);
+  box-shadow: 0 2px 16px rgba(141,98,255,0.07);
+}
+header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 2px;
+  background: linear-gradient(90deg, transparent, #8d62ff, transparent);
+}
+.header-logo { height: 48px; margin-bottom: 14px; display: block; margin-left: auto; margin-right: auto; }
+.logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.logo span { opacity: 0.6; }
+.subtitle { color: var(--muted); font-size: .85rem; margin-top: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
+.header-badge {
+  display: inline-block; margin-top: 12px; padding: 4px 16px; border-radius: 99px;
+  font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace;
+  background: linear-gradient(270deg, rgba(141,98,255,.15), rgba(0,255,188,.1));
+  border: 1px solid rgba(141,98,255,.3); color: var(--accent); letter-spacing: .06em;
+}
+.wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+/* ── AULA TABS ── */
+.aula-bar {
+  display: flex; gap: 4px; margin-bottom: 1.5rem;
+  background: var(--text); border-radius: 14px; padding: 6px;
+  box-shadow: 0 4px 20px rgba(26,23,48,0.18);
+}
+.aula-tab {
+  flex: 1; padding: 12px 20px; border-radius: 10px; border: none;
+  background: transparent; color: rgba(255,255,255,0.45); cursor: pointer;
+  font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+  transition: all .2s; letter-spacing: .02em;
+}
+.aula-tab.active { background: var(--grad); color: #fff; box-shadow: 0 2px 14px rgba(141,98,255,.45); }
+.aula-section { display: none; }
+.aula-section.active { display: block; }
+
+/* ── INNER TABS ── */
+.tab-bar {
+  display: flex; gap: 6px; margin-bottom: 1.5rem; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 14px; padding: 6px;
+  flex-wrap: wrap; box-shadow: 0 2px 10px rgba(141,98,255,0.06);
+}
+.tab {
+  flex: 1; min-width: 120px; padding: 9px 16px; border-radius: var(--radius);
+  border: none; background: transparent; color: var(--muted); cursor: pointer;
+  font-size: 13px; font-weight: 500; font-family: 'Space Grotesk', sans-serif; transition: all .2s;
+}
+.tab:hover:not(.active) { background: rgba(141,98,255,.08); color: var(--text); }
+.tab.active { background: var(--grad); color: #fff; font-weight: 700; box-shadow: 0 2px 12px rgba(141,98,255,.3); }
+.section { display: none; }
+.section.active { display: block; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.5rem; margin-bottom: 1.25rem; position: relative; overflow: hidden;
+  box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(141,98,255,.35), transparent);
+}
+.card-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700;
+  margin-bottom: 1rem; display: flex; align-items: center; gap: 10px; color: var(--text); flex-wrap: wrap;
+}
+.card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+/* ── PILLS ── */
+.pill { display: inline-block; padding: 3px 11px; border-radius: 99px; font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+.pill-grad  { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.3);  color: var(--accent); }
+.pill-green { background: rgba(0,200,150,.12);  border: 1px solid rgba(0,200,150,.3);   color: #0a7a5a; }
+.pill-red   { background: rgba(214,48,48,.1);   border: 1px solid rgba(214,48,48,.25);  color: var(--danger); }
+.pill-amber { background: rgba(212,138,0,.1);   border: 1px solid rgba(212,138,0,.25);  color: var(--warn); }
+.pill-blue  { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.25); color: #5a30cc; }
+.pill-java  { background: rgba(248,152,32,.12); border: 1px solid rgba(248,152,32,.35); color: #9a5000; }
+
+/* ── TABLE ── */
+table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 12px 0; }
+th {
+  background: rgba(141,98,255,.1); padding: 10px 14px; text-align: center;
+  font-weight: 700; font-size: 12px; color: var(--accent);
+  font-family: 'JetBrains Mono', monospace; letter-spacing: .05em; border-bottom: 1px solid var(--border);
+}
+td { padding: 10px 14px; text-align: center; border-bottom: 1px solid rgba(141,98,255,.08); font-size: 13px; font-family: 'JetBrains Mono', monospace; }
+td.left { text-align: left; font-family: 'Space Grotesk', sans-serif; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(141,98,255,.04); }
+
+/* ── CODE BLOCK ── */
+.code-block {
+  background: #1e1e2e; border: 1px solid #3a3a5c; border-radius: 10px;
+  padding: 16px 18px; margin: 12px 0; font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; line-height: 1.8; color: #cdd6f4; overflow-x: auto; white-space: pre;
+}
+.code-block .kw  { color: #cba6f7; }
+.code-block .typ { color: #89b4fa; }
+.code-block .str { color: #a6e3a1; }
+.code-block .num { color: #fab387; }
+.code-block .cmt { color: #6c7086; font-style: italic; }
+.code-block .cls { color: #f5c2e7; }
+.code-block .mtd { color: #89dceb; }
+
+/* ── SCORE BAR ── */
+.score-bar-area {
+  display: flex; align-items: center; gap: 16px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px 18px; margin-bottom: 1.25rem; box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.score-val {
+  font-size: 28px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+  background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.score-label { font-size: 11px; color: var(--muted); }
+.score-track { flex: 1; background: #e5e2f0; border-radius: 99px; height: 8px; overflow: hidden; }
+.score-fill { height: 100%; border-radius: 99px; background: var(--grad); width: 0%; transition: width .4s cubic-bezier(.4,0,.2,1); }
+
+/* ── EXERCISES ── */
+.ex-block {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem; margin-bottom: 1rem; border-left: 3px solid var(--accent);
+  transition: border-left-color .2s; box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.ex-block.done { border-left-color: var(--accent2); }
+.ex-q { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text); line-height: 1.55; }
+.ex-scenario { font-size: 13px; color: var(--muted); margin-bottom: 14px; line-height: 1.55; }
+.choices { display: flex; gap: 8px; flex-wrap: wrap; }
+.choice {
+  padding: 9px 20px; border-radius: 7px; border: 1.5px solid var(--border);
+  background: transparent; color: var(--text); cursor: pointer;
+  font-size: 13px; font-family: 'JetBrains Mono', monospace; font-weight: 600; transition: all .15s;
+}
+.choice:hover:not(:disabled) { background: rgba(141,98,255,.08); border-color: var(--accent); }
+.choice:disabled { cursor: default; }
+.choice.correct { background: var(--green-bg); color: #0a7a5a; border-color: var(--green-border); }
+.choice.wrong   { background: var(--red-bg);   color: var(--danger); border-color: var(--red-border); }
+.feedback { font-size: 13px; margin-top: 12px; padding: 10px 14px; border-radius: var(--radius); display: none; line-height: 1.6; }
+.feedback.show { display: block; }
+.feedback.ok { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.feedback.ko { background: var(--red-bg);   color: var(--red);   border: 1px solid var(--red-border); }
+
+/* ── CURIOSIDADES ── */
+.curi-item { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid rgba(141,98,255,.1); }
+.curi-item:last-of-type { border-bottom: none; }
+.curi-icon {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+  background: linear-gradient(270deg, rgba(141,98,255,.15), rgba(0,200,150,.1));
+  border: 1px solid rgba(141,98,255,.25);
+}
+.curi-title { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-bottom: 4px; color: var(--text); }
+.curi-body { font-size: 13px; color: var(--muted); line-height: 1.65; }
+.curi-body code { background: rgba(141,98,255,.12); color: #5a30cc; padding: 1px 6px; border-radius: 4px; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+
+/* ── LINKS ── */
+.link-item {
+  color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  text-decoration: none; word-break: break-all; transition: color .15s;
+}
+.link-item:hover { color: var(--mint); text-decoration: underline; }
+
+/* ── GRAD BTN ── */
+.grad-btn {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 14px;
+  padding: 10px 22px; border-radius: 8px; background: var(--grad); color: #fff;
+  border: none; cursor: pointer; font-size: 13px; font-weight: 700;
+  font-family: 'JetBrains Mono', monospace; text-decoration: none;
+  transition: opacity .2s, transform .15s; box-shadow: 0 3px 14px rgba(141,98,255,.3);
+}
+.grad-btn:hover { opacity: .88; transform: translateY(-1px); }
+
+/* ── INLINE CODE ── */
+.ic { background: rgba(141,98,255,.12); color: #5a30cc; padding: 1px 7px; border-radius: 4px; font-size: 12px; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+/* ── TIMELINE ── */
+.timeline-item { display: grid; grid-template-columns: 160px 1fr; gap: 16px; padding: 14px 0; border-bottom: 1px solid rgba(141,98,255,.1); }
+.timeline-item:last-child { border-bottom: none; }
+.timeline-era { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--accent); line-height: 1.5; }
+.timeline-body { font-size: 13px; color: var(--muted); line-height: 1.65; }
+.timeline-body strong { color: var(--text); }
+
+/* ── TYPE PICKER (SIMULADOR) ── */
+.type-btns { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0 14px; }
+.type-btn {
+  padding: 8px 16px; border-radius: 99px; border: 1.5px solid var(--border);
+  background: transparent; font-size: 12px; font-weight: 700; cursor: pointer;
+  font-family: 'JetBrains Mono', monospace; color: var(--muted); transition: all .15s;
+}
+.type-btn:hover { border-color: var(--accent); color: var(--text); }
+.type-btn.active { background: var(--grad); color: #fff; border-color: transparent; box-shadow: 0 2px 10px rgba(141,98,255,.3); }
+
+.output-block {
+  background: #12121e; border: 1px solid #2a2a40; border-radius: 8px;
+  padding: 14px 18px; margin-top: 10px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.8;
+  color: #a6e3a1; overflow-x: auto; white-space: pre;
+}
+.output-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  color: var(--muted); letter-spacing: .07em; text-transform: uppercase;
+  margin: 12px 0 4px;
+}
+.warn-block {
+  background: rgba(212,138,0,.08); border: 1px solid rgba(212,138,0,.25); border-radius: 8px;
+  padding: 10px 14px; margin-top: 10px; font-size: 12px; color: var(--warn); line-height: 1.6;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── STEPPER (SIMULADOR) ── */
+.stepper { display: flex; gap: 4px; flex-wrap: wrap; margin: 4px 0 14px; }
+.step-btn {
+  flex: 1; min-width: 90px; padding: 10px 8px; border-radius: 8px; border: 1.5px solid var(--border);
+  background: transparent; font-size: 11px; font-weight: 700; cursor: pointer;
+  font-family: 'JetBrains Mono', monospace; color: var(--muted); transition: all .15s; text-align: center;
+}
+.step-btn:hover { border-color: var(--accent); color: var(--text); }
+.step-btn.active { background: var(--grad); color: #fff; border-color: transparent; box-shadow: 0 2px 10px rgba(141,98,255,.3); }
+.step-btn.past { border-color: var(--accent2); color: #0a7a5a; }
+
+footer { text-align: center; margin-top: 3rem; font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+footer span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700; }
+
+@media (max-width: 600px) {
+  .tab { min-width: 80px; font-size: 12px; }
+  .timeline-item { grid-template-columns: 1fr; gap: 4px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img class="header-logo" src="https://capacitabrasil.irede.org.br/assets/capacitaLogo-Ct3BEyem.png" alt="Capacita Brasil"/>
+  <div class="logo">&#x2615; <span>//</span> Java</div>
+  <div class="subtitle">Desenvolvimento Java &mdash; Aula Interativa</div>
+  <div class="header-badge">Unidade 04 &mdash; Cap&iacute;tulo 01 &mdash; Banco de Dados Relacional e JDBC</div>
+</header>
+
+<div class="wrap">
+
+  <div class="aula-bar">
+    <button class="aula-tab active">&#x1F5C3; Cap&iacute;tulo 01 &mdash; Banco de Dados Relacional e JDBC</button>
+  </div>
+
+  <div id="aula01" class="aula-section active">
+
+  <div class="tab-bar">
+    <button class="tab active"  onclick="showTab('resumo1',this)">&#x1F4D8; Resumo</button>
+    <button class="tab"         onclick="showTab('simulador1',this)">&#x26A1; Simulador</button>
+    <button class="tab"         onclick="showTab('exercicios1',this)">&#x1F3AF; Exercícios</button>
+    <button class="tab"         onclick="showTab('questionarios1',this)">&#x1F4DD; Questionários</button>
+    <button class="tab"         onclick="showTab('curiosidades1',this)">&#x1F680; Curiosidades</button>
+    <button class="tab"         onclick="showTab('links1',this)">&#x1F517; Links</button>
+  </div>
+
+  <!-- ═══ RESUMO ═══ -->
+  <div id="resumo1" class="section active">
+
+    <!-- Card 1: O que é um Banco de Dados Relacional -->
+    <div class="card">
+      <div class="card-title">O que é um Banco de Dados Relacional? <span class="pill pill-blue">Tabelas &amp; Relações</span></div>
+      <p>O modelo relacional é amplamente utilizado na maioria dos sistemas de informação. Ele se baseia na organização dos dados em <strong style="color:var(--text)">tabelas</strong> (ou relações), que podem ser visualizadas como planilhas compostas por <strong style="color:var(--text)">linhas</strong> e <strong style="color:var(--text)">colunas</strong>.</p>
+      <p style="margin-top:10px">Cada tabela armazena dados relacionados a uma entidade (como usuários, produtos, pedidos), e cada linha representa um <strong style="color:var(--text)">registro único</strong> dessa entidade. As colunas correspondem aos <strong style="color:var(--text)">atributos</strong> da entidade &mdash; por exemplo: nome, email, idade, etc.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+        <span class="pill pill-grad">Tabela = Entidade</span>
+        <span class="pill pill-green">Linha = Registro</span>
+        <span class="pill pill-blue">Coluna = Atributo</span>
+      </div>
+    </div>
+
+    <!-- Card 2: Origem histórica -->
+    <div class="card">
+      <div class="card-title">A Origem do Banco de Dados Relacional <span class="pill pill-grad">Linha do Tempo</span></div>
+
+      <div class="timeline-item">
+        <div class="timeline-era">1950&ndash;1960<br/>Modelos Antecessores</div>
+        <div class="timeline-body"><strong>Modelo Hierárquico:</strong> organiza dados como uma árvore pai-filho, rígido e de difícil manutenção. <strong>Modelo em Rede:</strong> mais flexível, mas exige navegação manual e é complexo de implementar.</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-era">1970<br/>A Revolução de Codd</div>
+        <div class="timeline-body"><strong>Edgar F. Codd</strong> publica <em>"A Relational Model of Data for Large Shared Data Banks"</em>, introduzindo tabelas relacionais, chaves primárias e estrangeiras, e operações declarativas (SELECT, JOIN, PROJECT) &mdash; separando a lógica dos dados do armazenamento físico.</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-era">1970&ndash;1980<br/>Primeiros SGBDs</div>
+        <div class="timeline-body"><strong>System R</strong> (protótipo da IBM baseado no modelo de Codd) abre caminho para <strong>Ingres</strong> (Berkeley), <strong>Oracle</strong> (1977), <strong>DB2</strong> (IBM, 1983) e <strong>SQL Server</strong> (Microsoft, 1989).</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-era">1990&ndash;hoje<br/>Legado Duradouro</div>
+        <div class="timeline-body">Mais de 50 anos depois, o modelo relacional ainda domina sistemas financeiros e bancários, plataformas de e-commerce, ERPs e aplicações corporativas e web.</div>
+      </div>
+    </div>
+
+    <!-- Card 3: Chave Primária e Estrangeira -->
+    <div class="card">
+      <div class="card-title">Chave Primária e Chave Estrangeira <span class="pill pill-java">PK &amp; FK</span></div>
+      <p><strong style="color:var(--text)">Chave primária (Primary Key):</strong> campo (ou conjunto de campos) que identifica de forma única cada linha de uma tabela. Deve ser única e não pode ser nula.</p>
+      <table>
+        <tr><th>id_usuario</th><th>nome</th><th>email</th></tr>
+        <tr><td>1</td><td class="left">Ana Souza</td><td class="left">ana@email.com</td></tr>
+        <tr><td>2</td><td class="left">João Lima</td><td class="left">joao@email.com</td></tr>
+      </table>
+      <p style="margin-top:14px"><strong style="color:var(--text)">Chave estrangeira (Foreign Key):</strong> campo em uma tabela que referencia a chave primária de outra, conectando entidades diferentes e garantindo a <strong style="color:var(--text)">integridade referencial</strong> &mdash; os dados relacionados precisam existir no banco.</p>
+      <table>
+        <tr><th>id_pedido</th><th>id_usuario</th><th>total</th></tr>
+        <tr><td>1</td><td>1</td><td>89.90</td></tr>
+        <tr><td>2</td><td>2</td><td>150.00</td></tr>
+      </table>
+    </div>
+
+    <!-- Card 4: O que é SQL -->
+    <div class="card">
+      <div class="card-title">O que é SQL? <span class="pill pill-grad">Structured Query Language</span></div>
+      <p><strong style="color:var(--text)">SQL</strong> é a linguagem padrão para gerenciar e manipular dados em bancos relacionais (MySQL, PostgreSQL, Oracle, SQL Server...). Com ela realizamos:</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <span class="pill pill-blue">CREATE &mdash; criar estruturas</span>
+        <span class="pill pill-green">INSERT &mdash; inserir dados</span>
+        <span class="pill pill-grad">SELECT &mdash; consultar</span>
+        <span class="pill pill-amber">UPDATE &mdash; atualizar</span>
+        <span class="pill pill-red">DELETE &mdash; remover</span>
+      </div>
+      <p style="margin-top:14px"><strong style="color:var(--text)">Criando a tabela <code class="ic">usuarios</code>:</strong></p>
+      <div class="code-block"><span class="kw">CREATE TABLE</span> usuarios (
+    id_usuario <span class="typ">INT</span> <span class="kw">PRIMARY KEY</span>,
+    nome <span class="typ">VARCHAR</span>(<span class="num">100</span>),
+    email <span class="typ">VARCHAR</span>(<span class="num">100</span>)
+);</div>
+    </div>
+
+    <!-- Card 5: INSERT / UPDATE / DELETE -->
+    <div class="card">
+      <div class="card-title">Manipulando Dados com SQL <span class="pill pill-blue">INSERT · UPDATE · DELETE</span></div>
+      <p><strong style="color:var(--text)">INSERT:</strong> adiciona novos registros à tabela.</p>
+      <div class="code-block"><span class="kw">INSERT INTO</span> usuarios (id_usuario, nome, email)
+<span class="kw">VALUES</span> (<span class="num">1</span>, <span class="str">'Ana Souza'</span>, <span class="str">'ana@email.com'</span>);</div>
+      <p style="margin-top:14px"><strong style="color:var(--text)">UPDATE:</strong> altera registros existentes &mdash; a cláusula <code class="ic">WHERE</code> define quais linhas serão afetadas.</p>
+      <div class="code-block"><span class="kw">UPDATE</span> usuarios
+<span class="kw">SET</span> email = <span class="str">'ana.souza@novaempresa.com'</span>
+<span class="kw">WHERE</span> id_usuario = <span class="num">1</span>;</div>
+      <p style="margin-top:14px"><strong style="color:var(--text)">DELETE:</strong> remove registros &mdash; sem <code class="ic">WHERE</code>, remove <strong style="color:var(--text)">todas</strong> as linhas da tabela!</p>
+      <div class="code-block"><span class="kw">DELETE FROM</span> usuarios
+<span class="kw">WHERE</span> id_usuario = <span class="num">2</span>;</div>
+    </div>
+
+    <!-- Card 6: O que é JDBC -->
+    <div class="card">
+      <div class="card-title">O que é JDBC? <span class="pill pill-java">Java Database Connectivity</span></div>
+      <p><strong style="color:var(--text)">JDBC</strong> é uma API da linguagem Java que permite a comunicação entre aplicações Java e bancos de dados relacionais. Por meio dela, o desenvolvedor pode:</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <span class="pill pill-grad">Conectar ao banco</span>
+        <span class="pill pill-blue">Executar SQL</span>
+        <span class="pill pill-green">Receber resultados</span>
+        <span class="pill pill-amber">Tratar exceções</span>
+      </div>
+      <p style="margin-top:14px"><strong style="color:var(--text)">Arquitetura em camadas:</strong></p>
+      <div class="code-block" style="text-align:center">Java Applications
+        ↓
+    JDBC API
+        ↓
+JDBC Driver Manager
+        ↓
+   JDBC Driver
+        ↓
+      DBMS</div>
+      <p style="margin-top:10px">O <code class="ic">JDBC Driver Manager</code> escolhe, entre os drivers registrados, aquele capaz de conversar com o banco de dados de destino (MySQL, PostgreSQL, Oracle...).</p>
+      <p style="margin-top:14px"><strong style="color:var(--text)">Ciclo de conexão com JDBC:</strong> Registrar o Driver &rarr; Estabelecer a Conexão &rarr; Executar Comandos SQL &rarr; Processar Resultados &rarr; Fechar a Conexão.</p>
+    </div>
+
+    <!-- Card 7: Conectando Java ao BD via JDBC -->
+    <div class="card">
+      <div class="card-title">Conectando Java ao Banco via JDBC <span class="pill pill-blue">Maven + MySQL</span></div>
+      <p>Com o MySQL instalado e um banco criado, adicionamos o <strong style="color:var(--text)">driver JDBC</strong> como dependência no <code class="ic">pom.xml</code> do projeto Maven:</p>
+      <div class="code-block">&lt;dependency&gt;
+    &lt;groupId&gt;mysql&lt;/groupId&gt;
+    &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+    &lt;version&gt;8.0.33&lt;/version&gt;
+&lt;/dependency&gt;</div>
+      <p style="margin-top:14px"><strong style="color:var(--text)">Centralizamos a conexão</strong> em uma classe de fábrica:</p>
+      <div class="code-block"><span class="kw">public class</span> <span class="cls">ConexaoFactory</span> {
+    <span class="kw">private static final</span> <span class="typ">String</span> URL = <span class="str">"jdbc:mysql://localhost:3306/meubanco"</span>;
+    <span class="kw">private static final</span> <span class="typ">String</span> USUARIO = <span class="str">"root"</span>;
+    <span class="kw">private static final</span> <span class="typ">String</span> SENHA = <span class="str">"sua_senha"</span>;
+
+    <span class="kw">public static</span> <span class="cls">Connection</span> <span class="mtd">conectar</span>() <span class="kw">throws</span> <span class="cls">SQLException</span> {
+        <span class="kw">return</span> <span class="cls">DriverManager</span>.<span class="mtd">getConnection</span>(URL, USUARIO, SENHA);
+    }
+}</div>
+      <p style="margin-top:14px"><strong style="color:var(--text)">Executando uma consulta</strong> a partir do Java:</p>
+      <div class="code-block"><span class="kw">try</span> (<span class="cls">Connection</span> con = <span class="cls">ConexaoFactory</span>.<span class="mtd">conectar</span>()) {
+    <span class="cls">Statement</span> stmt = con.<span class="mtd">createStatement</span>();
+    <span class="cls">ResultSet</span> rs = stmt.<span class="mtd">executeQuery</span>(<span class="str">"SELECT * FROM usuarios"</span>);
+
+    <span class="kw">while</span> (rs.<span class="mtd">next</span>()) {
+        System.out.<span class="mtd">println</span>(
+            rs.<span class="mtd">getInt</span>(<span class="str">"id_usuario"</span>) + <span class="str">" - "</span> +
+            rs.<span class="mtd">getString</span>(<span class="str">"nome"</span>)  + <span class="str">" - "</span> +
+            rs.<span class="mtd">getString</span>(<span class="str">"email"</span>)
+        );
+    }
+} <span class="kw">catch</span> (<span class="cls">SQLException</span> e) {
+    e.<span class="mtd">printStackTrace</span>();
+}</div>
+    </div>
+
+    <!-- Card 8: Boas Práticas -->
+    <div class="card">
+      <div class="card-title">Boas Práticas com o JDBC <span class="pill pill-green">Segurança &amp; Manutenção</span></div>
+      <p>Trabalhar com JDBC exige não apenas escrever código funcional, mas também aplicar boas práticas que melhoram a segurança, a legibilidade e a manutenção do projeto:</p>
+      <p style="margin-top:10px"><strong style="color:var(--text)">Sempre feche conexões, statements e result sets:</strong> todo recurso aberto com o banco consome memória e mantém portas abertas. Não fechá-los pode causar vazamentos de memória e sobrecarregar o sistema com conexões abandonadas.</p>
+      <p style="margin-top:8px"><strong style="color:var(--text)">Use <code class="ic">PreparedStatement</code> para evitar SQL Injection:</strong> ele evita que valores maliciosos inseridos pelo usuário quebrem a lógica SQL da aplicação.</p>
+      <p style="margin-top:8px"><strong style="color:var(--text)">Centralize a lógica de conexão:</strong> mantenha toda a lógica de conexão concentrada em uma única classe (como a <code class="ic">ConexaoFactory</code>).</p>
+    </div>
+
+  </div><!-- /resumo1 -->
+
+  <!-- ═══ SIMULADOR ═══ -->
+  <div id="simulador1" class="section">
+
+    <!-- Part 1: Comandos SQL na tabela usuarios -->
+    <div class="card">
+      <div class="card-title">&#x1F5C3; Executor de Comandos SQL <span class="pill pill-grad">Tabela usuarios</span></div>
+      <p style="margin-bottom:4px">Clique nos comandos, em ordem, e observe como cada um transforma a tabela <code class="ic">usuarios</code>:</p>
+      <div class="type-btns">
+        <button class="type-btn active" onclick="runSql('create',this)">1. CREATE TABLE</button>
+        <button class="type-btn" onclick="runSql('insertAna',this)">2. INSERT Ana</button>
+        <button class="type-btn" onclick="runSql('insertJoao',this)">3. INSERT João</button>
+        <button class="type-btn" onclick="runSql('update',this)">4. UPDATE Ana</button>
+        <button class="type-btn" onclick="runSql('delete',this)">5. DELETE João</button>
+        <button class="type-btn" onclick="runSql('reset',this)" style="border-style:dashed">&#x1F5D1; Reiniciar</button>
+      </div>
+      <div class="code-block" id="sqlCode" style="min-height:70px"></div>
+      <div class="output-label">Estado da tabela</div>
+      <div id="sqlTableWrap"></div>
+    </div>
+
+    <!-- Part 2: Ciclo de conexão JDBC -->
+    <div class="card">
+      <div class="card-title">&#x1F50C; Ciclo de Conexão com JDBC <span class="pill pill-green">Passo a Passo</span></div>
+      <p style="margin-bottom:4px">Avance pelas etapas do ciclo de conexão e veja o trecho de código correspondente:</p>
+      <div class="stepper">
+        <button class="step-btn active" onclick="setJdbcStep(0,this)">1. Registrar Driver</button>
+        <button class="step-btn" onclick="setJdbcStep(1,this)">2. Conectar</button>
+        <button class="step-btn" onclick="setJdbcStep(2,this)">3. Executar SQL</button>
+        <button class="step-btn" onclick="setJdbcStep(3,this)">4. Processar</button>
+        <button class="step-btn" onclick="setJdbcStep(4,this)">5. Fechar</button>
+      </div>
+      <div class="code-block" id="jdbcStepCode" style="min-height:60px"></div>
+      <div class="warn-block" id="jdbcStepDesc"></div>
+    </div>
+
+  </div><!-- /simulador1 -->
+
+  <!-- ═══ EXERCÍCIOS ═══ -->
+  <div id="exercicios1" class="section">
+
+    <div class="score-bar-area">
+      <div>
+        <div class="score-val"><span id="scoreVal1">0</span>/5</div>
+        <div class="score-label">acertos</div>
+      </div>
+      <div style="flex:1">
+        <div class="score-track"><div class="score-fill" id="scoreBar1"></div></div>
+      </div>
+    </div>
+
+    <!-- Ex 1 -->
+    <div class="ex-block" id="ex1-0">
+      <div class="ex-q">Questão 1 &mdash; Uma <strong>chave primária</strong> pode se repetir em duas linhas diferentes da mesma tabela.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(0,this,false)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(0,this,true)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-0"></div>
+    </div>
+
+    <!-- Ex 2 -->
+    <div class="ex-block" id="ex1-1">
+      <div class="ex-q">Questão 2 &mdash; <strong>SQL</strong> é a linguagem padrão usada para criar, consultar e manipular dados em bancos relacionais.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(1,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(1,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-1"></div>
+    </div>
+
+    <!-- Ex 3 -->
+    <div class="ex-block" id="ex1-2">
+      <div class="ex-q">Questão 3 &mdash; Um comando <code class="ic">DELETE FROM usuarios;</code> sem cláusula <code class="ic">WHERE</code> remove <strong>apenas a primeira linha</strong> da tabela.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(2,this,false)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(2,this,true)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-2"></div>
+    </div>
+
+    <!-- Ex 4 -->
+    <div class="ex-block" id="ex1-3">
+      <div class="ex-q">Questão 4 &mdash; <strong>JDBC</strong> é a API que permite que uma aplicação Java se comunique com bancos de dados relacionais.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(3,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(3,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-3"></div>
+    </div>
+
+    <!-- Ex 5 -->
+    <div class="ex-block" id="ex1-4">
+      <div class="ex-q">Questão 5 &mdash; Não é necessário fechar conexões, statements e result sets, pois o Java sempre libera esses recursos automaticamente.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(4,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(4,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-4"></div>
+    </div>
+
+  </div><!-- /exercicios1 -->
+
+  <!-- ═══ QUESTIONÁRIOS ═══ -->
+  <div id="questionarios1" class="section">
+
+    <div class="card">
+      <div class="card-title">&#x1F4DD; Questionários</div>
+      <p style="margin-bottom:1rem">Teste seu conhecimento com os questionários abaixo. Cada arquivo contém questões de verdadeiro ou falso e exercícios práticos de implementação.</p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a class="grad-btn" href="questionario-u4c1-01.html">&#x1F4CB; Quiz 01 &mdash; Modelo Relacional, Chaves e SQL</a>
+        <a class="grad-btn" href="questionario-u4c1-02.html" style="background:linear-gradient(270deg,#00c896 0%,#00a0cc 100%)">&#x1F4CB; Quiz 02 &mdash; JDBC e Conexão com Banco de Dados</a>
+        <a class="grad-btn" href="questionario-u4c1-03.html" style="background:linear-gradient(270deg,#cba6f7 0%,#8d62ff 100%)">&#x1F6E0; Implementação &mdash; JDBC na Prática</a>
+      </div>
+    </div>
+
+  </div><!-- /questionarios1 -->
+
+  <!-- ═══ CURIOSIDADES ═══ -->
+  <div id="curiosidades1" class="section">
+
+    <div class="card">
+      <div class="card-title">&#x1F680; Curiosidades sobre Banco de Dados e JDBC</div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F4C4;</div>
+        <div>
+          <div class="curi-title">O paper que mudou tudo</div>
+          <div class="curi-body">Em 1970, o pesquisador da IBM <strong>Edgar F. Codd</strong> publicou <em>"A Relational Model of Data for Large Shared Data Banks"</em>, criando a base teórica que todo banco de dados relacional usa até hoje.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F524;</div>
+        <div>
+          <div class="curi-title">SQL já se chamou SEQUEL</div>
+          <div class="curi-body">O <strong>System R</strong>, protótipo da IBM baseado no modelo de Codd, usava uma linguagem chamada <em>SEQUEL</em> (Structured English Query Language). O nome foi encurtado para <code>SQL</code> por questões de marca registrada.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F510;</div>
+        <div>
+          <div class="curi-title">SQL Injection é um dos ataques mais antigos da web</div>
+          <div class="curi-body">Concatenar texto vindo do usuário direto em um comando SQL permite que ele injete comandos maliciosos. O <code>PreparedStatement</code> do JDBC trata os valores como dados, nunca como código SQL.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F9E9;</div>
+        <div>
+          <div class="curi-title">JDBC é só um contrato</div>
+          <div class="curi-body">A API <code>java.sql</code> define <strong>interfaces</strong> como <code>Connection</code> e <code>Statement</code>. Quem implementa de fato é o <strong>driver</strong> de cada fabricante (MySQL, PostgreSQL, Oracle...) &mdash; por isso é preciso adicionar o driver certo como dependência.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F5C4;</div>
+        <div>
+          <div class="curi-title">Nem tudo é relacional</div>
+          <div class="curi-body">A partir dos anos 2000, bancos <strong>NoSQL</strong> (como MongoDB e Redis) surgiram como alternativa para dados sem estrutura fixa ou que exigem altíssima escala &mdash; mas o modelo relacional continua sendo a escolha padrão para dados estruturados e transacionais.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F3D7;</div>
+        <div>
+          <div class="curi-title">O primeiro Oracle nem se chamava Oracle</div>
+          <div class="curi-body">A empresa fundada em 1977 por Larry Ellison chamava-se <em>Software Development Laboratories</em>. Seu produto de banco de dados relacional, batizado <em>Oracle</em>, acabou dando nome à própria empresa.</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div><!-- /curiosidades1 -->
+
+  <!-- ═══ LINKS ═══ -->
+  <div id="links1" class="section">
+
+    <div class="card">
+      <div class="card-title">&#x1F517; Links Úteis</div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;margin-top:4px">
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x23EA; Módulo Anterior</div>
+          <a class="link-item" href="../../unidade03/capitulo05/index.html">Unidade 03 &mdash; Capítulo 05 &mdash; Estilização com CSS e FXML</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4E5; MySQL &mdash; Downloads (Community Server)</div>
+          <a class="link-item" href="https://dev.mysql.com/downloads/" target="_blank">https://dev.mysql.com/downloads/</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4D6; Oracle &mdash; JDBC Basics (Tutorial Oficial)</div>
+          <a class="link-item" href="https://docs.oracle.com/javase/tutorial/jdbc/basics/index.html" target="_blank">https://docs.oracle.com/javase/tutorial/jdbc/basics/index.html</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F9EA; W3Schools &mdash; SQL Tutorial</div>
+          <a class="link-item" href="https://www.w3schools.com/sql/" target="_blank">https://www.w3schools.com/sql/</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4E6; Maven Central &mdash; mysql-connector-java</div>
+          <a class="link-item" href="https://mvnrepository.com/artifact/mysql/mysql-connector-java" target="_blank">https://mvnrepository.com/artifact/mysql/mysql-connector-java</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4BB; Apache NetBeans IDE</div>
+          <a class="link-item" href="https://netbeans.apache.org/" target="_blank">https://netbeans.apache.org/</a>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /links1 -->
+
+  </div><!-- /aula01 -->
+
+</div><!-- /wrap -->
+
+<footer>
+  Capacita Brasil &mdash; <span>iRede</span> &mdash; Material Interativo de Java
+</footer>
+
+<script>
+function showTab(t, btn) {
+  document.querySelectorAll('#aula01 .section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('#aula01 .tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(t).classList.add('active');
+  btn.classList.add('active');
+}
+
+/* ── Simulador 1: Executor de Comandos SQL ── */
+const SQL_STEPS = {
+  create: {
+    code: '<span class="kw">CREATE TABLE</span> usuarios (\n    id_usuario <span class="typ">INT</span> <span class="kw">PRIMARY KEY</span>,\n    nome <span class="typ">VARCHAR</span>(<span class="num">100</span>),\n    email <span class="typ">VARCHAR</span>(<span class="num">100</span>)\n);',
+    rows: []
+  },
+  insertAna: {
+    code: '<span class="kw">INSERT INTO</span> usuarios (id_usuario, nome, email)\n<span class="kw">VALUES</span> (<span class="num">1</span>, <span class="str">\'Ana Souza\'</span>, <span class="str">\'ana@email.com\'</span>);',
+    rows: [[1, 'Ana Souza', 'ana@email.com']]
+  },
+  insertJoao: {
+    code: '<span class="kw">INSERT INTO</span> usuarios (id_usuario, nome, email)\n<span class="kw">VALUES</span> (<span class="num">2</span>, <span class="str">\'João Lima\'</span>, <span class="str">\'joao@email.com\'</span>);',
+    rows: [[1, 'Ana Souza', 'ana@email.com'], [2, 'João Lima', 'joao@email.com']]
+  },
+  update: {
+    code: '<span class="kw">UPDATE</span> usuarios\n<span class="kw">SET</span> email = <span class="str">\'ana.souza@novaempresa.com\'</span>\n<span class="kw">WHERE</span> id_usuario = <span class="num">1</span>;',
+    rows: [[1, 'Ana Souza', 'ana.souza@novaempresa.com'], [2, 'João Lima', 'joao@email.com']]
+  },
+  delete: {
+    code: '<span class="kw">DELETE FROM</span> usuarios\n<span class="kw">WHERE</span> id_usuario = <span class="num">2</span>;',
+    rows: [[1, 'Ana Souza', 'ana.souza@novaempresa.com']]
+  },
+  reset: {
+    code: '<span class="cmt">-- tabela reiniciada, pronta para receber comandos novamente</span>',
+    rows: []
+  }
+};
+
+function renderSqlTable(rows) {
+  const wrap = document.getElementById('sqlTableWrap');
+  if (!rows.length) {
+    wrap.innerHTML = '<div class="output-block" style="color:#6c7086;font-style:italic">// tabela vazia</div>';
+    return;
+  }
+  let html = '<table><tr><th>id_usuario</th><th>nome</th><th>email</th></tr>';
+  for (const r of rows) {
+    html += '<tr><td>' + r[0] + '</td><td class="left">' + r[1] + '</td><td class="left">' + r[2] + '</td></tr>';
+  }
+  html += '</table>';
+  wrap.innerHTML = html;
+}
+
+function runSql(step, btn) {
+  document.querySelectorAll('#simulador1 .type-btns .type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const data = SQL_STEPS[step];
+  document.getElementById('sqlCode').innerHTML = data.code;
+  renderSqlTable(data.rows);
+}
+
+/* ── Simulador 2: Ciclo de Conexão JDBC ── */
+const JDBC_STEPS = [
+  {
+    code: '<span class="kw">Class</span>.<span class="mtd">forName</span>(<span class="str">"com.mysql.cj.jdbc.Driver"</span>);',
+    desc: '&#x1F539; Etapa 1 — Registrar o Driver: o programa carrega o driver JDBC específico do banco (aqui, MySQL). Com o driver moderno, esse passo geralmente é automático.'
+  },
+  {
+    code: '<span class="cls">Connection</span> con = <span class="cls">DriverManager</span>.<span class="mtd">getConnection</span>(\n    <span class="str">"jdbc:mysql://localhost:3306/meubanco"</span>, <span class="str">"root"</span>, <span class="str">"sua_senha"</span>\n);',
+    desc: '&#x1F539; Etapa 2 — Estabelecer a Conexão: a aplicação abre um canal de comunicação com o SGBD usando URL, usuário e senha.'
+  },
+  {
+    code: '<span class="cls">Statement</span> stmt = con.<span class="mtd">createStatement</span>();\n<span class="cls">ResultSet</span> rs = stmt.<span class="mtd">executeQuery</span>(<span class="str">"SELECT * FROM usuarios"</span>);',
+    desc: '&#x1F539; Etapa 3 — Executar Comandos SQL: o comando é enviado ao banco através de um Statement (ou PreparedStatement).'
+  },
+  {
+    code: '<span class="kw">while</span> (rs.<span class="mtd">next</span>()) {\n    System.out.<span class="mtd">println</span>(rs.<span class="mtd">getString</span>(<span class="str">"nome"</span>));\n}',
+    desc: '&#x1F539; Etapa 4 — Processar Resultados: o ResultSet é percorrido linha a linha para ler os dados retornados pela consulta.'
+  },
+  {
+    code: 'rs.<span class="mtd">close</span>();\nstmt.<span class="mtd">close</span>();\ncon.<span class="mtd">close</span>();',
+    desc: '&#x1F539; Etapa 5 — Fechar a Conexão: todo recurso aberto (ResultSet, Statement, Connection) deve ser fechado para liberar memória e conexões com o banco.'
+  }
+];
+
+function setJdbcStep(i, btn) {
+  document.querySelectorAll('#simulador1 .stepper .step-btn').forEach((b, idx) => {
+    b.classList.remove('active');
+    if (idx < i) b.classList.add('past'); else b.classList.remove('past');
+  });
+  btn.classList.add('active');
+  document.getElementById('jdbcStepCode').innerHTML = JDBC_STEPS[i].code;
+  document.getElementById('jdbcStepDesc').innerHTML = JDBC_STEPS[i].desc;
+}
+
+function answer1(i, btn, isCorrect) {
+  const block = document.getElementById('ex1-' + i);
+  const fb = document.getElementById('fb1-' + i);
+  block.querySelectorAll('.choice').forEach(b => b.disabled = true);
+  if (isCorrect) {
+    btn.classList.add('correct');
+    block.classList.add('done');
+    fb.className = 'feedback show ok';
+    fb.textContent = '✓ Correto!';
+    window.score1 = (window.score1 || 0) + 1;
+  } else {
+    btn.classList.add('wrong');
+    fb.className = 'feedback show ko';
+    fb.textContent = '✗ Incorreto. Revise o resumo desta aula.';
+  }
+  document.getElementById('scoreVal1').textContent = window.score1 || 0;
+  document.getElementById('scoreBar1').style.width = ((window.score1 || 0) / 5 * 100) + '%';
+}
+</script>
+
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+  runSql('create', document.querySelector('#simulador1 .type-btn.active'));
+  setJdbcStep(0, document.querySelector('#simulador1 .step-btn.active'));
+});
+</script>
+</body>
+</html>
