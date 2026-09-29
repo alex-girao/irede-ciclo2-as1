@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Implementação — TDD na Prática com JUnit</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:          #f0f0f5;
+  --surface:     #ffffff;
+  --border:      #d8d5e8;
+  --accent:      #8d62ff;
+  --accent2:     #00c896;
+  --text:        #1a1730;
+  --muted:       #7a748f;
+  --green:       #155e35;
+  --green-bg:    #d6f5e5;
+  --green-border:#6edaa8;
+  --radius:      10px;
+  --glow:        0 0 18px rgba(141,98,255,0.15);
+  --grad:        linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
+  --surface2:    #f7f5ff;
+  --danger:      #d63030;
+  --warn:        #d48a00;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  padding: 0 0 60px;
+  background-image:
+    radial-gradient(ellipse 70% 40% at 50% -10%, rgba(141,98,255,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 30% at 80% 110%, rgba(0,200,150,0.06) 0%, transparent 70%);
+}
+
+header {
+  text-align: center;
+  padding: 36px 20px 28px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  background: var(--surface);
+  box-shadow: 0 2px 16px rgba(141,98,255,0.07);
+}
+header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 2px;
+  background: linear-gradient(90deg, transparent, #8d62ff, transparent);
+}
+.header-logo { height: 48px; margin-bottom: 14px; display: block; margin-left: auto; margin-right: auto; }
+.logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+  font-weight: 700; letter-spacing: -0.5px;
+  background: var(--grad);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.logo span { opacity: 0.6; }
+.subtitle { color: var(--muted); font-size: .85rem; margin-top: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
+.header-badge {
+  display: inline-block; margin-top: 12px; padding: 4px 16px; border-radius: 99px;
+  font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace;
+  background: linear-gradient(270deg, rgba(141,98,255,.15), rgba(0,255,188,.1));
+  border: 1px solid rgba(141,98,255,.3); color: var(--accent); letter-spacing: .06em;
+}
+
+.wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+.back-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--muted); font-size: 13px; text-decoration: none;
+  font-family: 'JetBrains Mono', monospace; margin-bottom: 1.5rem;
+  transition: color .15s;
+}
+.back-link:hover { color: var(--accent); }
+
+.info-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem 1.5rem; margin-bottom: 1.75rem;
+  box-shadow: 0 2px 8px rgba(141,98,255,0.06); position: relative; overflow: hidden;
+}
+.info-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(141,98,255,.35), transparent);
+}
+.info-card-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700;
+  margin-bottom: .6rem; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.info-card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+.pill { display: inline-block; padding: 3px 11px; border-radius: 99px; font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+.pill-grad  { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.3);  color: var(--accent); }
+.pill-green { background: rgba(0,200,150,.12);  border: 1px solid rgba(0,200,150,.3);   color: #0a7a5a; }
+.pill-amber { background: rgba(212,138,0,.1);   border: 1px solid rgba(212,138,0,.25);  color: var(--warn); }
+.pill-red   { background: rgba(214,48,48,.1);   border: 1px solid rgba(214,48,48,.25);  color: var(--danger); }
+.pill-blue  { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.25); color: #5a30cc; }
+
+.ex-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  margin-bottom: 1.5rem; overflow: hidden;
+  box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.ex-header {
+  padding: 1.1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  background: var(--surface2);
+}
+.ex-number {
+  font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700;
+  background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  min-width: 36px;
+}
+.ex-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700; color: var(--text); flex: 1;
+}
+.ex-body { padding: 1.25rem 1.5rem; }
+.ex-enunciado {
+  font-size: 14px; color: var(--text); line-height: 1.75; margin-bottom: 1rem;
+}
+.ex-enunciado strong { color: var(--accent); }
+.ex-requisitos {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 14px 16px; margin-bottom: 1.25rem;
+}
+.ex-requisitos-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  color: var(--muted); letter-spacing: .07em; text-transform: uppercase; margin-bottom: 10px;
+}
+.ex-requisitos ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.ex-requisitos li {
+  font-size: 13px; color: var(--muted); display: flex; align-items: flex-start; gap: 8px; line-height: 1.55;
+}
+.ex-requisitos li::before {
+  content: '›'; color: var(--accent); font-weight: 700; font-size: 16px;
+  line-height: 1; flex-shrink: 0; margin-top: 1px;
+}
+.ic { background: rgba(141,98,255,.12); color: #5a30cc; padding: 1px 6px; border-radius: 4px; font-size: 12px; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+.reveal-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 22px; border-radius: 8px; border: 1.5px solid var(--accent);
+  background: transparent; color: var(--accent);
+  cursor: pointer; font-size: 13px; font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  transition: all .2s; margin-bottom: 0;
+}
+.reveal-btn:hover { background: rgba(141,98,255,.1); transform: translateY(-1px); box-shadow: var(--glow); }
+.reveal-btn.revealed {
+  background: var(--grad); color: #fff; border-color: transparent;
+  box-shadow: 0 3px 14px rgba(141,98,255,.3);
+}
+.reveal-btn svg { transition: transform .3s; }
+.reveal-btn.revealed svg { transform: rotate(180deg); }
+
+.solution-area { margin-top: 1rem; display: none; }
+.solution-area.visible { display: block; }
+.solution-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  color: var(--muted); letter-spacing: .07em; text-transform: uppercase;
+  margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+}
+.solution-label::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); }
+
+.code-block {
+  background: #1e1e2e; border: 1px solid #3a3a5c; border-radius: 10px;
+  padding: 18px 20px; font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; line-height: 1.85; color: #cdd6f4; overflow-x: auto; white-space: pre;
+}
+.code-block .kw  { color: #cba6f7; }
+.code-block .typ { color: #89b4fa; }
+.code-block .str { color: #a6e3a1; }
+.code-block .num { color: #fab387; }
+.code-block .cmt { color: #6c7086; font-style: italic; }
+.code-block .cls { color: #f5c2e7; }
+.code-block .mtd { color: #89dceb; }
+.code-block .ann { color: #f9e2af; }
+
+.output-block {
+  background: #12121e; border: 1px solid #2a2a40; border-radius: 8px;
+  padding: 14px 18px; margin-top: 10px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.8;
+  color: #a6e3a1; overflow-x: auto; white-space: pre;
+}
+.output-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  color: var(--muted); letter-spacing: .07em; text-transform: uppercase;
+  margin: 12px 0 6px; display: flex; align-items: center; gap: 6px;
+}
+.output-label::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #a6e3a1; }
+
+.diff-bar { display: flex; gap: 4px; align-items: center; }
+.diff-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); }
+.diff-dot.filled-easy   { background: #00c896; }
+.diff-dot.filled-medium { background: #d48a00; }
+.diff-dot.filled-hard   { background: #d63030; }
+
+.progress-area {
+  display: flex; align-items: center; gap: 16px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px 18px; margin-bottom: 1.75rem; box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.progress-val {
+  font-size: 28px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+  background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  min-width: 60px;
+}
+.progress-label { font-size: 11px; color: var(--muted); }
+.progress-track { flex: 1; background: #e5e2f0; border-radius: 99px; height: 8px; overflow: hidden; }
+.progress-fill  { height: 100%; border-radius: 99px; background: var(--grad); width: 0%; transition: width .4s cubic-bezier(.4,0,.2,1); }
+
+.tip-box {
+  margin-top: 12px; padding: 12px 14px;
+  background: rgba(141,98,255,.08); border: 1px solid rgba(141,98,255,.2);
+  border-radius: 8px; font-size: 13px; color: var(--muted); line-height: 1.65;
+}
+
+footer { text-align: center; margin-top: 3rem; font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+footer span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700; }
+
+@media (max-width: 540px) {
+  .ex-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .code-block { font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img class="header-logo" src="https://capacitabrasil.irede.org.br/assets/capacitaLogo-Ct3BEyem.png" alt="Capacita Brasil"/>
+  <div class="logo">&#x2615; <span>//</span> Java</div>
+  <div class="subtitle">Desenvolvimento Java &mdash; Unidade 05 | Cap. 01</div>
+  <div class="header-badge">Questões de Implementação</div>
+</header>
+
+<div class="wrap">
+
+  <a class="back-link" href="index.html">&#x2190; Voltar para a Aula</a>
+
+  <div class="info-card">
+    <div class="info-card-title">
+      TDD na Prática com JUnit
+      <span class="pill pill-grad">5 questões</span>
+      <span class="pill pill-green">Nível Básico a Avançado</span>
+    </div>
+    <p>Pratique o ciclo <strong style="color:var(--text)">Red &rarr; Green &rarr; Refactor</strong> escrevendo testes e código Java reais. Cada questão apresenta um problema a ser resolvido com os conceitos deste capítulo: <strong style="color:var(--text)">anotação @Test, assertivas (assertEquals, assertTrue, assertFalse) e o ciclo do TDD</strong>. Leia o enunciado, tente resolver por conta própria e depois revele a solução para conferir.</p>
+  </div>
+
+  <div class="progress-area">
+    <div>
+      <div class="progress-val" id="progressVal">0/5</div>
+      <div class="progress-label">reveladas</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <!-- ═══════════ QUESTÃO 1 ═══════════ -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-number">1)</div>
+      <div class="ex-title">RED — Escrever o Teste que Falha</div>
+      <span class="pill pill-green">Básico</span>
+      <div class="diff-bar" title="Dificuldade: Básico">
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot"></div>
+        <div class="diff-dot"></div>
+        <div class="diff-dot"></div>
+        <div class="diff-dot"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="ex-enunciado">
+        Antes de existir qualquer código de produção, escreva o teste de unidade <strong>testSomar</strong> para um futuro método <span class="ic">Calculadora.somar(int a, int b)</span>, que deverá retornar a soma dos dois números.
+      </div>
+      <div class="ex-requisitos">
+        <div class="ex-requisitos-title">Requisitos</div>
+        <ul>
+          <li>Use a anotação <span class="ic">@Test</span> no método de teste</li>
+          <li>Chame <span class="ic">Calculadora.somar(2, 3)</span> e guarde o resultado em uma variável</li>
+          <li>Use <span class="ic">assertEquals(5, resultado)</span> para verificar o valor esperado</li>
+        </ul>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(1, this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Ver solução
+      </button>
+      <div class="solution-area" id="sol1">
+        <div class="solution-label">Solução</div>
+        <div class="code-block"><span class="ann">@Test</span>
+<span class="kw">public void</span> <span class="mtd">testSomar</span>() {
+    <span class="typ">int</span> resultado = <span class="cls">Calculadora</span>.<span class="mtd">somar</span>(<span class="num">2</span>, <span class="num">3</span>);
+    assertEquals(<span class="num">5</span>, resultado);
+}</div>
+        <div class="output-label">Resultado ao rodar o teste</div>
+        <div class="output-block"><span style="color:#f38ba8">✗ FALHOU  testSomar()</span>
+<span style="color:#6c7086">cannot find symbol: class Calculadora</span></div>
+        <div class="tip-box">&#x1F4A1; Esse é o comportamento esperado na etapa <strong>Red</strong>: a classe <span class="ic">Calculadora</span> ainda não existe, então o teste falha (ou nem compila). É esse "vermelho" que orienta o próximo passo da implementação.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ QUESTÃO 2 ═══════════ -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-number">2)</div>
+      <div class="ex-title">GREEN — Implementar o Mínimo para Passar</div>
+      <span class="pill pill-green">Básico</span>
+      <div class="diff-bar" title="Dificuldade: Básico">
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot filled-easy"></div>
+        <div class="diff-dot"></div>
+        <div class="diff-dot"></div>
+        <div class="diff-dot"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="ex-enunciado">
+        Agora escreva o código de produção <strong>mínimo</strong> necessário para que o teste <span class="ic">testSomar</span> da questão anterior passe.
+      </div>
+      <div class="ex-requisitos">
+        <div class="ex-requisitos-title">Requisitos</div>
+        <ul>
+          <li>Crie a classe <span class="ic">Calculadora</span></li>
+          <li>Implemente <span class="ic">public static int somar(int a, int b)</span></li>
+          <li>Não adicione nada além do necessário para o teste passar (essa é a filosofia do Green)</li>
+        </ul>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(2, this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Ver solução
+      </button>
+      <div class="solution-area" id="sol2">
+        <div class="solution-label">Solução</div>
+        <div class="code-block"><span class="kw">public class</span> <span class="cls">Calculadora</span> {
+
+    <span class="kw">public static</span> <span class="typ">int</span> <span class="mtd">somar</span>(<span class="typ">int</span> a, <span class="typ">int</span> b) {
+        <span class="kw">return</span> a + b;
+    }
+
+}</div>
+        <div class="output-label">Resultado ao rodar o teste</div>
+        <div class="output-block"><span style="color:#a6e3a1">✓ PASSOU  testSomar()</span>
+
+<span style="color:#a6e3a1">Tests run: 1, Failures: 0</span></div>
+        <div class="tip-box">&#x1F4A1; No Green, o objetivo não é escrever o código "perfeito" — é fazer o teste passar da forma mais simples possível. A qualidade do código é tratada depois, na etapa Refactor.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ QUESTÃO 3 ═══════════ -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-number">3)</div>
+      <div class="ex-title">Ciclo Completo — Verificar Número Par</div>
+      <span class="pill pill-amber">Intermediário</span>
+      <div class="diff-bar" title="Dificuldade: Intermediário">
+        <div class="diff-dot filled-medium"></div>
+        <div class="diff-dot filled-medium"></div>
+        <div class="diff-dot filled-medium"></div>
+        <div class="diff-dot"></div>
+        <div class="diff-dot"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="ex-enunciado">
+        Aplique o ciclo completo <strong>Red &rarr; Green</strong> para um novo método <span class="ic">Calculadora.ehPar(int numero)</span>, que deve retornar <span class="ic">true</span> quando o número for par e <span class="ic">false</span> quando for ímpar.
+      </div>
+      <div class="ex-requisitos">
+        <div class="ex-requisitos-title">Requisitos</div>
+        <ul>
+          <li>Escreva (Red) dois testes: um para número par e outro para número ímpar</li>
+          <li>Use <span class="ic">assertTrue(...)</span> e <span class="ic">assertFalse(...)</span> nas assertivas</li>
+          <li>Implemente (Green) <span class="ic">public static boolean ehPar(int numero)</span> usando o operador <span class="ic">%</span></li>
+        </ul>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(3, this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Ver solução
+      </button>
+      <div class="solution-area" id="sol3">
+        <div class="solution-label">Solução</div>
+        <div class="code-block"><span class="cmt">// RED — testes escritos primeiro</span>
+<span class="ann">@Test</span>
+<span class="kw">public void</span> <span class="mtd">testEhParComNumeroPar</span>() {
+    assertTrue(<span class="cls">Calculadora</span>.<span class="mtd">ehPar</span>(<span class="num">4</span>));
+}
+
+<span class="ann">@Test</span>
+<span class="kw">public void</span> <span class="mtd">testEhParComNumeroImpar</span>() {
+    assertFalse(<span class="cls">Calculadora</span>.<span class="mtd">ehPar</span>(<span class="num">7</span>));
+}
+
+<span class="cmt">// GREEN — implementação mínima</span>
+<span class="kw">public static</span> <span class="typ">boolean</span> <span class="mtd">ehPar</span>(<span class="typ">int</span> numero) {
+    <span class="kw">return</span> numero % <span class="num">2</span> == <span class="num">0</span>;
+}</div>
+        <div class="output-label">Resultado ao rodar os testes</div>
+        <div class="output-block"><span style="color:#a6e3a1">✓ PASSOU  testEhParComNumeroPar()</span>
+<span style="color:#a6e3a1">✓ PASSOU  testEhParComNumeroImpar()</span>
+
+<span style="color:#a6e3a1">Tests run: 2, Failures: 0</span></div>
+        <div class="tip-box">&#x1F4A1; Escrever mais de um caso de teste (par e ímpar) ajuda a garantir que a implementação realmente trata a regra de negócio, e não apenas "engana" um único caso.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ QUESTÃO 4 ═══════════ -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-number">4)</div>
+      <div class="ex-title">REFACTOR — Javadoc e Testes de Borda</div>
+      <span class="pill pill-amber">Intermediário</span>
+      <div class="diff-bar" title="Dificuldade: Intermediário">
+        <div class="diff-dot filled-medium"></div>
+        <div class="diff-dot filled-medium"></div>
+        <div class="diff-dot filled-medium"></div>
+        <div class="diff-dot filled-medium"></div>
+        <div class="diff-dot"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="ex-enunciado">
+        Refatore a classe <strong>Calculadora</strong> (a mesma do exercício 2, com o método <span class="ic">somar</span>), adicionando documentação e cobrindo casos de borda, sem quebrar os testes já existentes.
+      </div>
+      <div class="ex-requisitos">
+        <div class="ex-requisitos-title">Requisitos</div>
+        <ul>
+          <li>Adicione um comentário <span class="ic">javadoc</span> descrevendo o método <span class="ic">somar</span></li>
+          <li>Escreva um novo teste <span class="ic">testSomarComNumerosNegativos</span></li>
+          <li>Escreva um novo teste <span class="ic">testSomarComZero</span></li>
+          <li>Todos os testes (o antigo e os novos) devem continuar passando</li>
+        </ul>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(4, this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Ver solução
+      </button>
+      <div class="solution-area" id="sol4">
+        <div class="solution-label">Solução</div>
+        <div class="code-block"><span class="kw">public class</span> <span class="cls">Calculadora</span> {
+
+    <span class="cmt">/**
+     * Retorna a soma de dois números inteiros.
+     */</span>
+    <span class="kw">public static</span> <span class="typ">int</span> <span class="mtd">somar</span>(<span class="typ">int</span> a, <span class="typ">int</span> b) {
+        <span class="kw">return</span> a + b;
+    }
+
+}
+
+<span class="ann">@Test</span>
+<span class="kw">public void</span> <span class="mtd">testSomarComNumerosNegativos</span>() {
+    assertEquals(-<span class="num">5</span>, <span class="cls">Calculadora</span>.<span class="mtd">somar</span>(-<span class="num">2</span>, -<span class="num">3</span>));
+}
+
+<span class="ann">@Test</span>
+<span class="kw">public void</span> <span class="mtd">testSomarComZero</span>() {
+    assertEquals(<span class="num">4</span>, <span class="cls">Calculadora</span>.<span class="mtd">somar</span>(<span class="num">4</span>, <span class="num">0</span>));
+}</div>
+        <div class="output-label">Resultado ao rodar os testes</div>
+        <div class="output-block"><span style="color:#a6e3a1">✓ PASSOU  testSomar()</span>
+<span style="color:#a6e3a1">✓ PASSOU  testSomarComNumerosNegativos()</span>
+<span style="color:#a6e3a1">✓ PASSOU  testSomarComZero()</span>
+
+<span style="color:#a6e3a1">Tests run: 3, Failures: 0</span></div>
+        <div class="tip-box">&#x1F4A1; Refatorar não significa apenas "arrumar" o código de produção — também vale reforçar a suíte de testes com casos de borda (negativos, zero, limites) para dar mais confiança à implementação.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ QUESTÃO 5 ═══════════ -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-number">5)</div>
+      <div class="ex-title">Ciclo Completo — Validador de Senha</div>
+      <span class="pill pill-red">Avançado</span>
+      <div class="diff-bar" title="Dificuldade: Avançado">
+        <div class="diff-dot filled-hard"></div>
+        <div class="diff-dot filled-hard"></div>
+        <div class="diff-dot filled-hard"></div>
+        <div class="diff-dot filled-hard"></div>
+        <div class="diff-dot"></div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="ex-enunciado">
+        Aplique o ciclo completo <strong>Red &rarr; Green &rarr; Refactor</strong> para um método <span class="ic">Validador.senhaValida(String senha)</span>, que deve retornar <span class="ic">true</span> apenas quando a senha tiver <strong>6 caracteres ou mais</strong>.
+      </div>
+      <div class="ex-requisitos">
+        <div class="ex-requisitos-title">Requisitos</div>
+        <ul>
+          <li><strong>Red:</strong> escreva testes para uma senha válida (6+ caracteres) e uma inválida (menos de 6)</li>
+          <li><strong>Green:</strong> implemente a versão mínima de <span class="ic">senhaValida</span> usando <span class="ic">senha.length()</span></li>
+          <li><strong>Refactor:</strong> extraia o número <span class="ic">6</span> para uma constante <span class="ic">TAMANHO_MINIMO</span>, mantendo os testes verdes</li>
+        </ul>
+      </div>
+      <button class="reveal-btn" onclick="toggleSolution(5, this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Ver solução
+      </button>
+      <div class="solution-area" id="sol5">
+        <div class="solution-label">Solução</div>
+        <div class="code-block"><span class="cmt">// RED — testes escritos primeiro</span>
+<span class="ann">@Test</span>
+<span class="kw">public void</span> <span class="mtd">testSenhaValidaComSeisCaracteres</span>() {
+    assertTrue(<span class="cls">Validador</span>.<span class="mtd">senhaValida</span>(<span class="str">"123456"</span>));
+}
+
+<span class="ann">@Test</span>
+<span class="kw">public void</span> <span class="mtd">testSenhaInvalidaComMenosDeSeisCaracteres</span>() {
+    assertFalse(<span class="cls">Validador</span>.<span class="mtd">senhaValida</span>(<span class="str">"123"</span>));
+}
+
+<span class="cmt">// GREEN — implementação mínima</span>
+<span class="kw">public class</span> <span class="cls">Validador</span> {
+    <span class="kw">public static</span> <span class="typ">boolean</span> <span class="mtd">senhaValida</span>(<span class="typ">String</span> senha) {
+        <span class="kw">return</span> senha.<span class="mtd">length</span>() >= <span class="num">6</span>;
+    }
+}
+
+<span class="cmt">// REFACTOR — número mágico extraído para constante</span>
+<span class="kw">public class</span> <span class="cls">Validador</span> {
+
+    <span class="kw">private static final</span> <span class="typ">int</span> TAMANHO_MINIMO = <span class="num">6</span>;
+
+    <span class="cmt">/**
+     * Retorna true se a senha tiver ao menos TAMANHO_MINIMO caracteres.
+     */</span>
+    <span class="kw">public static</span> <span class="typ">boolean</span> <span class="mtd">senhaValida</span>(<span class="typ">String</span> senha) {
+        <span class="kw">return</span> senha.<span class="mtd">length</span>() >= TAMANHO_MINIMO;
+    }
+}</div>
+        <div class="output-label">Resultado ao rodar os testes (após o Refactor)</div>
+        <div class="output-block"><span style="color:#a6e3a1">✓ PASSOU  testSenhaValidaComSeisCaracteres()</span>
+<span style="color:#a6e3a1">✓ PASSOU  testSenhaInvalidaComMenosDeSeisCaracteres()</span>
+
+<span style="color:#a6e3a1">Tests run: 2, Failures: 0</span></div>
+        <div class="tip-box">&#x1F4A1; Perceba que o Refactor não adicionou nenhum comportamento novo — apenas melhorou a legibilidade do código (constante nomeada em vez de número mágico). Os mesmos testes, sem nenhuma alteração, continuam validando a nova versão.</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<footer>
+  Capacita Brasil &mdash; <span>iRede</span> &mdash; Material Interativo de Java
+</footer>
+
+<script>
+let revealed = 0;
+
+function toggleSolution(num, btn) {
+  const sol = document.getElementById('sol' + num);
+  const isVisible = sol.classList.contains('visible');
+
+  if (!isVisible) {
+    sol.classList.add('visible');
+    btn.classList.add('revealed');
+    btn.innerHTML =
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transform:rotate(180deg)"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>' +
+      'Ocultar solução';
+    if (!btn.dataset.counted) {
+      btn.dataset.counted = '1';
+      revealed++;
+      updateProgress();
+    }
+  } else {
+    sol.classList.remove('visible');
+    btn.classList.remove('revealed');
+    btn.innerHTML =
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>' +
+      'Ver solução';
+  }
+}
+
+function updateProgress() {
+  document.getElementById('progressVal').textContent  = revealed + '/5';
+  document.getElementById('progressFill').style.width = (revealed / 5 * 100) + '%';
+}
+</script>
+</body>
+</html>
