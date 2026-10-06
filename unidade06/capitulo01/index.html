@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Java &mdash; Cap&iacute;tulo 01 &mdash; Apresenta&ccedil;&atilde;o do Projeto (Intermedi&aacute;rio)</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:          #f0f0f5;
+  --surface:     #ffffff;
+  --border:      #d8d5e8;
+  --accent:      #8d62ff;
+  --accent2:     #00c896;
+  --text:        #1a1730;
+  --muted:       #7a748f;
+  --green:       #155e35;
+  --green-bg:    #d6f5e5;
+  --green-border:#6edaa8;
+  --red:         #7a1f1f;
+  --red-bg:      #fde8e8;
+  --red-border:  #f0a0a0;
+  --radius:      10px;
+  --glow:        0 0 18px rgba(141,98,255,0.15);
+  --grad:        linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
+  --surface2:    #f7f5ff;
+  --mint:        #00c896;
+  --danger:      #d63030;
+  --warn:        #d48a00;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  padding: 0 0 60px;
+  background-image:
+    radial-gradient(ellipse 70% 40% at 50% -10%, rgba(141,98,255,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 30% at 80% 110%, rgba(0,200,150,0.06) 0%, transparent 70%);
+}
+header {
+  text-align: center;
+  padding: 36px 20px 28px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  background: var(--surface);
+  box-shadow: 0 2px 16px rgba(141,98,255,0.07);
+}
+header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 2px;
+  background: linear-gradient(90deg, transparent, #8d62ff, transparent);
+}
+.header-logo { height: 48px; margin-bottom: 14px; display: block; margin-left: auto; margin-right: auto; }
+.logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.logo span { opacity: 0.6; }
+.subtitle { color: var(--muted); font-size: .85rem; margin-top: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
+.header-badge {
+  display: inline-block; margin-top: 12px; padding: 4px 16px; border-radius: 99px;
+  font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace;
+  background: linear-gradient(270deg, rgba(141,98,255,.15), rgba(0,255,188,.1));
+  border: 1px solid rgba(141,98,255,.3); color: var(--accent); letter-spacing: .06em;
+}
+.wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+/* ── AULA TABS ── */
+.aula-bar {
+  display: flex; gap: 4px; margin-bottom: 1.5rem;
+  background: var(--text); border-radius: 14px; padding: 6px;
+  box-shadow: 0 4px 20px rgba(26,23,48,0.18);
+}
+.aula-tab {
+  flex: 1; padding: 12px 20px; border-radius: 10px; border: none;
+  background: transparent; color: rgba(255,255,255,0.45); cursor: pointer;
+  font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+  transition: all .2s; letter-spacing: .02em;
+}
+.aula-tab.active { background: var(--grad); color: #fff; box-shadow: 0 2px 14px rgba(141,98,255,.45); }
+.aula-section { display: none; }
+.aula-section.active { display: block; }
+
+/* ── INNER TABS ── */
+.tab-bar {
+  display: flex; gap: 6px; margin-bottom: 1.5rem; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 14px; padding: 6px;
+  flex-wrap: wrap; box-shadow: 0 2px 10px rgba(141,98,255,0.06);
+}
+.tab {
+  flex: 1; min-width: 120px; padding: 9px 16px; border-radius: var(--radius);
+  border: none; background: transparent; color: var(--muted); cursor: pointer;
+  font-size: 13px; font-weight: 500; font-family: 'Space Grotesk', sans-serif; transition: all .2s;
+}
+.tab:hover:not(.active) { background: rgba(141,98,255,.08); color: var(--text); }
+.tab.active { background: var(--grad); color: #fff; font-weight: 700; box-shadow: 0 2px 12px rgba(141,98,255,.3); }
+.section { display: none; }
+.section.active { display: block; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.5rem; margin-bottom: 1.25rem; position: relative; overflow: hidden;
+  box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(141,98,255,.35), transparent);
+}
+.card-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700;
+  margin-bottom: 1rem; display: flex; align-items: center; gap: 10px; color: var(--text); flex-wrap: wrap;
+}
+.card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+/* ── PILLS ── */
+.pill { display: inline-block; padding: 3px 11px; border-radius: 99px; font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+.pill-grad  { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.3);  color: var(--accent); }
+.pill-green { background: rgba(0,200,150,.12);  border: 1px solid rgba(0,200,150,.3);   color: #0a7a5a; }
+.pill-red   { background: rgba(214,48,48,.1);   border: 1px solid rgba(214,48,48,.25);  color: var(--danger); }
+.pill-amber { background: rgba(212,138,0,.1);   border: 1px solid rgba(212,138,0,.25);  color: var(--warn); }
+.pill-blue  { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.25); color: #5a30cc; }
+.pill-java  { background: rgba(248,152,32,.12); border: 1px solid rgba(248,152,32,.35); color: #9a5000; }
+
+/* ── TABLE ── */
+table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 12px 0; }
+th {
+  background: rgba(141,98,255,.1); padding: 10px 14px; text-align: center;
+  font-weight: 700; font-size: 12px; color: var(--accent);
+  font-family: 'JetBrains Mono', monospace; letter-spacing: .05em; border-bottom: 1px solid var(--border);
+}
+td { padding: 10px 14px; text-align: center; border-bottom: 1px solid rgba(141,98,255,.08); font-size: 13px; font-family: 'JetBrains Mono', monospace; }
+td.left { text-align: left; font-family: 'Space Grotesk', sans-serif; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(141,98,255,.04); }
+
+/* ── CODE BLOCK ── */
+.code-block {
+  background: #1e1e2e; border: 1px solid #3a3a5c; border-radius: 10px;
+  padding: 16px 18px; margin: 12px 0; font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; line-height: 1.8; color: #cdd6f4; overflow-x: auto; white-space: pre;
+}
+.code-block .kw  { color: #cba6f7; }
+.code-block .typ { color: #89b4fa; }
+.code-block .str { color: #a6e3a1; }
+.code-block .num { color: #fab387; }
+.code-block .cmt { color: #6c7086; font-style: italic; }
+.code-block .cls { color: #f5c2e7; }
+.code-block .mtd { color: #89dceb; }
+.code-block .ann { color: #f9e2af; }
+
+/* ── SCORE BAR ── */
+.score-bar-area {
+  display: flex; align-items: center; gap: 16px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px 18px; margin-bottom: 1.25rem; box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.score-val {
+  font-size: 28px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+  background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.score-label { font-size: 11px; color: var(--muted); }
+.score-track { flex: 1; background: #e5e2f0; border-radius: 99px; height: 8px; overflow: hidden; }
+.score-fill { height: 100%; border-radius: 99px; background: var(--grad); width: 0%; transition: width .4s cubic-bezier(.4,0,.2,1); }
+
+/* ── EXERCISES ── */
+.ex-block {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem; margin-bottom: 1rem; border-left: 3px solid var(--accent);
+  transition: border-left-color .2s; box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.ex-block.done { border-left-color: var(--accent2); }
+.ex-q { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text); line-height: 1.55; }
+.ex-scenario { font-size: 13px; color: var(--muted); margin-bottom: 14px; line-height: 1.55; }
+.choices { display: flex; gap: 8px; flex-wrap: wrap; }
+.choice {
+  padding: 9px 20px; border-radius: 7px; border: 1.5px solid var(--border);
+  background: transparent; color: var(--text); cursor: pointer;
+  font-size: 13px; font-family: 'JetBrains Mono', monospace; font-weight: 600; transition: all .15s;
+}
+.choice:hover:not(:disabled) { background: rgba(141,98,255,.08); border-color: var(--accent); }
+.choice:disabled { cursor: default; }
+.choice.correct { background: var(--green-bg); color: #0a7a5a; border-color: var(--green-border); }
+.choice.wrong   { background: var(--red-bg);   color: var(--danger); border-color: var(--red-border); }
+.feedback { font-size: 13px; margin-top: 12px; padding: 10px 14px; border-radius: var(--radius); display: none; line-height: 1.6; }
+.feedback.show { display: block; }
+.feedback.ok { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.feedback.ko { background: var(--red-bg);   color: var(--red);   border: 1px solid var(--red-border); }
+
+/* ── CURIOSIDADES ── */
+.curi-item { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid rgba(141,98,255,.1); }
+.curi-item:last-of-type { border-bottom: none; }
+.curi-icon {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+  background: linear-gradient(270deg, rgba(141,98,255,.15), rgba(0,200,150,.1));
+  border: 1px solid rgba(141,98,255,.25);
+}
+.curi-title { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-bottom: 4px; color: var(--text); }
+.curi-body { font-size: 13px; color: var(--muted); line-height: 1.65; }
+.curi-body code { background: rgba(141,98,255,.12); color: #5a30cc; padding: 1px 6px; border-radius: 4px; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+
+/* ── LINKS ── */
+.link-item {
+  color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  text-decoration: none; word-break: break-all; transition: color .15s;
+}
+.link-item:hover { color: var(--mint); text-decoration: underline; }
+
+/* ── GRAD BTN ── */
+.grad-btn {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 14px;
+  padding: 10px 22px; border-radius: 8px; background: var(--grad); color: #fff;
+  border: none; cursor: pointer; font-size: 13px; font-weight: 700;
+  font-family: 'JetBrains Mono', monospace; text-decoration: none;
+  transition: opacity .2s, transform .15s; box-shadow: 0 3px 14px rgba(141,98,255,.3);
+}
+.grad-btn:hover { opacity: .88; transform: translateY(-1px); }
+
+/* ── INLINE CODE ── */
+.ic { background: rgba(141,98,255,.12); color: #5a30cc; padding: 1px 7px; border-radius: 4px; font-size: 12px; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+/* ── TYPE PICKER (SIMULADOR) ── */
+.type-btns { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0 14px; }
+.type-btn {
+  padding: 8px 16px; border-radius: 99px; border: 1.5px solid var(--border);
+  background: transparent; font-size: 12px; font-weight: 700; cursor: pointer;
+  font-family: 'JetBrains Mono', monospace; color: var(--muted); transition: all .15s;
+}
+.type-btn:hover { border-color: var(--accent); color: var(--text); }
+.type-btn.active { background: var(--grad); color: #fff; border-color: transparent; box-shadow: 0 2px 10px rgba(141,98,255,.3); }
+
+.output-block {
+  background: #12121e; border: 1px solid #2a2a40; border-radius: 8px;
+  padding: 14px 18px; margin-top: 10px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.8;
+  color: #a6e3a1; overflow-x: auto; white-space: pre;
+}
+.output-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  color: var(--muted); letter-spacing: .07em; text-transform: uppercase;
+  margin: 12px 0 4px;
+}
+.warn-block {
+  background: rgba(212,138,0,.08); border: 1px solid rgba(212,138,0,.25); border-radius: 8px;
+  padding: 10px 14px; margin-top: 10px; font-size: 12px; color: var(--warn); line-height: 1.6;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── STEPPER (SIMULADOR) ── */
+.stepper { display: flex; gap: 4px; flex-wrap: wrap; margin: 4px 0 14px; }
+.step-btn {
+  flex: 1; min-width: 90px; padding: 10px 8px; border-radius: 8px; border: 1.5px solid var(--border);
+  background: transparent; font-size: 11px; font-weight: 700; cursor: pointer;
+  font-family: 'JetBrains Mono', monospace; color: var(--muted); transition: all .15s; text-align: center;
+}
+.step-btn:hover { border-color: var(--accent); color: var(--text); }
+.step-btn.active { background: var(--grad); color: #fff; border-color: transparent; box-shadow: 0 2px 10px rgba(141,98,255,.3); }
+.step-btn.past { border-color: var(--accent2); color: #0a7a5a; }
+
+footer { text-align: center; margin-top: 3rem; font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+footer span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700; }
+
+@media (max-width: 600px) {
+  .tab { min-width: 80px; font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img class="header-logo" src="https://capacitabrasil.irede.org.br/assets/capacitaLogo-Ct3BEyem.png" alt="Capacita Brasil"/>
+  <div class="logo">&#x2615; <span>//</span> Java</div>
+  <div class="subtitle">Desenvolvimento Java &mdash; Aula Interativa</div>
+  <div class="header-badge">Unidade 06 &mdash; Cap&iacute;tulo 01 &mdash; Apresenta&ccedil;&atilde;o do Projeto (Intermedi&aacute;rio)</div>
+</header>
+
+<div class="wrap">
+
+  <div class="aula-bar">
+    <button class="aula-tab active">&#x1F4E6; Cap&iacute;tulo 01 &mdash; Apresenta&ccedil;&atilde;o do Projeto</button>
+  </div>
+
+  <div id="aula01" class="aula-section active">
+
+  <div class="tab-bar">
+    <button class="tab active"  onclick="showTab('resumo1',this)">&#x1F4D8; Resumo</button>
+    <button class="tab"         onclick="showTab('simulador1',this)">&#x26A1; Simulador</button>
+    <button class="tab"         onclick="showTab('exercicios1',this)">&#x1F3AF; Exercícios</button>
+    <button class="tab"         onclick="showTab('questionarios1',this)">&#x1F4DD; Questionários</button>
+    <button class="tab"         onclick="showTab('curiosidades1',this)">&#x1F680; Curiosidades</button>
+    <button class="tab"         onclick="showTab('links1',this)">&#x1F517; Links</button>
+  </div>
+
+  <!-- ═══ RESUMO ═══ -->
+  <div id="resumo1" class="section active">
+
+    <!-- Card 1: Sobre esta entrega -->
+    <div class="card">
+      <div class="card-title">Sobre esta Entrega <span class="pill pill-blue">2&ordm; de 3 entregas</span></div>
+      <p>Este capítulo apresenta a <strong style="color:var(--text)">continuação dos projetos práticos</strong> iniciados no módulo anterior (fase console + POO). Agora, cada equipe deve evoluir o mesmo projeto para uma versão com <strong style="color:var(--text)">interface gráfica, banco de dados e testes automatizados</strong>.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+        <span class="pill pill-grad">Mesma equipe</span>
+        <span class="pill pill-green">Mesmo projeto escolhido</span>
+        <span class="pill pill-amber">Nível Intermediário</span>
+        <span class="pill pill-blue">Haverá mais 1 entrega (módulo avançado)</span>
+      </div>
+    </div>
+
+    <!-- Card 2: Projeto 1 - TaskManager -->
+    <div class="card">
+      <div class="card-title">Projeto 1 &mdash; TaskManager <span class="pill pill-blue">Gerenciador de Tarefas</span></div>
+      <p><strong style="color:var(--text)">Já construído (fase console):</strong> sistema de gerenciamento de tarefas no terminal, com <span class="ic">Scanner</span>, estruturas de decisão e repetição, <span class="ic">ArrayList</span> e manipulação de <span class="ic">String</span>. Em POO: classe <span class="ic">Tarefa</span>, herança com <span class="ic">TarefaPrioritaria</span>, encapsulamento, polimorfismo e pacotes <span class="ic">model/controller/app/exceptions</span>.</p>
+      <p style="margin-top:12px"><strong style="color:var(--text)">Próxima entrega:</strong></p>
+      <table>
+        <tr><th>Etapa</th><th>O que fazer</th></tr>
+        <tr><td class="left">Generics</td><td class="left">Classes e métodos genéricos para manipular listas de tarefas, usando <span class="ic">?</span>, <span class="ic">? extends T</span> e <span class="ic">? super T</span>.</td></tr>
+        <tr><td class="left">JavaFX</td><td class="left">Tela Principal (listar/marcar/remover/editar), Tela de Cadastro/Edição, confirmação ao remover.</td></tr>
+        <tr><td class="left">FXML &amp; Scene Builder</td><td class="left">Telas em <span class="ic">.fxml</span>, separando responsabilidades, montadas visualmente no Scene Builder.</td></tr>
+        <tr><td class="left">JDBC</td><td class="left">Banco relacional (SQLite ou MySQL) com tabela <span class="ic">tarefas</span>.</td></tr>
+        <tr><td class="left">JUnit</td><td class="left">Testar criação e conclusão de tarefa, DAO com SQLite em memória, validação de dados.</td></tr>
+      </table>
+      <div class="code-block"><span class="kw">CREATE TABLE</span> tarefas (
+    id <span class="typ">INTEGER</span> <span class="kw">PRIMARY KEY</span> <span class="kw">AUTO_INCREMENT</span>,
+    titulo <span class="typ">VARCHAR</span>(<span class="num">100</span>),
+    descricao <span class="typ">TEXT</span>,
+    concluida <span class="typ">BOOLEAN</span>
+);</div>
+    </div>
+
+    <!-- Card 3: Projeto 2 - FinTrack -->
+    <div class="card">
+      <div class="card-title">Projeto 2 &mdash; FinTrack <span class="pill pill-green">Finanças Pessoais</span></div>
+      <p><strong style="color:var(--text)">Já construído (fase console):</strong> controle de finanças pessoais via terminal &mdash; cadastro de receitas/despesas e cálculo do saldo total, usando <span class="ic">ArrayList</span>, <span class="ic">Scanner</span>, <span class="ic">String</span> e <span class="ic">double</span>. Em POO: classes <span class="ic">Transacao</span> e <span class="ic">TransacaoMensal</span>, classe <span class="ic">FinTracker</span> e pacotes <span class="ic">model/controller/app/exceptions/utils</span>.</p>
+      <p style="margin-top:12px"><strong style="color:var(--text)">Próxima entrega:</strong></p>
+      <table>
+        <tr><th>Etapa</th><th>O que fazer</th></tr>
+        <tr><td class="left">Generics</td><td class="left">Classes genéricas para listas de registros e serviços; métodos reutilizáveis com curingas (<span class="ic">?</span>, <span class="ic">? extends T</span>, <span class="ic">? super T</span>).</td></tr>
+        <tr><td class="left">JavaFX</td><td class="left">Tela principal com tabela de transações, tela de nova transação (receita/despesa), tela de relatório/saldo.</td></tr>
+        <tr><td class="left">FXML &amp; Scene Builder</td><td class="left">Telas em <span class="ic">.fxml</span> separadas, lógica em controllers, estilização com <span class="ic">.css</span>.</td></tr>
+        <tr><td class="left">JDBC</td><td class="left">Banco relacional com tabela <span class="ic">transacoes</span>.</td></tr>
+        <tr><td class="left">JUnit</td><td class="left">Testes para <span class="ic">Transacao</span>, <span class="ic">RepositorioGenerico</span> e <span class="ic">TransacaoDAO</span> com SQLite em memória; <span class="ic">@BeforeEach</span>/<span class="ic">@AfterEach</span>/<span class="ic">@Test</span>; <span class="ic">assertEquals()</span> e <span class="ic">assertThrows()</span>.</td></tr>
+      </table>
+      <div class="code-block"><span class="kw">CREATE TABLE</span> transacoes (
+    id <span class="typ">INT</span> <span class="kw">PRIMARY KEY</span> <span class="kw">AUTO_INCREMENT</span>,
+    descricao <span class="typ">VARCHAR</span>(<span class="num">100</span>),
+    valor <span class="typ">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>),
+    tipo <span class="typ">VARCHAR</span>(<span class="num">10</span>),
+    data <span class="typ">DATE</span>
+);</div>
+    </div>
+
+    <!-- Card 4: Projeto 3 - Agenda de Contatos -->
+    <div class="card">
+      <div class="card-title">Projeto 3 &mdash; Agenda de Contatos <span class="pill pill-amber">Contatos</span></div>
+      <p><strong style="color:var(--text)">Já construído (fase console):</strong> agenda de contatos no terminal, com funcionalidades de adicionar, listar, buscar e remover, usando <span class="ic">Scanner</span>, <span class="ic">ArrayList</span>, <span class="ic">String</span> e <span class="ic">equalsIgnoreCase</span>. Em POO: classes <span class="ic">Contato</span> e <span class="ic">ContatoComercial</span>, encapsulamento, herança, interface opcional e pacotes <span class="ic">model/controller/app/exceptions/utils</span>.</p>
+      <p style="margin-top:12px"><strong style="color:var(--text)">Próxima entrega:</strong></p>
+      <table>
+        <tr><th>Etapa</th><th>O que fazer</th></tr>
+        <tr><td class="left">Generics</td><td class="left">Repositório genérico para contatos de qualquer tipo; métodos genéricos de busca/listagem/remoção; curingas (<span class="ic">?</span>, <span class="ic">? extends T</span>, <span class="ic">? super T</span>).</td></tr>
+        <tr><td class="left">JavaFX</td><td class="left">Tela Principal (buscar/editar/remover), Tela de Cadastro com validação, Tela de Detalhes (opcional).</td></tr>
+        <tr><td class="left">FXML &amp; Scene Builder</td><td class="left">Interface em <span class="ic">.fxml</span> separando lógica da visualização; estilização via <span class="ic">.css</span>.</td></tr>
+        <tr><td class="left">JDBC</td><td class="left">SQLite ou MySQL com tabela <span class="ic">contatos</span>.</td></tr>
+        <tr><td class="left">JUnit</td><td class="left">Inserção, remoção e busca de contatos; validação de e-mails com <span class="ic">ValidadorEmail</span>; testes de DAO com SQLite em memória.</td></tr>
+      </table>
+      <div class="code-block"><span class="kw">CREATE TABLE</span> contatos (
+    id <span class="typ">INTEGER</span> <span class="kw">PRIMARY KEY</span> <span class="kw">AUTO_INCREMENT</span>,
+    nome <span class="typ">VARCHAR</span>(<span class="num">100</span>),
+    telefone <span class="typ">VARCHAR</span>(<span class="num">20</span>),
+    email <span class="typ">VARCHAR</span>(<span class="num">100</span>),
+    empresa <span class="typ">VARCHAR</span>(<span class="num">100</span>) <span class="cmt">-- pode ser nulo</span>
+);</div>
+    </div>
+
+    <!-- Card 5: Requisitos técnicos obrigatórios -->
+    <div class="card">
+      <div class="card-title">Requisitos Técnicos Obrigatórios <span class="pill pill-red">Para qualquer projeto</span></div>
+      <p>A turma deve se dividir nas <strong style="color:var(--text)">mesmas equipes</strong> do módulo anterior, pois esta é uma continuação do projeto já escolhido. Caso o aluno tenha optado por desenvolver um projeto diferente dos três apresentados, deve atender aos <strong style="color:var(--text)">mesmos critérios técnicos</strong>:</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <span class="pill pill-grad">Generics</span>
+        <span class="pill pill-blue">Interface Gráfica &mdash; JavaFX</span>
+        <span class="pill pill-green">Banco de Dados &mdash; JDBC</span>
+        <span class="pill pill-amber">Testes &mdash; JUnit</span>
+      </div>
+      <p style="margin-top:14px">O uso de JUnit para testes deve ser <strong style="color:var(--text)">acordado com o professor e os tutores</strong>. Lembre-se: esta é a <strong style="color:var(--text)">2&ordm; de 3 entregas</strong> previstas para o curso &mdash; haverá ainda uma última etapa no módulo avançado.</p>
+    </div>
+
+    <!-- Card 6: Antes de começar -->
+    <div class="card">
+      <div class="card-title">Antes de Começar <span class="pill pill-blue">Checklist</span></div>
+      <p>Antes de iniciar o desenvolvimento da próxima parte do projeto, o aluno deve <strong style="color:var(--text)">responder ao quiz deste capítulo</strong> e revisar os detalhes completos na tarefa <em>"TAREFA &mdash; Desenvolvimento do Projeto (Intermediário)"</em>.</p>
+    </div>
+
+  </div><!-- /resumo1 -->
+
+  <!-- ═══ SIMULADOR ═══ -->
+  <div id="simulador1" class="section">
+
+    <!-- Part 1: Explorador de Projetos -->
+    <div class="card">
+      <div class="card-title">&#x1F50D; Explorador de Projetos <span class="pill pill-grad">Escolha um projeto</span></div>
+      <p style="margin-bottom:4px">Selecione um dos três projetos e compare o que já foi construído com o que precisa ser entregue agora:</p>
+      <div class="type-btns">
+        <button class="type-btn active" onclick="showProject('taskmanager',this)">&#x1F4CB; TaskManager</button>
+        <button class="type-btn" onclick="showProject('fintrack',this)">&#x1F4B0; FinTrack</button>
+        <button class="type-btn" onclick="showProject('agenda',this)">&#x1F4C7; Agenda de Contatos</button>
+      </div>
+      <div class="output-label">&#x2705; Já construído (fase console)</div>
+      <div class="output-block" id="projectDone"></div>
+      <div class="output-label" style="margin-top:14px">&#x1F6A7; Próxima entrega</div>
+      <div class="output-block" id="projectNext" style="color:#f9e2af"></div>
+    </div>
+
+    <!-- Part 2: Roadmap da Próxima Entrega -->
+    <div class="card">
+      <div class="card-title">&#x1F5FA; Roadmap da Próxima Entrega <span class="pill pill-green">Comum a todos os projetos</span></div>
+      <p style="margin-bottom:4px">Avance pelas 5 etapas obrigatórias desta entrega, independentemente do projeto escolhido:</p>
+      <div class="stepper">
+        <button class="step-btn active" onclick="setRoadmapStep(0,this)">1. Generics</button>
+        <button class="step-btn" onclick="setRoadmapStep(1,this)">2. JavaFX</button>
+        <button class="step-btn" onclick="setRoadmapStep(2,this)">3. FXML</button>
+        <button class="step-btn" onclick="setRoadmapStep(3,this)">4. JDBC</button>
+        <button class="step-btn" onclick="setRoadmapStep(4,this)">5. JUnit</button>
+      </div>
+      <div class="code-block" id="roadmapCode" style="min-height:50px"></div>
+      <div class="warn-block" id="roadmapDesc"></div>
+    </div>
+
+  </div><!-- /simulador1 -->
+
+  <!-- ═══ EXERCÍCIOS ═══ -->
+  <div id="exercicios1" class="section">
+
+    <div class="score-bar-area">
+      <div>
+        <div class="score-val"><span id="scoreVal1">0</span>/5</div>
+        <div class="score-label">acertos</div>
+      </div>
+      <div style="flex:1">
+        <div class="score-track"><div class="score-fill" id="scoreBar1"></div></div>
+      </div>
+    </div>
+
+    <!-- Ex 1 -->
+    <div class="ex-block" id="ex1-0">
+      <div class="ex-q">Questão 1 &mdash; Para esta entrega, a turma deve se dividir em equipes <strong>diferentes</strong> das usadas no módulo anterior.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(0,this,false)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(0,this,true)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-0"></div>
+    </div>
+
+    <!-- Ex 2 -->
+    <div class="ex-block" id="ex1-1">
+      <div class="ex-q">Questão 2 &mdash; O projeto a ser continuado deve ser o <strong>mesmo</strong> escolhido no módulo inicial.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(1,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(1,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-1"></div>
+    </div>
+
+    <!-- Ex 3 -->
+    <div class="ex-block" id="ex1-2">
+      <div class="ex-q">Questão 3 &mdash; Quem optou por desenvolver um projeto diferente dos três apresentados <strong>não precisa</strong> seguir os mesmos critérios técnicos (Generics, JavaFX, JDBC, JUnit).</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(2,this,false)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(2,this,true)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-2"></div>
+    </div>
+
+    <!-- Ex 4 -->
+    <div class="ex-block" id="ex1-3">
+      <div class="ex-q">Questão 4 &mdash; Esta entrega é a <strong>última</strong> das três previstas para o curso.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(3,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(3,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-3"></div>
+    </div>
+
+    <!-- Ex 5 -->
+    <div class="ex-block" id="ex1-4">
+      <div class="ex-q">Questão 5 &mdash; O aluno deve responder ao quiz do capítulo <strong>antes</strong> de iniciar o desenvolvimento do projeto.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(4,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(4,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-4"></div>
+    </div>
+
+  </div><!-- /exercicios1 -->
+
+  <!-- ═══ QUESTIONÁRIOS ═══ -->
+  <div id="questionarios1" class="section">
+
+    <div class="card">
+      <div class="card-title">&#x1F4DD; Questionários</div>
+      <p style="margin-bottom:1rem">Responda aos questionários abaixo <strong style="color:var(--text)">antes de iniciar o desenvolvimento do projeto</strong>. Cada arquivo contém questões de verdadeiro ou falso e exercícios práticos de implementação.</p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a class="grad-btn" href="questionario-u6c1-01.html">&#x1F4CB; Quiz 01 &mdash; A Entrega e os Projetos Disponíveis</a>
+        <a class="grad-btn" href="questionario-u6c1-02.html" style="background:linear-gradient(270deg,#00c896 0%,#00a0cc 100%)">&#x1F4CB; Quiz 02 &mdash; Requisitos Técnicos da Próxima Entrega</a>
+        <a class="grad-btn" href="questionario-u6c1-03.html" style="background:linear-gradient(270deg,#cba6f7 0%,#8d62ff 100%)">&#x1F6E0; Implementação &mdash; Kickoff Técnico do Projeto</a>
+      </div>
+    </div>
+
+  </div><!-- /questionarios1 -->
+
+  <!-- ═══ CURIOSIDADES ═══ -->
+  <div id="curiosidades1" class="section">
+
+    <div class="card">
+      <div class="card-title">&#x1F680; Curiosidades sobre Projetos e Entregas Incrementais</div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F9E9;</div>
+        <div>
+          <div class="curi-title">Entregas incrementais vêm do mundo ágil</div>
+          <div class="curi-body">Dividir um projeto grande em várias <strong>entregas menores</strong> (como esta, a 2&ordm; de 3) é uma prática central de metodologias ágeis como Scrum: cada incremento já é algo funcional, testável e que pode ser avaliado antes da próxima etapa.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F3D7;</div>
+        <div>
+          <div class="curi-title">model, controller, app, exceptions... por que separar em pacotes?</div>
+          <div class="curi-body">Organizar o código em pacotes como <code>model</code>, <code>controller</code> e <code>exceptions</code> segue princípios do padrão arquitetural <strong>MVC</strong> (Model-View-Controller), facilitando manutenção, testes e a entrada de uma interface gráfica sem reescrever a lógica de negócio.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F4BE;</div>
+        <div>
+          <div class="curi-title">Por que SQLite nos testes?</div>
+          <div class="curi-body"><strong>SQLite</strong> pode rodar totalmente <strong>em memória</strong> (<code>jdbc:sqlite::memory:</code>), sem precisar instalar um servidor de banco de dados. Isso torna os testes de DAO rápidos, isolados e descartáveis a cada execução.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F3A8;</div>
+        <div>
+          <div class="curi-title">Scene Builder: interface sem escrever XML na mão</div>
+          <div class="curi-body">O <strong>Scene Builder</strong>, mantido pela Gluon, permite montar telas JavaFX arrastando e soltando componentes, gerando o <code>.fxml</code> automaticamente &mdash; o mesmo arquivo que o <code>@FXML</code> do controller consome.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F501;</div>
+        <div>
+          <div class="curi-title">DAO: um padrão, muitos projetos</div>
+          <div class="curi-body">Os três projetos desta unidade seguem o padrão <strong>DAO (Data Access Object)</strong> &mdash; como em <code>TransacaoDAO</code> &mdash; que isola todo o código de acesso ao banco em uma camada própria, deixando as classes de domínio (<code>Tarefa</code>, <code>Contato</code>...) livres de SQL.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F9EE;</div>
+        <div>
+          <div class="curi-title">Generics evitam duplicar código entre projetos</div>
+          <div class="curi-body">Um <code>RepositorioGenerico&lt;T&gt;</code> com métodos de adicionar, remover e listar pode ser reaproveitado tanto para <code>Tarefa</code> quanto para <code>Contato</code> ou <code>Transacao</code> &mdash; é exatamente esse reuso que os três projetos desta unidade exploram.</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div><!-- /curiosidades1 -->
+
+  <!-- ═══ LINKS ═══ -->
+  <div id="links1" class="section">
+
+    <div class="card">
+      <div class="card-title">&#x1F517; Links Úteis</div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;margin-top:4px">
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x23EA; Módulo Anterior</div>
+          <a class="link-item" href="../../unidade05/capitulo01/index.html">Unidade 05 &mdash; Capítulo 01 &mdash; Fundamentos de Testes de Software e TDD</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F3A8; Gluon Scene Builder &mdash; Download</div>
+          <a class="link-item" href="https://gluonhq.com/products/scene-builder/" target="_blank">https://gluonhq.com/products/scene-builder/</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4BE; SQLite &mdash; Downloads</div>
+          <a class="link-item" href="https://www.sqlite.org/download.html" target="_blank">https://www.sqlite.org/download.html</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4D6; Oracle &mdash; Generics (Tutorial Oficial)</div>
+          <a class="link-item" href="https://docs.oracle.com/javase/tutorial/java/generics/index.html" target="_blank">https://docs.oracle.com/javase/tutorial/java/generics/index.html</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4D6; JUnit 5 &mdash; User Guide (Documentação Oficial)</div>
+          <a class="link-item" href="https://junit.org/junit5/docs/current/user-guide/" target="_blank">https://junit.org/junit5/docs/current/user-guide/</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F9EA; Baeldung &mdash; The DAO Pattern in Java</div>
+          <a class="link-item" href="https://www.baeldung.com/java-dao-pattern" target="_blank">https://www.baeldung.com/java-dao-pattern</a>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /links1 -->
+
+  </div><!-- /aula01 -->
+
+</div><!-- /wrap -->
+
+<footer>
+  Capacita Brasil &mdash; <span>iRede</span> &mdash; Material Interativo de Java
+</footer>
+
+<script>
+function showTab(t, btn) {
+  document.querySelectorAll('#aula01 .section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('#aula01 .tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(t).classList.add('active');
+  btn.classList.add('active');
+}
+
+/* ── Simulador 1: Explorador de Projetos ── */
+const PROJECTS = {
+  taskmanager: {
+    done: '✓ Sistema de tarefas no terminal (Scanner, if/switch, for/while)\n✓ ArrayList e manipulação de String\n✓ Classe Tarefa + herança (TarefaPrioritaria)\n✓ Encapsulamento e polimorfismo\n✓ Pacotes: model, controller, app, exceptions',
+    next: '➤ Generics: classes/métodos genéricos p/ listas de tarefas (?, extends, super)\n➤ JavaFX: Tela Principal, Cadastro/Edição, confirmação ao remover\n➤ FXML + Scene Builder\n➤ JDBC: tabela tarefas (SQLite/MySQL)\n➤ JUnit: criação, conclusão, DAO em memória, validação'
+  },
+  fintrack: {
+    done: '✓ Controle de finanças no terminal\n✓ Cadastro de receitas e despesas + cálculo de saldo\n✓ ArrayList, Scanner, String, double\n✓ Classes Transacao, TransacaoMensal, FinTracker\n✓ Pacotes: model, controller, app, exceptions, utils',
+    next: '➤ Generics: classes genéricas p/ registros e serviços, curingas\n➤ JavaFX: tabela de transações, nova transação, relatório/saldo\n➤ FXML + Scene Builder + CSS\n➤ JDBC: tabela transacoes\n➤ JUnit: Transacao, RepositorioGenerico, TransacaoDAO, @BeforeEach/@AfterEach, assertThrows()'
+  },
+  agenda: {
+    done: '✓ Agenda de contatos no terminal\n✓ Adicionar, listar, buscar, remover contatos\n✓ Scanner, ArrayList, String, equalsIgnoreCase\n✓ Classes Contato, ContatoComercial (herança, interface opcional)\n✓ Pacotes: model, controller, app, exceptions, utils',
+    next: '➤ Generics: repositório genérico de contatos, curingas\n➤ JavaFX: Tela Principal, Cadastro com validação, Detalhes (opcional)\n➤ FXML + Scene Builder + CSS\n➤ JDBC: tabela contatos\n➤ JUnit: inserção/remoção/busca, ValidadorEmail, DAO em memória'
+  }
+};
+
+function showProject(key, btn) {
+  document.querySelectorAll('#simulador1 .type-btns .type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('projectDone').textContent = PROJECTS[key].done;
+  document.getElementById('projectNext').textContent = PROJECTS[key].next;
+}
+
+/* ── Simulador 2: Roadmap da Próxima Entrega ── */
+const ROADMAP_STEPS = [
+  {
+    code: '<span class="kw">public class</span> <span class="cls">RepositorioGenerico</span><span class="typ">&lt;T&gt;</span> {\n    <span class="kw">private</span> <span class="cls">List</span><span class="typ">&lt;T&gt;</span> itens = <span class="kw">new</span> <span class="cls">ArrayList</span><>();\n\n    <span class="kw">public void</span> <span class="mtd">adicionar</span>(T item) { itens.<span class="mtd">add</span>(item); }\n    <span class="kw">public</span> <span class="cls">List</span><span class="typ">&lt;T&gt;</span> <span class="mtd">listar</span>() { <span class="kw">return</span> itens; }\n}',
+    desc: '&#x1F539; 1. Generics — crie estruturas (como um repositório genérico) e métodos reutilizáveis para manipular listas de Tarefa, Transacao ou Contato, usando ?, ? extends T e ? super T quando fizer sentido.'
+  },
+  {
+    code: '<span class="kw">public class</span> <span class="cls">TelaPrincipalController</span> {\n    <span class="ann">@FXML</span>\n    <span class="kw">private</span> <span class="cls">ListView</span><span class="typ">&lt;String&gt;</span> listaItens;\n\n    <span class="ann">@FXML</span>\n    <span class="kw">void</span> <span class="mtd">onRemover</span>(<span class="cls">ActionEvent</span> event) { <span class="cmt">/* ... */</span> }\n}',
+    desc: '&#x1F539; 2. JavaFX — construa as telas de interface gráfica (listagem, cadastro/edição, confirmação) que vão substituir a versão de terminal.'
+  },
+  {
+    code: '<span class="cmt">&lt;!-- tela-principal.fxml --&gt;</span>\n<span class="kw">&lt;VBox</span> <span class="typ">fx:controller</span>=<span class="str">"TelaPrincipalController"</span><span class="kw">&gt;</span>\n    <span class="kw">&lt;ListView</span> <span class="typ">fx:id</span>=<span class="str">"listaItens"</span> <span class="kw">/&gt;</span>\n<span class="kw">&lt;/VBox&gt;</span>',
+    desc: '&#x1F539; 3. FXML & Scene Builder — monte o layout visualmente no Scene Builder, gerando o .fxml que o controller consome via @FXML, e aplique estilização com .css.'
+  },
+  {
+    code: '<span class="kw">try</span> (<span class="cls">Connection</span> con = <span class="cls">ConexaoFactory</span>.<span class="mtd">conectar</span>()) {\n    <span class="cls">PreparedStatement</span> stmt = con.<span class="mtd">prepareStatement</span>(\n        <span class="str">"INSERT INTO tarefas (titulo, descricao) VALUES (?, ?)"</span>);\n    stmt.<span class="mtd">setString</span>(<span class="num">1</span>, titulo);\n    stmt.<span class="mtd">setString</span>(<span class="num">2</span>, descricao);\n    stmt.<span class="mtd">executeUpdate</span>();\n}',
+    desc: '&#x1F539; 4. JDBC — crie a base de dados relacional (SQLite ou MySQL) e persista os dados do projeto com PreparedStatement, evitando SQL Injection.'
+  },
+  {
+    code: '<span class="ann">@BeforeEach</span>\n<span class="kw">void</span> <span class="mtd">setUp</span>() { conexao = <span class="cls">DriverManager</span>.<span class="mtd">getConnection</span>(<span class="str">"jdbc:sqlite::memory:"</span>); }\n\n<span class="ann">@Test</span>\n<span class="kw">void</span> <span class="mtd">testInserirRegistro</span>() {\n    assertDoesNotThrow(() -> dao.<span class="mtd">inserir</span>(novoRegistro));\n}',
+    desc: '&#x1F539; 5. JUnit — escreva testes automatizados para as regras de negócio e para o DAO, usando SQLite em memória, @BeforeEach/@AfterEach e assertEquals()/assertThrows().'
+  }
+];
+
+function setRoadmapStep(i, btn) {
+  document.querySelectorAll('#simulador1 .stepper .step-btn').forEach((b, idx) => {
+    b.classList.remove('active');
+    if (idx < i) b.classList.add('past'); else b.classList.remove('past');
+  });
+  btn.classList.add('active');
+  document.getElementById('roadmapCode').innerHTML = ROADMAP_STEPS[i].code;
+  document.getElementById('roadmapDesc').innerHTML = ROADMAP_STEPS[i].desc;
+}
+
+function answer1(i, btn, isCorrect) {
+  const block = document.getElementById('ex1-' + i);
+  const fb = document.getElementById('fb1-' + i);
+  block.querySelectorAll('.choice').forEach(b => b.disabled = true);
+  if (isCorrect) {
+    btn.classList.add('correct');
+    block.classList.add('done');
+    fb.className = 'feedback show ok';
+    fb.textContent = '✓ Correto!';
+    window.score1 = (window.score1 || 0) + 1;
+  } else {
+    btn.classList.add('wrong');
+    fb.className = 'feedback show ko';
+    fb.textContent = '✗ Incorreto. Revise o resumo desta aula.';
+  }
+  document.getElementById('scoreVal1').textContent = window.score1 || 0;
+  document.getElementById('scoreBar1').style.width = ((window.score1 || 0) / 5 * 100) + '%';
+}
+</script>
+
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+  showProject('taskmanager', document.querySelector('#simulador1 .type-btn.active'));
+  setRoadmapStep(0, document.querySelector('#simulador1 .step-btn.active'));
+});
+</script>
+</body>
+</html>
