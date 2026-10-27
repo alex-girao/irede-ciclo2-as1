@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Java &mdash; Cap&iacute;tulo 01 &mdash; Introdu&ccedil;&atilde;o ao ORM e ao Hibernate</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:          #f0f0f5;
+  --surface:     #ffffff;
+  --border:      #d8d5e8;
+  --accent:      #8d62ff;
+  --accent2:     #00c896;
+  --text:        #1a1730;
+  --muted:       #7a748f;
+  --green:       #155e35;
+  --green-bg:    #d6f5e5;
+  --green-border:#6edaa8;
+  --red:         #7a1f1f;
+  --red-bg:      #fde8e8;
+  --red-border:  #f0a0a0;
+  --radius:      10px;
+  --glow:        0 0 18px rgba(141,98,255,0.15);
+  --grad:        linear-gradient(270deg, #8d62ff 53.6%, #00ffbc 98.32%);
+  --surface2:    #f7f5ff;
+  --mint:        #00c896;
+  --danger:      #d63030;
+  --warn:        #d48a00;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  padding: 0 0 60px;
+  background-image:
+    radial-gradient(ellipse 70% 40% at 50% -10%, rgba(141,98,255,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 30% at 80% 110%, rgba(0,200,150,0.06) 0%, transparent 70%);
+}
+header {
+  text-align: center;
+  padding: 36px 20px 28px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  background: var(--surface);
+  box-shadow: 0 2px 16px rgba(141,98,255,0.07);
+}
+header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 2px;
+  background: linear-gradient(90deg, transparent, #8d62ff, transparent);
+}
+.header-logo { height: 48px; margin-bottom: 14px; display: block; margin-left: auto; margin-right: auto; }
+.logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.logo span { opacity: 0.6; }
+.subtitle { color: var(--muted); font-size: .85rem; margin-top: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
+.header-badge {
+  display: inline-block; margin-top: 12px; padding: 4px 16px; border-radius: 99px;
+  font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace;
+  background: linear-gradient(270deg, rgba(141,98,255,.15), rgba(0,255,188,.1));
+  border: 1px solid rgba(141,98,255,.3); color: var(--accent); letter-spacing: .06em;
+}
+.wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+/* ── AULA TABS ── */
+.aula-bar {
+  display: flex; gap: 4px; margin-bottom: 1.5rem;
+  background: var(--text); border-radius: 14px; padding: 6px;
+  box-shadow: 0 4px 20px rgba(26,23,48,0.18);
+}
+.aula-tab {
+  flex: 1; padding: 12px 20px; border-radius: 10px; border: none;
+  background: transparent; color: rgba(255,255,255,0.45); cursor: pointer;
+  font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+  transition: all .2s; letter-spacing: .02em;
+}
+.aula-tab.active { background: var(--grad); color: #fff; box-shadow: 0 2px 14px rgba(141,98,255,.45); }
+.aula-section { display: none; }
+.aula-section.active { display: block; }
+
+/* ── INNER TABS ── */
+.tab-bar {
+  display: flex; gap: 6px; margin-bottom: 1.5rem; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 14px; padding: 6px;
+  flex-wrap: wrap; box-shadow: 0 2px 10px rgba(141,98,255,0.06);
+}
+.tab {
+  flex: 1; min-width: 120px; padding: 9px 16px; border-radius: var(--radius);
+  border: none; background: transparent; color: var(--muted); cursor: pointer;
+  font-size: 13px; font-weight: 500; font-family: 'Space Grotesk', sans-serif; transition: all .2s;
+}
+.tab:hover:not(.active) { background: rgba(141,98,255,.08); color: var(--text); }
+.tab.active { background: var(--grad); color: #fff; font-weight: 700; box-shadow: 0 2px 12px rgba(141,98,255,.3); }
+.section { display: none; }
+.section.active { display: block; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.5rem; margin-bottom: 1.25rem; position: relative; overflow: hidden;
+  box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(141,98,255,.35), transparent);
+}
+.card-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700;
+  margin-bottom: 1rem; display: flex; align-items: center; gap: 10px; color: var(--text); flex-wrap: wrap;
+}
+.card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+/* ── PILLS ── */
+.pill { display: inline-block; padding: 3px 11px; border-radius: 99px; font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+.pill-grad  { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.3);  color: var(--accent); }
+.pill-green { background: rgba(0,200,150,.12);  border: 1px solid rgba(0,200,150,.3);   color: #0a7a5a; }
+.pill-red   { background: rgba(214,48,48,.1);   border: 1px solid rgba(214,48,48,.25);  color: var(--danger); }
+.pill-amber { background: rgba(212,138,0,.1);   border: 1px solid rgba(212,138,0,.25);  color: var(--warn); }
+.pill-blue  { background: rgba(141,98,255,.12); border: 1px solid rgba(141,98,255,.25); color: #5a30cc; }
+.pill-java  { background: rgba(248,152,32,.12); border: 1px solid rgba(248,152,32,.35); color: #9a5000; }
+
+/* ── TABLE ── */
+table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 12px 0; }
+th {
+  background: rgba(141,98,255,.1); padding: 10px 14px; text-align: center;
+  font-weight: 700; font-size: 12px; color: var(--accent);
+  font-family: 'JetBrains Mono', monospace; letter-spacing: .05em; border-bottom: 1px solid var(--border);
+}
+td { padding: 10px 14px; text-align: center; border-bottom: 1px solid rgba(141,98,255,.08); font-size: 13px; font-family: 'JetBrains Mono', monospace; }
+td.left { text-align: left; font-family: 'Space Grotesk', sans-serif; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(141,98,255,.04); }
+
+/* ── CODE BLOCK ── */
+.code-block {
+  background: #1e1e2e; border: 1px solid #3a3a5c; border-radius: 10px;
+  padding: 16px 18px; margin: 12px 0; font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; line-height: 1.8; color: #cdd6f4; overflow-x: auto; white-space: pre;
+}
+.code-block .kw  { color: #cba6f7; }
+.code-block .typ { color: #89b4fa; }
+.code-block .str { color: #a6e3a1; }
+.code-block .num { color: #fab387; }
+.code-block .cmt { color: #6c7086; font-style: italic; }
+.code-block .cls { color: #f5c2e7; }
+.code-block .mtd { color: #89dceb; }
+.code-block .ann { color: #f9e2af; }
+
+/* ── SCORE BAR ── */
+.score-bar-area {
+  display: flex; align-items: center; gap: 16px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px 18px; margin-bottom: 1.25rem; box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.score-val {
+  font-size: 28px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+  background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.score-label { font-size: 11px; color: var(--muted); }
+.score-track { flex: 1; background: #e5e2f0; border-radius: 99px; height: 8px; overflow: hidden; }
+.score-fill { height: 100%; border-radius: 99px; background: var(--grad); width: 0%; transition: width .4s cubic-bezier(.4,0,.2,1); }
+
+/* ── EXERCISES ── */
+.ex-block {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem; margin-bottom: 1rem; border-left: 3px solid var(--accent);
+  transition: border-left-color .2s; box-shadow: 0 2px 8px rgba(141,98,255,0.06);
+}
+.ex-block.done { border-left-color: var(--accent2); }
+.ex-q { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text); line-height: 1.55; }
+.ex-scenario { font-size: 13px; color: var(--muted); margin-bottom: 14px; line-height: 1.55; }
+.choices { display: flex; gap: 8px; flex-wrap: wrap; }
+.choice {
+  padding: 9px 20px; border-radius: 7px; border: 1.5px solid var(--border);
+  background: transparent; color: var(--text); cursor: pointer;
+  font-size: 13px; font-family: 'JetBrains Mono', monospace; font-weight: 600; transition: all .15s;
+}
+.choice:hover:not(:disabled) { background: rgba(141,98,255,.08); border-color: var(--accent); }
+.choice:disabled { cursor: default; }
+.choice.correct { background: var(--green-bg); color: #0a7a5a; border-color: var(--green-border); }
+.choice.wrong   { background: var(--red-bg);   color: var(--danger); border-color: var(--red-border); }
+.feedback { font-size: 13px; margin-top: 12px; padding: 10px 14px; border-radius: var(--radius); display: none; line-height: 1.6; }
+.feedback.show { display: block; }
+.feedback.ok { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.feedback.ko { background: var(--red-bg);   color: var(--red);   border: 1px solid var(--red-border); }
+
+/* ── CURIOSIDADES ── */
+.curi-item { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid rgba(141,98,255,.1); }
+.curi-item:last-of-type { border-bottom: none; }
+.curi-icon {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+  background: linear-gradient(270deg, rgba(141,98,255,.15), rgba(0,200,150,.1));
+  border: 1px solid rgba(141,98,255,.25);
+}
+.curi-title { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-bottom: 4px; color: var(--text); }
+.curi-body { font-size: 13px; color: var(--muted); line-height: 1.65; }
+.curi-body code { background: rgba(141,98,255,.12); color: #5a30cc; padding: 1px 6px; border-radius: 4px; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+
+/* ── LINKS ── */
+.link-item {
+  color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  text-decoration: none; word-break: break-all; transition: color .15s;
+}
+.link-item:hover { color: var(--mint); text-decoration: underline; }
+
+/* ── GRAD BTN ── */
+.grad-btn {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 14px;
+  padding: 10px 22px; border-radius: 8px; background: var(--grad); color: #fff;
+  border: none; cursor: pointer; font-size: 13px; font-weight: 700;
+  font-family: 'JetBrains Mono', monospace; text-decoration: none;
+  transition: opacity .2s, transform .15s; box-shadow: 0 3px 14px rgba(141,98,255,.3);
+}
+.grad-btn:hover { opacity: .88; transform: translateY(-1px); }
+
+/* ── INLINE CODE ── */
+.ic { background: rgba(141,98,255,.12); color: #5a30cc; padding: 1px 7px; border-radius: 4px; font-size: 12px; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+/* ── TIMELINE ── */
+.timeline-item { display: grid; grid-template-columns: 160px 1fr; gap: 16px; padding: 14px 0; border-bottom: 1px solid rgba(141,98,255,.1); }
+.timeline-item:last-child { border-bottom: none; }
+.timeline-era { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--accent); line-height: 1.5; }
+.timeline-body { font-size: 13px; color: var(--muted); line-height: 1.65; }
+.timeline-body strong { color: var(--text); }
+
+/* ── TYPE PICKER (SIMULADOR) ── */
+.type-btns { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0 14px; }
+.type-btn {
+  padding: 8px 16px; border-radius: 99px; border: 1.5px solid var(--border);
+  background: transparent; font-size: 12px; font-weight: 700; cursor: pointer;
+  font-family: 'JetBrains Mono', monospace; color: var(--muted); transition: all .15s;
+}
+.type-btn:hover { border-color: var(--accent); color: var(--text); }
+.type-btn.active { background: var(--grad); color: #fff; border-color: transparent; box-shadow: 0 2px 10px rgba(141,98,255,.3); }
+
+.output-block {
+  background: #12121e; border: 1px solid #2a2a40; border-radius: 8px;
+  padding: 14px 18px; margin-top: 10px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.8;
+  color: #a6e3a1; overflow-x: auto; white-space: pre;
+}
+.output-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  color: var(--muted); letter-spacing: .07em; text-transform: uppercase;
+  margin: 12px 0 4px;
+}
+.warn-block {
+  background: rgba(212,138,0,.08); border: 1px solid rgba(212,138,0,.25); border-radius: 8px;
+  padding: 10px 14px; margin-top: 10px; font-size: 12px; color: var(--warn); line-height: 1.6;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── STEPPER (SIMULADOR) ── */
+.stepper { display: flex; gap: 4px; flex-wrap: wrap; margin: 4px 0 14px; }
+.step-btn {
+  flex: 1; min-width: 90px; padding: 10px 8px; border-radius: 8px; border: 1.5px solid var(--border);
+  background: transparent; font-size: 11px; font-weight: 700; cursor: pointer;
+  font-family: 'JetBrains Mono', monospace; color: var(--muted); transition: all .15s; text-align: center;
+}
+.step-btn:hover { border-color: var(--accent); color: var(--text); }
+.step-btn.active { background: var(--grad); color: #fff; border-color: transparent; box-shadow: 0 2px 10px rgba(141,98,255,.3); }
+.step-btn.past { border-color: var(--accent2); color: #0a7a5a; }
+
+footer { text-align: center; margin-top: 3rem; font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+footer span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700; }
+
+@media (max-width: 600px) {
+  .tab { min-width: 80px; font-size: 12px; }
+  .timeline-item { grid-template-columns: 1fr; gap: 4px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img class="header-logo" src="https://capacitabrasil.irede.org.br/assets/capacitaLogo-Ct3BEyem.png" alt="Capacita Brasil"/>
+  <div class="logo">&#x2615; <span>//</span> Java</div>
+  <div class="subtitle">Desenvolvimento Java &mdash; Aula Interativa</div>
+  <div class="header-badge">Unidade 07 &mdash; Cap&iacute;tulo 01 &mdash; Introdu&ccedil;&atilde;o ao ORM e ao Hibernate</div>
+</header>
+
+<div class="wrap">
+
+  <div class="aula-bar">
+    <button class="aula-tab active">&#x1F5C4; Cap&iacute;tulo 01 &mdash; ORM e Hibernate</button>
+  </div>
+
+  <div id="aula01" class="aula-section active">
+
+  <div class="tab-bar">
+    <button class="tab active"  onclick="showTab('resumo1',this)">&#x1F4D8; Resumo</button>
+    <button class="tab"         onclick="showTab('simulador1',this)">&#x26A1; Simulador</button>
+    <button class="tab"         onclick="showTab('exercicios1',this)">&#x1F3AF; Exercícios</button>
+    <button class="tab"         onclick="showTab('questionarios1',this)">&#x1F4DD; Questionários</button>
+    <button class="tab"         onclick="showTab('curiosidades1',this)">&#x1F680; Curiosidades</button>
+    <button class="tab"         onclick="showTab('links1',this)">&#x1F517; Links</button>
+  </div>
+
+  <!-- ═══ RESUMO ═══ -->
+  <div id="resumo1" class="section active">
+
+    <!-- Card 1: Mapeamento Objeto-Relacional -->
+    <div class="card">
+      <div class="card-title">Mapeamento Objeto-Relacional (ORM) <span class="pill pill-blue">Object-Relational Mapping</span></div>
+      <p><strong style="color:var(--text)">ORM</strong> é uma técnica que cria uma <strong style="color:var(--text)">camada de abstração</strong> entre a aplicação (orientada a objetos) e o banco de dados (relacional).</p>
+      <p style="margin-top:10px"><strong style="color:var(--text)">Como funciona?</strong> Você manipula <strong style="color:var(--text)">objetos</strong> no seu código. O ORM traduz suas ações em comandos SQL (<span class="ic">INSERT</span>, <span class="ic">UPDATE</span>, <span class="ic">DELETE</span>, <span class="ic">SELECT</span>) e converte os resultados do banco de dados de volta para objetos.</p>
+      <div class="code-block" style="text-align:center"><span class="cls">Objeto Java</span>  &rarr;  <span class="ann">ORM (Hibernate)</span>  &rarr;  <span class="str">SQL</span>  &rarr;  <span class="typ">MySQL</span>
+<span class="cls">Objeto Java</span>  &larr;  <span class="ann">ORM (Hibernate)</span>  &larr;  <span class="str">ResultSet</span>  &larr;  <span class="typ">MySQL</span></div>
+      <p style="margin-top:10px">O ORM resolve a diferença entre os dois "mundos" &mdash; conhecida como <em>impedância objeto-relacional</em>:</p>
+      <table>
+        <tr><th>Mundo Orientado a Objetos</th><th>Mundo Relacional</th></tr>
+        <tr><td>Classe <span class="ic">Produto</span></td><td>Tabela <span class="ic">produtos</span></td></tr>
+        <tr><td>Atributo <span class="ic">nome</span></td><td>Coluna <span class="ic">nome</span></td></tr>
+        <tr><td>Objeto (instância)</td><td>Linha (registro)</td></tr>
+        <tr><td>Identidade do objeto</td><td>Chave primária (PK)</td></tr>
+        <tr><td>Referência a outro objeto</td><td>Chave estrangeira (FK)</td></tr>
+      </table>
+    </div>
+
+    <!-- Card 2: Exemplo prático -->
+    <div class="card">
+      <div class="card-title">Exemplo Prático: Sem ORM vs. Com ORM <span class="pill pill-green">Mesmo resultado</span></div>
+      <p><strong style="color:var(--text)">Sem ORM</strong> &mdash; você escreve o SQL manualmente:</p>
+      <div class="code-block"><span class="kw">INSERT INTO</span> PRODUTO (NOME, PRECO) <span class="kw">VALUES</span> (<span class="str">'Caneta'</span>, <span class="num">1.99</span>);</div>
+      <p style="margin-top:14px"><strong style="color:var(--text)">Com ORM</strong> &mdash; você trabalha apenas com o objeto:</p>
+      <div class="code-block"><span class="cls">Produto</span> produto = <span class="kw">new</span> <span class="cls">Produto</span>(<span class="str">"Caneta"</span>, <span class="num">1.99</span>);
+entityManager.<span class="mtd">persist</span>(produto);  <span class="cmt">// o Hibernate gera o INSERT</span></div>
+      <p style="margin-top:10px">Na Unidade 04 você usou <strong style="color:var(--text)">JDBC</strong> para fazer isso &mdash; abrindo conexão, montando o <span class="ic">PreparedStatement</span>, preenchendo cada <span class="ic">?</span> e lendo o <span class="ic">ResultSet</span> campo a campo. Com ORM, todo esse trabalho repetitivo é feito pelo framework.</p>
+    </div>
+
+    <!-- Card 3: Benefícios -->
+    <div class="card">
+      <div class="card-title">Os Benefícios Estratégicos do ORM <span class="pill pill-grad">4 Vantagens</span></div>
+      <p>A adoção de um framework ORM traz vantagens significativas para o ciclo de vida de um projeto de software:</p>
+      <p style="margin-top:10px"><strong style="color:var(--text)">&#x1F680; Produtividade Acelerada:</strong> menos código repetitivo (SQL, conversão de <span class="ic">ResultSet</span>, abertura/fechamento de recursos). O desenvolvedor foca na regra de negócio.</p>
+      <p style="margin-top:8px"><strong style="color:var(--text)">&#x1F527; Manutenibilidade Aprimorada:</strong> adicionar um atributo na classe é suficiente para que ele seja persistido &mdash; não é preciso caçar e alterar dezenas de comandos SQL espalhados.</p>
+      <p style="margin-top:8px"><strong style="color:var(--text)">&#x1F504; Independência do Banco de Dados:</strong> o ORM gera o SQL no "dialeto" de cada banco. Trocar MySQL por PostgreSQL, por exemplo, exige basicamente alterar a configuração.</p>
+      <p style="margin-top:8px"><strong style="color:var(--text)">&#x26A1; Performance Otimizada:</strong> recursos como <em>cache</em> de primeiro nível, carregamento sob demanda (<em>lazy loading</em>) e envio de comandos em lote reduzem idas ao banco.</p>
+    </div>
+
+    <!-- Card 4: Hibernate -->
+    <div class="card">
+      <div class="card-title">Hibernate <span class="pill pill-java">Framework ORM</span></div>
+      <p style="margin-top:4px">&#x1F539; Criado por <strong style="color:var(--text)">Gavin King</strong> no início dos anos 2000 (primeira versão em 2001).</p>
+      <p style="margin-top:8px">&#x1F539; É um framework robusto que, por muitos anos, <strong style="color:var(--text)">definiu o padrão</strong> de como a persistência de dados é feita em Java &mdash; e inspirou a especificação oficial <strong style="color:var(--text)">JPA</strong> (Java/Jakarta Persistence API).</p>
+      <p style="margin-top:8px">&#x1F539; Objetivos centrais: ser um framework <span class="pill pill-grad">transparente</span> <span class="pill pill-green">intuitivo</span> <span class="pill pill-amber">poderoso</span></p>
+      <p style="margin-top:14px"><strong style="color:var(--text)">JPA x Hibernate:</strong> a <strong style="color:var(--text)">JPA</strong> é a <em>especificação</em> (o "contrato", só interfaces e anotações). O <strong style="color:var(--text)">Hibernate</strong> é a <em>implementação</em> mais usada dessa especificação &mdash; e ainda oferece sua própria API nativa.</p>
+    </div>
+
+    <!-- Card 5: Arquitetura em camadas -->
+    <div class="card">
+      <div class="card-title">Arquitetura em Camadas <span class="pill pill-blue">Do código ao banco</span></div>
+      <p>O acesso a dados em uma aplicação Java com Hibernate é organizado em camadas:</p>
+      <div class="code-block">┌────────────────────────────────────────────────┐
+│       <span class="ann">Data Access Layer</span> (sua aplicação)        │
+└────────────────────────────────────────────────┘
+            &darr;                         &darr;
+┌──────────────────────┐  ┌──────────────────────┐
+│ <span class="typ">Java Persistence API</span> │  │ <span class="typ">Hibernate Native API</span> │
+└──────────────────────┘  └──────────────────────┘
+            &darr;                         &darr;
+┌────────────────────────────────────────────────┐
+│                   <span class="cls">Hibernate</span>                    │
+└────────────────────────────────────────────────┘
+                        &darr;
+┌────────────────────────────────────────────────┐
+│                      <span class="mtd">JDBC</span>                      │
+└────────────────────────────────────────────────┘
+                        &darr;
+            &#x1F6E2;  <span class="str">Banco Relacional (MySQL)</span></div>
+      <p style="margin-top:10px">A aplicação pode usar a <strong style="color:var(--text)">JPA</strong> (padrão) ou a <strong style="color:var(--text)">API nativa do Hibernate</strong> (específica). Ambas são implementadas pelo Hibernate, que por sua vez <strong style="color:var(--text)">usa o JDBC</strong> para se comunicar com o banco. Ou seja: o ORM <em>não substitui</em> o JDBC &mdash; ele o utiliza por baixo dos panos.</p>
+      <p style="margin-top:10px;font-size:12px"><a class="link-item" href="https://pw2.rpmhub.dev/topicos/jpa/hibernate.html" target="_blank">pw2.rpmhub.dev &mdash; Hibernate</a></p>
+    </div>
+
+    <!-- Card 6: SessionFactory -->
+    <div class="card">
+      <div class="card-title">Arquitetura Principal: SessionFactory <span class="pill pill-red">Pesado &middot; Thread-safe</span></div>
+      <p><strong style="color:var(--text)">O que faz?</strong></p>
+      <p style="margin-top:6px">&#x1F539; Lê as configurações (<span class="ic">persistence.xml</span>);</p>
+      <p style="margin-top:4px">&#x1F539; Conhece todos os mapeamentos (sabe como transformar <span class="ic">Produto</span> em <span class="ic">produtos</span>);</p>
+      <p style="margin-top:4px">&#x1F539; Cria e fornece as <span class="ic">Session</span>.</p>
+      <div class="warn-block">&#x26A0; Criada apenas UMA VEZ quando a aplicação inicia. É um processo caro!</div>
+      <div class="code-block"><span class="cmt">// JPA: EntityManagerFactory (no Hibernate, é a SessionFactory)</span>
+<span class="kw">private static final</span> <span class="typ">EntityManagerFactory</span> emf =
+        <span class="cls">Persistence</span>.<span class="mtd">createEntityManagerFactory</span>(<span class="str">"lojaPU"</span>);</div>
+    </div>
+
+    <!-- Card 7: Session -->
+    <div class="card">
+      <div class="card-title">Arquitetura Principal: Session <span class="pill pill-green">Leve &middot; Vida curta</span></div>
+      <p>Um objeto <strong style="color:var(--text)">leve</strong>, de <strong style="color:var(--text)">vida curta</strong> e <strong style="color:var(--text)">não thread-safe</strong>.</p>
+      <p style="margin-top:10px"><strong style="color:var(--text)">O que faz?</strong></p>
+      <p style="margin-top:6px">&#x1F539; É a sua interface principal para o banco de dados;</p>
+      <p style="margin-top:4px">&#x1F539; Realiza as operações: <span class="ic">persist()</span> (salvar), <span class="ic">find()</span> (buscar), <span class="ic">remove()</span> (deletar);</p>
+      <p style="margin-top:4px">&#x1F539; Gerencia o <strong style="color:var(--text)">cache de primeiro nível</strong> (contexto de persistência).</p>
+      <div class="warn-block">&#x1F4A1; Abra, use e feche. Uma nova Session para cada unidade de trabalho.</div>
+      <div class="code-block"><span class="cmt">// JPA: EntityManager (no Hibernate, é a Session)</span>
+<span class="typ">EntityManager</span> em = emf.<span class="mtd">createEntityManager</span>();
+<span class="cls">Produto</span> p = em.<span class="mtd">find</span>(<span class="cls">Produto</span>.<span class="kw">class</span>, <span class="num">1L</span>);
+em.<span class="mtd">close</span>();</div>
+    </div>
+
+    <!-- Card 8: Transaction -->
+    <div class="card">
+      <div class="card-title">Arquitetura Principal: Transaction <span class="pill pill-amber">Unidade atômica</span></div>
+      <p><strong style="color:var(--text)">O que faz?</strong> Garante a integridade dos dados: <strong style="color:var(--text)">ou todas as operações funcionam, ou nenhuma funciona.</strong></p>
+      <table>
+        <tr><th>Método</th><th>Significado</th></tr>
+        <tr><td>transaction.begin()</td><td class="left">"Começar a operação."</td></tr>
+        <tr><td>transaction.commit()</td><td class="left">"Confirmar e salvar tudo no banco."</td></tr>
+        <tr><td>transaction.rollback()</td><td class="left">"Deu erro! Desfazer tudo."</td></tr>
+      </table>
+      <div class="code-block"><span class="typ">EntityTransaction</span> tx = em.<span class="mtd">getTransaction</span>();
+<span class="kw">try</span> {
+    tx.<span class="mtd">begin</span>();
+    em.<span class="mtd">persist</span>(produto);
+    tx.<span class="mtd">commit</span>();
+} <span class="kw">catch</span> (<span class="typ">Exception</span> e) {
+    tx.<span class="mtd">rollback</span>();
+} <span class="kw">finally</span> {
+    em.<span class="mtd">close</span>();
+}</div>
+    </div>
+
+    <!-- Card 9: JPA x Hibernate nativo -->
+    <div class="card">
+      <div class="card-title">Nomes na JPA x Hibernate Nativo <span class="pill pill-blue">Equivalências</span></div>
+      <p>Você encontrará os dois nomes na documentação e em projetos reais. No Hibernate 6, as interfaces nativas <em>estendem</em> as da JPA:</p>
+      <table>
+        <tr><th>Papel</th><th>JPA (jakarta.persistence)</th><th>Hibernate Nativo</th></tr>
+        <tr><td class="left">Fábrica (pesada)</td><td>EntityManagerFactory</td><td>SessionFactory</td></tr>
+        <tr><td class="left">Unidade de trabalho</td><td>EntityManager</td><td>Session</td></tr>
+        <tr><td class="left">Transação</td><td>EntityTransaction</td><td>Transaction</td></tr>
+        <tr><td class="left">Configuração</td><td>persistence.xml</td><td>hibernate.cfg.xml</td></tr>
+      </table>
+    </div>
+
+    <!-- Card 10: Mapeando uma entidade -->
+    <div class="card">
+      <div class="card-title">Mapeando uma Entidade <span class="pill pill-java">Anotações</span></div>
+      <p>Para o ORM saber como transformar a classe em tabela, usamos anotações da JPA:</p>
+      <div class="code-block"><span class="kw">import</span> jakarta.persistence.*;
+
+<span class="ann">@Entity</span>
+<span class="ann">@Table</span>(name = <span class="str">"produtos"</span>)
+<span class="kw">public class</span> <span class="cls">Produto</span> {
+
+    <span class="ann">@Id</span>
+    <span class="ann">@GeneratedValue</span>(strategy = <span class="typ">GenerationType</span>.IDENTITY)
+    <span class="kw">private</span> <span class="typ">Long</span> id;
+
+    <span class="ann">@Column</span>(nullable = <span class="kw">false</span>, length = <span class="num">100</span>)
+    <span class="kw">private</span> <span class="typ">String</span> nome;
+
+    <span class="kw">private</span> <span class="typ">Double</span> preco;
+
+    <span class="kw">public</span> <span class="cls">Produto</span>() { }  <span class="cmt">// construtor vazio obrigatório</span>
+
+    <span class="cmt">// construtor com campos, getters e setters...</span>
+}</div>
+      <p style="margin-top:10px"><strong style="color:var(--text)">@Entity:</strong> a classe é uma entidade persistente. <strong style="color:var(--text)">@Table:</strong> nome da tabela. <strong style="color:var(--text)">@Id:</strong> chave primária. <strong style="color:var(--text)">@GeneratedValue(IDENTITY):</strong> usa o <span class="ic">AUTO_INCREMENT</span> do MySQL. <strong style="color:var(--text)">@Column:</strong> detalhes da coluna.</p>
+    </div>
+
+    <!-- Card 11: Configuração com MySQL -->
+    <div class="card">
+      <div class="card-title">Configurando o Hibernate com MySQL <span class="pill pill-green">Maven + persistence.xml</span></div>
+      <p><strong style="color:var(--text)">1. Dependências</strong> no <span class="ic">pom.xml</span>:</p>
+      <div class="code-block"><span class="cls">&lt;dependency&gt;</span>
+    <span class="cls">&lt;groupId&gt;</span>org.hibernate.orm<span class="cls">&lt;/groupId&gt;</span>
+    <span class="cls">&lt;artifactId&gt;</span>hibernate-core<span class="cls">&lt;/artifactId&gt;</span>
+    <span class="cls">&lt;version&gt;</span>6.5.2.Final<span class="cls">&lt;/version&gt;</span>
+<span class="cls">&lt;/dependency&gt;</span>
+<span class="cls">&lt;dependency&gt;</span>
+    <span class="cls">&lt;groupId&gt;</span>com.mysql<span class="cls">&lt;/groupId&gt;</span>
+    <span class="cls">&lt;artifactId&gt;</span>mysql-connector-j<span class="cls">&lt;/artifactId&gt;</span>
+    <span class="cls">&lt;version&gt;</span>8.4.0<span class="cls">&lt;/version&gt;</span>
+<span class="cls">&lt;/dependency&gt;</span></div>
+      <p style="margin-top:14px"><strong style="color:var(--text)">2. Configuração</strong> em <span class="ic">src/main/resources/META-INF/persistence.xml</span>:</p>
+      <div class="code-block"><span class="cls">&lt;persistence-unit</span> <span class="mtd">name</span>=<span class="str">"lojaPU"</span><span class="cls">&gt;</span>
+    <span class="cls">&lt;class&gt;</span>br.org.irede.loja.model.Produto<span class="cls">&lt;/class&gt;</span>
+    <span class="cls">&lt;properties&gt;</span>
+        <span class="cls">&lt;property</span> <span class="mtd">name</span>=<span class="str">"jakarta.persistence.jdbc.url"</span>
+                  <span class="mtd">value</span>=<span class="str">"jdbc:mysql://localhost:3306/loja"</span><span class="cls">/&gt;</span>
+        <span class="cls">&lt;property</span> <span class="mtd">name</span>=<span class="str">"jakarta.persistence.jdbc.user"</span>     <span class="mtd">value</span>=<span class="str">"root"</span><span class="cls">/&gt;</span>
+        <span class="cls">&lt;property</span> <span class="mtd">name</span>=<span class="str">"jakarta.persistence.jdbc.password"</span> <span class="mtd">value</span>=<span class="str">"root"</span><span class="cls">/&gt;</span>
+        <span class="cls">&lt;property</span> <span class="mtd">name</span>=<span class="str">"hibernate.hbm2ddl.auto"</span> <span class="mtd">value</span>=<span class="str">"update"</span><span class="cls">/&gt;</span>
+        <span class="cls">&lt;property</span> <span class="mtd">name</span>=<span class="str">"hibernate.show_sql"</span>     <span class="mtd">value</span>=<span class="str">"true"</span><span class="cls">/&gt;</span>
+    <span class="cls">&lt;/properties&gt;</span>
+<span class="cls">&lt;/persistence-unit&gt;</span></div>
+      <p style="margin-top:10px"><strong style="color:var(--text)">hbm2ddl.auto = update:</strong> o Hibernate cria/atualiza as tabelas a partir das entidades. <strong style="color:var(--text)">show_sql = true:</strong> exibe no console o SQL gerado &mdash; ótimo para aprender! Antes de rodar, crie o banco no MySQL: <span class="ic">CREATE DATABASE loja;</span></p>
+    </div>
+
+    <!-- Card 12: Análise comparativa -->
+    <div class="card">
+      <div class="card-title">Análise Comparativa: JDBC Manual vs. ORM <span class="pill pill-grad">Prática</span></div>
+      <table>
+        <tr><th>Aspecto</th><th>JDBC (manual)</th><th>ORM (Hibernate)</th></tr>
+        <tr><td class="left">Escrita de SQL</td><td>Manual, em Strings</td><td>Gerado automaticamente</td></tr>
+        <tr><td class="left">Conversão ResultSet &rarr; objeto</td><td>Campo a campo</td><td>Automática</td></tr>
+        <tr><td class="left">Quantidade de código</td><td>Alta</td><td>Baixa</td></tr>
+        <tr><td class="left">Troca de banco de dados</td><td>Reescrever SQL específico</td><td>Trocar dialeto/config</td></tr>
+        <tr><td class="left">Controle fino do SQL</td><td>Total</td><td>Menor (mas possível)</td></tr>
+        <tr><td class="left">Curva de aprendizado</td><td>Baixa</td><td>Moderada</td></tr>
+        <tr><td class="left">Cache e otimizações</td><td>Você implementa</td><td>Já incluídos</td></tr>
+      </table>
+      <p style="margin-top:10px">Nenhuma abordagem é "sempre melhor": ORM acelera a maior parte do CRUD, enquanto JDBC puro ainda é útil em consultas muito específicas ou de altíssima performance.</p>
+    </div>
+
+  </div><!-- /resumo1 -->
+
+  <!-- ═══ SIMULADOR ═══ -->
+  <div id="simulador1" class="section">
+
+    <!-- Part 1: Do objeto ao SQL -->
+    <div class="card">
+      <div class="card-title">&#x1F501; Do Objeto ao SQL &mdash; O que o Hibernate Gera <span class="pill pill-grad">show_sql = true</span></div>
+      <p style="margin-bottom:4px">Escolha uma operação e compare o código com ORM, o SQL gerado pelo Hibernate e o equivalente em JDBC puro:</p>
+      <div class="type-btns" id="ormOps">
+        <button class="type-btn active" onclick="runOrm('persist',this)">persist()</button>
+        <button class="type-btn" onclick="runOrm('find',this)">find()</button>
+        <button class="type-btn" onclick="runOrm('merge',this)">merge()</button>
+        <button class="type-btn" onclick="runOrm('remove',this)">remove()</button>
+        <button class="type-btn" onclick="runOrm('jpql',this)">JPQL (listar)</button>
+      </div>
+      <div class="output-label">Com ORM (Hibernate / JPA)</div>
+      <div class="code-block" id="ormCode" style="min-height:50px"></div>
+      <div class="output-label">SQL gerado no console</div>
+      <div class="output-block" id="ormSql"></div>
+      <div class="output-label">Equivalente em JDBC puro</div>
+      <div class="code-block" id="ormJdbc" style="min-height:50px"></div>
+      <div class="warn-block" id="ormDesc"></div>
+    </div>
+
+    <!-- Part 2: Viagem pelas camadas -->
+    <div class="card">
+      <div class="card-title">&#x1F9ED; A Viagem de um persist() pelas Camadas <span class="pill pill-blue">Arquitetura</span></div>
+      <p style="margin-bottom:4px">Acompanhe o caminho percorrido por <span class="ic">em.persist(produto)</span> até chegar ao MySQL:</p>
+      <div class="stepper">
+        <button class="step-btn active" onclick="setLayerStep(0,this)">1. Aplicação</button>
+        <button class="step-btn" onclick="setLayerStep(1,this)">2. JPA</button>
+        <button class="step-btn" onclick="setLayerStep(2,this)">3. Hibernate</button>
+        <button class="step-btn" onclick="setLayerStep(3,this)">4. JDBC</button>
+        <button class="step-btn" onclick="setLayerStep(4,this)">5. MySQL</button>
+      </div>
+      <div class="code-block" id="layerCode" style="min-height:50px"></div>
+      <div class="warn-block" id="layerDesc"></div>
+    </div>
+
+    <!-- Part 3: Transaction -->
+    <div class="card">
+      <div class="card-title">&#x1F512; Transação: Commit ou Rollback? <span class="pill pill-amber">Atomicidade</span></div>
+      <p style="margin-bottom:4px">Um pedido salva <strong style="color:var(--text)">2 produtos</strong> na mesma transação. Veja o que acontece quando tudo dá certo e quando o segundo falha:</p>
+      <div class="type-btns" id="txOps">
+        <button class="type-btn active" onclick="runTx('commit',this)">&#x2705; Tudo certo (commit)</button>
+        <button class="type-btn" onclick="runTx('rollback',this)">&#x274C; Erro no 2º (rollback)</button>
+      </div>
+      <div class="code-block" id="txCode" style="min-height:70px"></div>
+      <div class="output-label">Console</div>
+      <div class="output-block" id="txOutput"></div>
+      <div class="output-label">mysql&gt; SELECT * FROM produtos;</div>
+      <div class="output-block" id="txTable"></div>
+    </div>
+
+  </div><!-- /simulador1 -->
+
+  <!-- ═══ EXERCÍCIOS ═══ -->
+  <div id="exercicios1" class="section">
+
+    <div class="score-bar-area">
+      <div>
+        <div class="score-val"><span id="scoreVal1">0</span>/5</div>
+        <div class="score-label">acertos</div>
+      </div>
+      <div style="flex:1">
+        <div class="score-track"><div class="score-fill" id="scoreBar1"></div></div>
+      </div>
+    </div>
+
+    <!-- Ex 1 -->
+    <div class="ex-block" id="ex1-0">
+      <div class="ex-q">Questão 1 &mdash; O ORM elimina o uso do JDBC: o Hibernate se comunica diretamente com o MySQL sem passar por ele.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(0,this,false)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(0,this,true)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-0"></div>
+    </div>
+
+    <!-- Ex 2 -->
+    <div class="ex-block" id="ex1-1">
+      <div class="ex-q">Questão 2 &mdash; A <strong>SessionFactory</strong> é um objeto pesado e deve ser criada apenas uma vez, quando a aplicação inicia.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(1,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(1,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-1"></div>
+    </div>
+
+    <!-- Ex 3 -->
+    <div class="ex-block" id="ex1-2">
+      <div class="ex-q">Questão 3 &mdash; Uma mesma <strong>Session</strong> pode ser compartilhada com segurança entre várias threads durante toda a vida da aplicação.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(2,this,false)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(2,this,true)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-2"></div>
+    </div>
+
+    <!-- Ex 4 -->
+    <div class="ex-block" id="ex1-3">
+      <div class="ex-q">Questão 4 &mdash; Se ocorrer um erro no meio de uma transação, <code class="ic">rollback()</code> desfaz todas as operações feitas desde o <code class="ic">begin()</code>.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(3,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(3,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-3"></div>
+    </div>
+
+    <!-- Ex 5 -->
+    <div class="ex-block" id="ex1-4">
+      <div class="ex-q">Questão 5 &mdash; Com ORM, o comando <code class="ic">entityManager.persist(produto)</code> equivale a escrever manualmente um <code class="ic">INSERT</code> no banco.</div>
+      <div class="choices">
+        <button class="choice" onclick="answer1(4,this,true)">Verdadeiro</button>
+        <button class="choice" onclick="answer1(4,this,false)">Falso</button>
+      </div>
+      <div class="feedback" id="fb1-4"></div>
+    </div>
+
+  </div><!-- /exercicios1 -->
+
+  <!-- ═══ QUESTIONÁRIOS ═══ -->
+  <div id="questionarios1" class="section">
+
+    <div class="card">
+      <div class="card-title">&#x1F4DD; Questionários</div>
+      <p style="margin-bottom:1rem">Teste seu conhecimento com os questionários abaixo. Cada arquivo contém questões de verdadeiro ou falso e exercícios práticos de implementação.</p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a class="grad-btn" href="questionario-u7c1-01.html">&#x1F4CB; Quiz 01 &mdash; Conceito de ORM e seus Benefícios</a>
+        <a class="grad-btn" href="questionario-u7c1-02.html" style="background:linear-gradient(270deg,#00c896 0%,#00a0cc 100%)">&#x1F4CB; Quiz 02 &mdash; Hibernate: SessionFactory, Session e Transaction</a>
+        <a class="grad-btn" href="questionario-u7c1-03.html" style="background:linear-gradient(270deg,#cba6f7 0%,#8d62ff 100%)">&#x1F6E0; Implementação &mdash; Hibernate com MySQL na Prática</a>
+      </div>
+    </div>
+
+  </div><!-- /questionarios1 -->
+
+  <!-- ═══ CURIOSIDADES ═══ -->
+  <div id="curiosidades1" class="section">
+
+    <div class="card">
+      <div class="card-title">&#x1F680; Curiosidades sobre ORM, Hibernate e MySQL</div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F624;</div>
+        <div>
+          <div class="curi-title">O Hibernate nasceu de uma frustração</div>
+          <div class="curi-body"><strong>Gavin King</strong> criou o Hibernate em 2001 como alternativa aos <em>Entity Beans</em> do EJB 2, considerados complexos e pesados demais. A ideia era permitir persistir objetos Java simples (<em>POJOs</em>), sem herdar classes especiais do framework.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F4DC;</div>
+        <div>
+          <div class="curi-title">O Hibernate inspirou o padrão oficial</div>
+          <div class="curi-body">A <strong>JPA</strong> surgiu em 2006, com o Java EE 5, fortemente influenciada pelo Hibernate &mdash; o próprio Gavin King participou do grupo de especificação. Em 2020, com o Jakarta EE 9, os pacotes mudaram de <code>javax.persistence</code> para <code>jakarta.persistence</code>.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F42C;</div>
+        <div>
+          <div class="curi-title">O "My" do MySQL é um nome</div>
+          <div class="curi-body">O MySQL foi criado em 1995 pela empresa sueca MySQL AB. O nome vem de <strong>My</strong>, filha de <strong>Michael "Monty" Widenius</strong>, um dos fundadores. O MySQL foi comprado pela Sun em 2008, que por sua vez foi adquirida pela Oracle em 2010.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F4AC;</div>
+        <div>
+          <div class="curi-title">"O Vietnã da Ciência da Computação"</div>
+          <div class="curi-body">Em 2006, <strong>Ted Neward</strong> publicou um ensaio famoso comparando o ORM a uma guerra sem fim, por causa da dificuldade de conciliar perfeitamente objetos e tabelas. Mesmo assim, o ORM se tornou a abordagem mais comum de persistência em Java.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x1F50D;</div>
+        <div>
+          <div class="curi-title">O cache de primeiro nível economiza consultas</div>
+          <div class="curi-body">Se você chamar <code>em.find(Produto.class, 1L)</code> duas vezes na mesma Session, o Hibernate executa o <code>SELECT</code> <strong>apenas uma vez</strong> &mdash; a segunda chamada devolve o objeto que já está no contexto de persistência.</div>
+        </div>
+      </div>
+
+      <div class="curi-item">
+        <div class="curi-icon">&#x26A0;</div>
+        <div>
+          <div class="curi-title">Cuidado com o problema N+1</div>
+          <div class="curi-body">Um erro clássico de quem usa ORM: buscar uma lista com 1 consulta e, ao acessar um relacionamento de cada item, disparar mais <strong>N</strong> consultas. Ativar o <code>show_sql</code> ajuda a enxergar esse tipo de problema cedo.</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div><!-- /curiosidades1 -->
+
+  <!-- ═══ LINKS ═══ -->
+  <div id="links1" class="section">
+
+    <div class="card">
+      <div class="card-title">&#x1F517; Links Úteis</div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;margin-top:4px">
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x23EA; Módulo Anterior</div>
+          <a class="link-item" href="../../unidade06/capitulo01/index.html">Unidade 06 &mdash; Capítulo 01 &mdash; Apresentação do Projeto (Intermediário)</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F5C3; Revisão &mdash; JDBC</div>
+          <a class="link-item" href="../../unidade04/capitulo01/index.html">Unidade 04 &mdash; Capítulo 01 &mdash; Banco de Dados Relacional e JDBC</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4D6; Hibernate ORM &mdash; Documentação Oficial</div>
+          <a class="link-item" href="https://hibernate.org/orm/documentation/" target="_blank">https://hibernate.org/orm/documentation/</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4DC; Jakarta Persistence (JPA) &mdash; Especificação</div>
+          <a class="link-item" href="https://jakarta.ee/specifications/persistence/" target="_blank">https://jakarta.ee/specifications/persistence/</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F4D8; Material de Apoio &mdash; Hibernate (pw2.rpmhub.dev)</div>
+          <a class="link-item" href="https://pw2.rpmhub.dev/topicos/jpa/hibernate.html" target="_blank">https://pw2.rpmhub.dev/topicos/jpa/hibernate.html</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F42C; MySQL Connector/J &mdash; Documentação</div>
+          <a class="link-item" href="https://dev.mysql.com/doc/connector-j/en/" target="_blank">https://dev.mysql.com/doc/connector-j/en/</a>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">&#x1F9EA; Baeldung &mdash; Learn JPA &amp; Hibernate</div>
+          <a class="link-item" href="https://www.baeldung.com/learn-jpa-hibernate" target="_blank">https://www.baeldung.com/learn-jpa-hibernate</a>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /links1 -->
+
+  </div><!-- /aula01 -->
+
+</div><!-- /wrap -->
+
+<footer>
+  Capacita Brasil &mdash; <span>iRede</span> &mdash; Material Interativo de Java
+</footer>
+
+<script>
+function showTab(t, btn) {
+  document.querySelectorAll('#aula01 .section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('#aula01 .tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(t).classList.add('active');
+  btn.classList.add('active');
+}
+
+/* ── Simulador 1: Do Objeto ao SQL ── */
+const ORM_OPS = {
+  persist: {
+    code: `<span class="cls">Produto</span> p = <span class="kw">new</span> <span class="cls">Produto</span>(<span class="str">"Caneta"</span>, <span class="num">1.99</span>);
+em.<span class="mtd">getTransaction</span>().<span class="mtd">begin</span>();
+em.<span class="mtd">persist</span>(p);
+em.<span class="mtd">getTransaction</span>().<span class="mtd">commit</span>();
+<span class="cmt">// p.getId() agora contém o id gerado pelo MySQL</span>`,
+    sql: `Hibernate: insert into produtos (nome,preco) values (?,?)`,
+    jdbc: `<span class="typ">String</span> sql = <span class="str">"INSERT INTO produtos (nome, preco) VALUES (?, ?)"</span>;
+<span class="kw">try</span> (<span class="typ">PreparedStatement</span> ps = conn.<span class="mtd">prepareStatement</span>(sql,
+        <span class="typ">Statement</span>.RETURN_GENERATED_KEYS)) {
+    ps.<span class="mtd">setString</span>(<span class="num">1</span>, p.<span class="mtd">getNome</span>());
+    ps.<span class="mtd">setDouble</span>(<span class="num">2</span>, p.<span class="mtd">getPreco</span>());
+    ps.<span class="mtd">executeUpdate</span>();
+    <span class="typ">ResultSet</span> rs = ps.<span class="mtd">getGeneratedKeys</span>();
+    <span class="kw">if</span> (rs.<span class="mtd">next</span>()) p.<span class="mtd">setId</span>(rs.<span class="mtd">getLong</span>(<span class="num">1</span>));
+}`,
+    desc: '&#x1F539; persist() — torna o objeto gerenciado e agenda um INSERT. Com @GeneratedValue(IDENTITY), o Hibernate lê o AUTO_INCREMENT do MySQL e preenche o id do objeto automaticamente.'
+  },
+  find: {
+    code: `<span class="cls">Produto</span> p = em.<span class="mtd">find</span>(<span class="cls">Produto</span>.<span class="kw">class</span>, <span class="num">1L</span>);
+<span class="typ">System</span>.out.<span class="mtd">println</span>(p.<span class="mtd">getNome</span>());`,
+    sql: `Hibernate: select p1_0.id,p1_0.nome,p1_0.preco from produtos p1_0 where p1_0.id=?
+<span style="color:#cdd6f4">Caneta</span>`,
+    jdbc: `<span class="typ">String</span> sql = <span class="str">"SELECT id, nome, preco FROM produtos WHERE id = ?"</span>;
+<span class="kw">try</span> (<span class="typ">PreparedStatement</span> ps = conn.<span class="mtd">prepareStatement</span>(sql)) {
+    ps.<span class="mtd">setLong</span>(<span class="num">1</span>, <span class="num">1L</span>);
+    <span class="typ">ResultSet</span> rs = ps.<span class="mtd">executeQuery</span>();
+    <span class="kw">if</span> (rs.<span class="mtd">next</span>()) {
+        <span class="cls">Produto</span> p = <span class="kw">new</span> <span class="cls">Produto</span>();
+        p.<span class="mtd">setId</span>(rs.<span class="mtd">getLong</span>(<span class="str">"id"</span>));
+        p.<span class="mtd">setNome</span>(rs.<span class="mtd">getString</span>(<span class="str">"nome"</span>));
+        p.<span class="mtd">setPreco</span>(rs.<span class="mtd">getDouble</span>(<span class="str">"preco"</span>));
+    }
+}`,
+    desc: '&#x1F539; find() — busca pela chave primária e já devolve um objeto Produto montado. Toda a conversão do ResultSet para objeto é feita pelo Hibernate.'
+  },
+  merge: {
+    code: `<span class="cls">Produto</span> p = em.<span class="mtd">find</span>(<span class="cls">Produto</span>.<span class="kw">class</span>, <span class="num">1L</span>);
+em.<span class="mtd">getTransaction</span>().<span class="mtd">begin</span>();
+p.<span class="mtd">setPreco</span>(<span class="num">2.49</span>);       <span class="cmt">// basta alterar o objeto gerenciado...</span>
+em.<span class="mtd">getTransaction</span>().<span class="mtd">commit</span>(); <span class="cmt">// ...o UPDATE sai no commit</span>
+
+<span class="cmt">// para objetos "soltos" (fora da Session), use merge():</span>
+<span class="cmt">// em.merge(produtoVindoDaTela);</span>`,
+    sql: `Hibernate: select p1_0.id,p1_0.nome,p1_0.preco from produtos p1_0 where p1_0.id=?
+Hibernate: update produtos set nome=?,preco=? where id=?`,
+    jdbc: `<span class="typ">String</span> sql = <span class="str">"UPDATE produtos SET nome = ?, preco = ? WHERE id = ?"</span>;
+<span class="kw">try</span> (<span class="typ">PreparedStatement</span> ps = conn.<span class="mtd">prepareStatement</span>(sql)) {
+    ps.<span class="mtd">setString</span>(<span class="num">1</span>, p.<span class="mtd">getNome</span>());
+    ps.<span class="mtd">setDouble</span>(<span class="num">2</span>, <span class="num">2.49</span>);
+    ps.<span class="mtd">setLong</span>(<span class="num">3</span>, p.<span class="mtd">getId</span>());
+    ps.<span class="mtd">executeUpdate</span>();
+}`,
+    desc: '&#x1F539; Atualização — objetos gerenciados pela Session são monitorados (dirty checking): ao fazer commit, o Hibernate detecta o que mudou e gera o UPDATE sozinho. merge() é usado para objetos que estão fora do contexto de persistência.'
+  },
+  remove: {
+    code: `em.<span class="mtd">getTransaction</span>().<span class="mtd">begin</span>();
+<span class="cls">Produto</span> p = em.<span class="mtd">find</span>(<span class="cls">Produto</span>.<span class="kw">class</span>, <span class="num">1L</span>);
+em.<span class="mtd">remove</span>(p);
+em.<span class="mtd">getTransaction</span>().<span class="mtd">commit</span>();`,
+    sql: `Hibernate: select p1_0.id,p1_0.nome,p1_0.preco from produtos p1_0 where p1_0.id=?
+Hibernate: delete from produtos where id=?`,
+    jdbc: `<span class="typ">String</span> sql = <span class="str">"DELETE FROM produtos WHERE id = ?"</span>;
+<span class="kw">try</span> (<span class="typ">PreparedStatement</span> ps = conn.<span class="mtd">prepareStatement</span>(sql)) {
+    ps.<span class="mtd">setLong</span>(<span class="num">1</span>, <span class="num">1L</span>);
+    ps.<span class="mtd">executeUpdate</span>();
+}`,
+    desc: '&#x1F539; remove() — recebe um objeto gerenciado (por isso o find antes) e agenda o DELETE, executado no commit da transação.'
+  },
+  jpql: {
+    code: `<span class="typ">List</span>&lt;<span class="cls">Produto</span>&gt; lista = em
+    .<span class="mtd">createQuery</span>(<span class="str">"SELECT p FROM Produto p ORDER BY p.nome"</span>, <span class="cls">Produto</span>.<span class="kw">class</span>)
+    .<span class="mtd">getResultList</span>();`,
+    sql: `Hibernate: select p1_0.id,p1_0.nome,p1_0.preco from produtos p1_0 order by p1_0.nome`,
+    jdbc: `<span class="typ">List</span>&lt;<span class="cls">Produto</span>&gt; lista = <span class="kw">new</span> <span class="typ">ArrayList</span>&lt;&gt;();
+<span class="typ">String</span> sql = <span class="str">"SELECT id, nome, preco FROM produtos ORDER BY nome"</span>;
+<span class="kw">try</span> (<span class="typ">Statement</span> st = conn.<span class="mtd">createStatement</span>();
+     <span class="typ">ResultSet</span> rs = st.<span class="mtd">executeQuery</span>(sql)) {
+    <span class="kw">while</span> (rs.<span class="mtd">next</span>()) {
+        <span class="cls">Produto</span> p = <span class="kw">new</span> <span class="cls">Produto</span>();
+        p.<span class="mtd">setId</span>(rs.<span class="mtd">getLong</span>(<span class="str">"id"</span>));
+        p.<span class="mtd">setNome</span>(rs.<span class="mtd">getString</span>(<span class="str">"nome"</span>));
+        p.<span class="mtd">setPreco</span>(rs.<span class="mtd">getDouble</span>(<span class="str">"preco"</span>));
+        lista.<span class="mtd">add</span>(p);
+    }
+}`,
+    desc: '&#x1F539; JPQL — linguagem de consulta parecida com SQL, mas escrita sobre CLASSES e ATRIBUTOS (Produto, p.nome), não sobre tabelas e colunas. O Hibernate a traduz para o SQL do MySQL.'
+  }
+};
+
+function runOrm(op, btn) {
+  document.querySelectorAll('#ormOps .type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const data = ORM_OPS[op];
+  document.getElementById('ormCode').innerHTML = data.code;
+  document.getElementById('ormSql').innerHTML = data.sql;
+  document.getElementById('ormJdbc').innerHTML = data.jdbc;
+  document.getElementById('ormDesc').innerHTML = data.desc;
+}
+
+/* ── Simulador 2: Viagem pelas camadas ── */
+const LAYER_STEPS = [
+  {
+    code: `<span class="cmt">// ProdutoDAO — Data Access Layer</span>
+<span class="cls">Produto</span> p = <span class="kw">new</span> <span class="cls">Produto</span>(<span class="str">"Caneta"</span>, <span class="num">1.99</span>);
+em.<span class="mtd">persist</span>(p);`,
+    desc: '&#x1F539; Etapa 1 — Aplicação: o seu código (camada de acesso a dados) só conhece o objeto Produto. Não há nenhuma linha de SQL aqui.'
+  },
+  {
+    code: `<span class="cmt">// jakarta.persistence — a especificação</span>
+<span class="kw">public interface</span> <span class="typ">EntityManager</span> {
+    <span class="kw">void</span> <span class="mtd">persist</span>(<span class="typ">Object</span> entity);
+    ...
+}`,
+    desc: '&#x1F539; Etapa 2 — JPA: a chamada é feita através de uma interface padrão. A JPA define O QUE fazer, mas não COMO — ela não tem implementação própria.'
+  },
+  {
+    code: `<span class="cmt">// Hibernate — a implementação</span>
+<span class="mtd">mapeamento</span>: <span class="cls">Produto</span> &rarr; <span class="typ">tabela</span> <span class="str">produtos</span>
+  nome  &rarr; <span class="typ">coluna</span> <span class="str">nome</span>
+  preco &rarr; <span class="typ">coluna</span> <span class="str">preco</span>
+<span class="mtd">gera</span>: <span class="str">insert into produtos (nome,preco) values (?,?)</span>`,
+    desc: '&#x1F539; Etapa 3 — Hibernate: usando os mapeamentos (@Entity, @Table, @Column) carregados pela SessionFactory, o Hibernate gera o SQL no dialeto do MySQL.'
+  },
+  {
+    code: `<span class="cmt">// JDBC — usado internamente pelo Hibernate</span>
+<span class="typ">PreparedStatement</span> ps = conn.<span class="mtd">prepareStatement</span>(sql);
+ps.<span class="mtd">setString</span>(<span class="num">1</span>, <span class="str">"Caneta"</span>);
+ps.<span class="mtd">setDouble</span>(<span class="num">2</span>, <span class="num">1.99</span>);
+ps.<span class="mtd">executeUpdate</span>();`,
+    desc: '&#x1F539; Etapa 4 — JDBC: o Hibernate usa o mesmo JDBC que você estudou na Unidade 04, com o driver mysql-connector-j, para enviar o comando ao banco.'
+  },
+  {
+    code: `mysql&gt; <span class="kw">SELECT</span> * <span class="kw">FROM</span> produtos;
++----+--------+-------+
+| id | nome   | preco |
++----+--------+-------+
+|  <span class="num">1</span> | <span class="str">Caneta</span> |  <span class="num">1.99</span> |
++----+--------+-------+`,
+    desc: '&#x1F539; Etapa 5 — MySQL: o banco executa o INSERT, gera o id via AUTO_INCREMENT e o Hibernate devolve esse id para o objeto p.'
+  }
+];
+
+function setLayerStep(i, btn) {
+  document.querySelectorAll('#simulador1 .stepper .step-btn').forEach((b, idx) => {
+    b.classList.remove('active');
+    if (idx < i) b.classList.add('past'); else b.classList.remove('past');
+  });
+  btn.classList.add('active');
+  document.getElementById('layerCode').innerHTML = LAYER_STEPS[i].code;
+  document.getElementById('layerDesc').innerHTML = LAYER_STEPS[i].desc;
+}
+
+/* ── Simulador 3: Transaction ── */
+const TX_CODE_START = `<span class="typ">EntityTransaction</span> tx = em.<span class="mtd">getTransaction</span>();
+<span class="kw">try</span> {
+    tx.<span class="mtd">begin</span>();
+    em.<span class="mtd">persist</span>(<span class="kw">new</span> <span class="cls">Produto</span>(<span class="str">"Caderno"</span>, <span class="num">15.90</span>));
+`;
+const TX_CODE_END = `
+    tx.<span class="mtd">commit</span>();
+} <span class="kw">catch</span> (<span class="typ">Exception</span> e) {
+    tx.<span class="mtd">rollback</span>();
+    <span class="typ">System</span>.out.<span class="mtd">println</span>(<span class="str">"Erro: "</span> + e.<span class="mtd">getMessage</span>());
+} <span class="kw">finally</span> {
+    em.<span class="mtd">close</span>();
+}`;
+const TX_STEPS = {
+  commit: {
+    code: TX_CODE_START + `    em.<span class="mtd">persist</span>(<span class="kw">new</span> <span class="cls">Produto</span>(<span class="str">"Lápis"</span>, <span class="num">2.50</span>));` + TX_CODE_END,
+    output: `<span style="color:#89dceb">tx.begin()</span>
+Hibernate: insert into produtos (nome,preco) values (?,?)
+Hibernate: insert into produtos (nome,preco) values (?,?)
+<span style="color:#a6e3a1">tx.commit()  ✓ 2 registros confirmados</span>`,
+    table: `+----+---------+-------+
+| id | nome    | preco |
++----+---------+-------+
+|  1 | Caderno | 15.90 |
+|  2 | Lápis   |  2.50 |
++----+---------+-------+
+2 rows in set`
+  },
+  rollback: {
+    code: TX_CODE_START + `    em.<span class="mtd">persist</span>(<span class="kw">new</span> <span class="cls">Produto</span>(<span class="kw">null</span>, <span class="num">2.50</span>)); <span class="cmt">// nome é NOT NULL!</span>` + TX_CODE_END,
+    output: `<span style="color:#89dceb">tx.begin()</span>
+Hibernate: insert into produtos (nome,preco) values (?,?)
+<span style="color:#f38ba8">PropertyValueException: not-null property references
+a null or transient value: Produto.nome</span>
+<span style="color:#fab387">tx.rollback()  ↺ todas as operações desfeitas</span>
+Erro: not-null property references a null or transient value: Produto.nome`,
+    table: `<span style="color:#6c7086">Empty set</span>
+
+<span style="color:#fab387">// O "Caderno" também NÃO foi salvo:
+// ou tudo funciona, ou nada funciona.</span>`
+  }
+};
+
+function runTx(step, btn) {
+  document.querySelectorAll('#txOps .type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const data = TX_STEPS[step];
+  document.getElementById('txCode').innerHTML = data.code;
+  document.getElementById('txOutput').innerHTML = data.output;
+  document.getElementById('txTable').innerHTML = data.table;
+}
+
+function answer1(i, btn, isCorrect) {
+  const block = document.getElementById('ex1-' + i);
+  const fb = document.getElementById('fb1-' + i);
+  block.querySelectorAll('.choice').forEach(b => b.disabled = true);
+  if (isCorrect) {
+    btn.classList.add('correct');
+    block.classList.add('done');
+    fb.className = 'feedback show ok';
+    fb.textContent = '✓ Correto!';
+    window.score1 = (window.score1 || 0) + 1;
+  } else {
+    btn.classList.add('wrong');
+    fb.className = 'feedback show ko';
+    fb.textContent = '✗ Incorreto. Revise o resumo desta aula.';
+  }
+  document.getElementById('scoreVal1').textContent = window.score1 || 0;
+  document.getElementById('scoreBar1').style.width = ((window.score1 || 0) / 5 * 100) + '%';
+}
+</script>
+
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+  runOrm('persist', document.querySelector('#ormOps .type-btn.active'));
+  setLayerStep(0, document.querySelector('#simulador1 .step-btn.active'));
+  runTx('commit', document.querySelector('#txOps .type-btn.active'));
+});
+</script>
+</body>
+</html>
